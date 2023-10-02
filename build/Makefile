@@ -129,29 +129,101 @@ mygame/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/build
 .PHONY : mygame/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+Main.o: Main.cpp.o
+.PHONY : Main.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/main.cpp.o
-.PHONY : main.cpp.o
+Main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Main.cpp.o
+.PHONY : Main.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+Main.i: Main.cpp.i
+.PHONY : Main.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/main.cpp.i
-.PHONY : main.cpp.i
+Main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Main.cpp.i
+.PHONY : Main.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+Main.s: Main.cpp.s
+.PHONY : Main.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/main.cpp.s
-.PHONY : main.cpp.s
+Main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Main.cpp.s
+.PHONY : Main.cpp.s
+
+MapTemplate.o: MapTemplate.cpp.o
+.PHONY : MapTemplate.o
+
+# target to build an object file
+MapTemplate.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/MapTemplate.cpp.o
+.PHONY : MapTemplate.cpp.o
+
+MapTemplate.i: MapTemplate.cpp.i
+.PHONY : MapTemplate.i
+
+# target to preprocess a source file
+MapTemplate.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/MapTemplate.cpp.i
+.PHONY : MapTemplate.cpp.i
+
+MapTemplate.s: MapTemplate.cpp.s
+.PHONY : MapTemplate.s
+
+# target to generate assembly for a file
+MapTemplate.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/MapTemplate.cpp.s
+.PHONY : MapTemplate.cpp.s
+
+MapWalls.o: MapWalls.cpp.o
+.PHONY : MapWalls.o
+
+# target to build an object file
+MapWalls.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/MapWalls.cpp.o
+.PHONY : MapWalls.cpp.o
+
+MapWalls.i: MapWalls.cpp.i
+.PHONY : MapWalls.i
+
+# target to preprocess a source file
+MapWalls.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/MapWalls.cpp.i
+.PHONY : MapWalls.cpp.i
+
+MapWalls.s: MapWalls.cpp.s
+.PHONY : MapWalls.s
+
+# target to generate assembly for a file
+MapWalls.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/MapWalls.cpp.s
+.PHONY : MapWalls.cpp.s
+
+Player.o: Player.cpp.o
+.PHONY : Player.o
+
+# target to build an object file
+Player.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Player.cpp.o
+.PHONY : Player.cpp.o
+
+Player.i: Player.cpp.i
+.PHONY : Player.i
+
+# target to preprocess a source file
+Player.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Player.cpp.i
+.PHONY : Player.cpp.i
+
+Player.s: Player.cpp.s
+.PHONY : Player.s
+
+# target to generate assembly for a file
+Player.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Player.cpp.s
+.PHONY : Player.cpp.s
 
 # Help Target
 help:
@@ -162,9 +234,18 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... mygame"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... Main.o"
+	@echo "... Main.i"
+	@echo "... Main.s"
+	@echo "... MapTemplate.o"
+	@echo "... MapTemplate.i"
+	@echo "... MapTemplate.s"
+	@echo "... MapWalls.o"
+	@echo "... MapWalls.i"
+	@echo "... MapWalls.s"
+	@echo "... Player.o"
+	@echo "... Player.i"
+	@echo "... Player.s"
 .PHONY : help
 
 

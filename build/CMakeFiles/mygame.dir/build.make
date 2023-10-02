@@ -69,35 +69,83 @@ include CMakeFiles/mygame.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/mygame.dir/flags.make
 
-CMakeFiles/mygame.dir/main.cpp.o: CMakeFiles/mygame.dir/flags.make
-CMakeFiles/mygame.dir/main.cpp.o: /home/bido/licence/L3/projet/raycastingPortal/sources/main.cpp
-CMakeFiles/mygame.dir/main.cpp.o: CMakeFiles/mygame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/mygame.dir/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mygame.dir/main.cpp.o -MF CMakeFiles/mygame.dir/main.cpp.o.d -o CMakeFiles/mygame.dir/main.cpp.o -c /home/bido/licence/L3/projet/raycastingPortal/sources/main.cpp
+CMakeFiles/mygame.dir/Main.cpp.o: CMakeFiles/mygame.dir/flags.make
+CMakeFiles/mygame.dir/Main.cpp.o: /home/bido/licence/L3/projet/raycastingPortal/sources/Main.cpp
+CMakeFiles/mygame.dir/Main.cpp.o: CMakeFiles/mygame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/mygame.dir/Main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mygame.dir/Main.cpp.o -MF CMakeFiles/mygame.dir/Main.cpp.o.d -o CMakeFiles/mygame.dir/Main.cpp.o -c /home/bido/licence/L3/projet/raycastingPortal/sources/Main.cpp
 
-CMakeFiles/mygame.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mygame.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bido/licence/L3/projet/raycastingPortal/sources/main.cpp > CMakeFiles/mygame.dir/main.cpp.i
+CMakeFiles/mygame.dir/Main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mygame.dir/Main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bido/licence/L3/projet/raycastingPortal/sources/Main.cpp > CMakeFiles/mygame.dir/Main.cpp.i
 
-CMakeFiles/mygame.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mygame.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bido/licence/L3/projet/raycastingPortal/sources/main.cpp -o CMakeFiles/mygame.dir/main.cpp.s
+CMakeFiles/mygame.dir/Main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mygame.dir/Main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bido/licence/L3/projet/raycastingPortal/sources/Main.cpp -o CMakeFiles/mygame.dir/Main.cpp.s
+
+CMakeFiles/mygame.dir/Player.cpp.o: CMakeFiles/mygame.dir/flags.make
+CMakeFiles/mygame.dir/Player.cpp.o: /home/bido/licence/L3/projet/raycastingPortal/sources/Player.cpp
+CMakeFiles/mygame.dir/Player.cpp.o: CMakeFiles/mygame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/mygame.dir/Player.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mygame.dir/Player.cpp.o -MF CMakeFiles/mygame.dir/Player.cpp.o.d -o CMakeFiles/mygame.dir/Player.cpp.o -c /home/bido/licence/L3/projet/raycastingPortal/sources/Player.cpp
+
+CMakeFiles/mygame.dir/Player.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mygame.dir/Player.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bido/licence/L3/projet/raycastingPortal/sources/Player.cpp > CMakeFiles/mygame.dir/Player.cpp.i
+
+CMakeFiles/mygame.dir/Player.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mygame.dir/Player.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bido/licence/L3/projet/raycastingPortal/sources/Player.cpp -o CMakeFiles/mygame.dir/Player.cpp.s
+
+CMakeFiles/mygame.dir/MapTemplate.cpp.o: CMakeFiles/mygame.dir/flags.make
+CMakeFiles/mygame.dir/MapTemplate.cpp.o: /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.cpp
+CMakeFiles/mygame.dir/MapTemplate.cpp.o: CMakeFiles/mygame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/mygame.dir/MapTemplate.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mygame.dir/MapTemplate.cpp.o -MF CMakeFiles/mygame.dir/MapTemplate.cpp.o.d -o CMakeFiles/mygame.dir/MapTemplate.cpp.o -c /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.cpp
+
+CMakeFiles/mygame.dir/MapTemplate.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mygame.dir/MapTemplate.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.cpp > CMakeFiles/mygame.dir/MapTemplate.cpp.i
+
+CMakeFiles/mygame.dir/MapTemplate.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mygame.dir/MapTemplate.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.cpp -o CMakeFiles/mygame.dir/MapTemplate.cpp.s
+
+CMakeFiles/mygame.dir/MapWalls.cpp.o: CMakeFiles/mygame.dir/flags.make
+CMakeFiles/mygame.dir/MapWalls.cpp.o: /home/bido/licence/L3/projet/raycastingPortal/sources/MapWalls.cpp
+CMakeFiles/mygame.dir/MapWalls.cpp.o: CMakeFiles/mygame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/mygame.dir/MapWalls.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mygame.dir/MapWalls.cpp.o -MF CMakeFiles/mygame.dir/MapWalls.cpp.o.d -o CMakeFiles/mygame.dir/MapWalls.cpp.o -c /home/bido/licence/L3/projet/raycastingPortal/sources/MapWalls.cpp
+
+CMakeFiles/mygame.dir/MapWalls.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mygame.dir/MapWalls.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bido/licence/L3/projet/raycastingPortal/sources/MapWalls.cpp > CMakeFiles/mygame.dir/MapWalls.cpp.i
+
+CMakeFiles/mygame.dir/MapWalls.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mygame.dir/MapWalls.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bido/licence/L3/projet/raycastingPortal/sources/MapWalls.cpp -o CMakeFiles/mygame.dir/MapWalls.cpp.s
 
 # Object files for target mygame
 mygame_OBJECTS = \
-"CMakeFiles/mygame.dir/main.cpp.o"
+"CMakeFiles/mygame.dir/Main.cpp.o" \
+"CMakeFiles/mygame.dir/Player.cpp.o" \
+"CMakeFiles/mygame.dir/MapTemplate.cpp.o" \
+"CMakeFiles/mygame.dir/MapWalls.cpp.o"
 
 # External object files for target mygame
 mygame_EXTERNAL_OBJECTS =
 
-mygame: CMakeFiles/mygame.dir/main.cpp.o
+mygame: CMakeFiles/mygame.dir/Main.cpp.o
+mygame: CMakeFiles/mygame.dir/Player.cpp.o
+mygame: CMakeFiles/mygame.dir/MapTemplate.cpp.o
+mygame: CMakeFiles/mygame.dir/MapWalls.cpp.o
 mygame: CMakeFiles/mygame.dir/build.make
 mygame: /usr/local/lib/libgf0.so.1.2.0
 mygame: /usr/local/lib/libgfnet0.so.1.2.0
 mygame: /usr/local/lib/libgfcore0.so.1.2.0
 mygame: /usr/lib/x86_64-linux-gnu/libz.so
 mygame: CMakeFiles/mygame.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable mygame"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable mygame"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mygame.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

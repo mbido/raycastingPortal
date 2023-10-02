@@ -7,11 +7,13 @@ project(raycastingPortal
 find_package(gf REQUIRED)
 
 add_executable(mygame
-  main.cpp
-  # and the rest of your sources
+  Main.cpp
+  Player.cpp
+  MapTemplate.cpp
+  MapWalls.cpp
 )
 
-target_link_libraries(mygame 
+target_link_libraries(mygame
   PRIVATE 
     gf::graphics 
     gf::net

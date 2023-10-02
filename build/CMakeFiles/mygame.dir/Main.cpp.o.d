@@ -1,5 +1,5 @@
-CMakeFiles/mygame.dir/main.cpp.o: \
- /home/bido/licence/L3/projet/raycastingPortal/sources/main.cpp \
+CMakeFiles/mygame.dir/Main.cpp.o: \
+ /home/bido/licence/L3/projet/raycastingPortal/sources/Main.cpp \
  /usr/include/stdc-predef.h /usr/local/include/gf/Action.h \
  /usr/include/c++/11/memory /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
@@ -248,4 +248,9 @@ CMakeFiles/mygame.dir/main.cpp.o: \
  /usr/local/include/gf/Transformable.h /usr/local/include/gf/Drawable.h \
  /usr/local/include/gf/VertexArray.h /usr/local/include/gf/Vertex.h \
  /usr/local/include/gf/Color.h /usr/local/include/gf/VertexBuffer.h \
- /usr/local/include/gf/Vector.h /usr/local/include/gf/RenderTarget.h
+ /usr/local/include/gf/Vector.h /usr/local/include/gf/RenderTarget.h \
+ /usr/local/include/gf/Math.h \
+ /home/bido/licence/L3/projet/raycastingPortal/sources/Player.hpp \
+ /usr/local/include/gf/Entity.h \
+ /home/bido/licence/L3/projet/raycastingPortal/sources/MapWalls.hpp \
+ /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.hpp
