@@ -7,17 +7,16 @@
 
 #include <cstdio>
 
-void Player::setWalls(MapWalls *walls){
-    m_mapWalls = walls;
-}
-
-void Player::setVelocity(const gf::Vector2f &velocity)
-{
+void Player::setVelocity(const gf::Vector2f &velocity) {
     m_velocity = velocity;
 }
 
-void Player::setAngularVelocity(float delta) {
+void Player::setAngularVelocity(double delta) {
     m_angularVelocity = delta;
+}
+
+double Player::getAngle() {
+    return m_angle;
 }
 
 const gf::Vector2f Player::getPosition(){
@@ -38,10 +37,9 @@ void Player::update(gf::Time dt){
 }
 
 void Player::render(gf::RenderWindow& renderer, int sizeUnit){
-    std::printf("rendering !!!!\n");
 
     // the direction is represented by a red ligne :
-    float lineLength = 2.0f; // longueur fixe de la ligne
+    double lineLength = 2.0f; // longueur fixe de la ligne
     gf::Vector2f direction(std::cos(m_angle), std::sin(m_angle));
     gf::Vector2f endPoint = m_position + lineLength * gf::normalize(direction);
     gf::VertexArray line(gf::PrimitiveType::Lines, 2);

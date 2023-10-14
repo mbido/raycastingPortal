@@ -14,11 +14,24 @@ class MapTemplate {
             init();
         }
         int setTile(int i, int j, int value);
+        
         ~MapTemplate() {
             for (int i = 0; i < m_nbRows; ++i) {
                 delete[] m_map[i];
             }
             delete[] m_map;
+        }
+
+        int getNbRows() const {
+            return m_nbRows;
+        }
+
+        int getNbColumns() const {
+            return m_nbColumns;
+        }
+
+        int getTile(int i, int j) const {
+            return m_map[i][j];
         }
 
     protected :

@@ -17,6 +17,7 @@
 #include "Player.hpp"
 #include "MapTemplate.hpp"
 #include "MapWalls.hpp"
+#include "Game2D.hpp"
  
 int main() {
   static constexpr gf::Vector2i ScreenSize(1024, 576);
@@ -30,20 +31,10 @@ int main() {
   window.setFramerateLimit(60);
  
   gf::RenderWindow renderer(window);
-
-  // map
-  const int nbRows = 10;
-  const int nbColumns = 10;
-  MapWalls map(nbRows, nbColumns);
-  // this will be the size unit : every entity will be in function of this size
-  int sizeUnit;
  
   // views
  
   gf::ViewContainer views;
- 
-  gf::ExtendView mainView(ViewCenter, ViewSize);
-  views.addView(mainView);
  
   gf::ScreenView hudView;
   views.addView(hudView);
@@ -98,12 +89,15 @@ int main() {
   // entities
   Player player(gf::Vector2f(5, 5));
  
-  gf::EntityContainer mainEntities;
-  // add entities to mainEntities
-  mainEntities.addEntity(player);
- 
-  gf::EntityContainer hudEntities;
-  // add entities to hudEntities
+  // map
+  const int nbRows = 10;
+  const int nbColumns = 10;
+  MapWalls map(nbRows, nbColumns);
+  // this will be the size unit : every entity will be in function of this size
+  int sizeUnit;
+
+  // game
+  Game2D game(&player, &map, renderer);
 
  
   // game loop
@@ -158,28 +152,16 @@ int main() {
     // 2. update
  
     gf::Time time = clock.restart();
-    mainEntities.update(time);
-    hudEntities.update(time);
 
-
-    // update the size unit
-    gf::Vector2u windowSize = renderer.getSize();
-    sizeUnit = std::min((int)(windowSize[0] / nbRows), (int)(windowSize[1] / nbColumns));
- 
+    game.update(time);
  
     // 3. draw
  
     renderer.clear();
 
-    map.render(renderer, sizeUnit);
- 
-    renderer.setView(mainView);
-    mainEntities.render(renderer); // !!! ne fonctionne pas pour afficher mon player 
- 
     renderer.setView(hudView);
-    hudEntities.render(renderer);
 
-    player.render(renderer, sizeUnit); // !!! bizarre, l'entityContainer devrais le faire tout seul pourtant
+    game.render();
 
     renderer.display();
  

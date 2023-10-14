@@ -129,6 +129,30 @@ mygame/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/build
 .PHONY : mygame/fast
 
+Game2D.o: Game2D.cpp.o
+.PHONY : Game2D.o
+
+# target to build an object file
+Game2D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game2D.cpp.o
+.PHONY : Game2D.cpp.o
+
+Game2D.i: Game2D.cpp.i
+.PHONY : Game2D.i
+
+# target to preprocess a source file
+Game2D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game2D.cpp.i
+.PHONY : Game2D.cpp.i
+
+Game2D.s: Game2D.cpp.s
+.PHONY : Game2D.s
+
+# target to generate assembly for a file
+Game2D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game2D.cpp.s
+.PHONY : Game2D.cpp.s
+
 Main.o: Main.cpp.o
 .PHONY : Main.o
 
@@ -234,6 +258,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... mygame"
+	@echo "... Game2D.o"
+	@echo "... Game2D.i"
+	@echo "... Game2D.s"
 	@echo "... Main.o"
 	@echo "... Main.i"
 	@echo "... Main.s"

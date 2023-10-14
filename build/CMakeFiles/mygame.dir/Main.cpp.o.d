@@ -253,4 +253,5 @@ CMakeFiles/mygame.dir/Main.cpp.o: \
  /home/bido/licence/L3/projet/raycastingPortal/sources/Player.hpp \
  /usr/local/include/gf/Entity.h \
  /home/bido/licence/L3/projet/raycastingPortal/sources/MapWalls.hpp \
- /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.hpp
+ /home/bido/licence/L3/projet/raycastingPortal/sources/MapTemplate.hpp \
+ /home/bido/licence/L3/projet/raycastingPortal/sources/Game2D.hpp
