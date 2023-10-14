@@ -18,6 +18,7 @@
 #include "MapTemplate.hpp"
 #include "MapWalls.hpp"
 #include "Game2D.hpp"
+#include "Game3D.hpp"
  
 int main() {
   static constexpr gf::Vector2i ScreenSize(1024, 576);
@@ -87,17 +88,35 @@ int main() {
   actions.addAction(lookRightAction);
  
   // entities
-  Player player(gf::Vector2f(5, 5));
+  Player player(gf::Vector2f(1.5, 1.5));
  
   // map
   const int nbRows = 10;
   const int nbColumns = 10;
   MapWalls map(nbRows, nbColumns);
-  map.setTile(3, 3, 1);
-  map.setTile(9, 5, 0);
+  map.setTile(1, 2, 1);
+  map.setTile(1, 6, 1);
+  map.setTile(2, 2, 1);
+  map.setTile(2, 4, 1);
+  map.setTile(2, 5, 1);
+  map.setTile(2, 6, 1);
+  map.setTile(2, 8, 1);
+  map.setTile(3, 6, 1);
+  map.setTile(4, 1, 1);
+  map.setTile(4, 2, 1);
+  map.setTile(4, 3, 1);
+  map.setTile(4, 4, 1);
+  map.setTile(6, 3, 1);
+  map.setTile(6, 4, 1);
+  map.setTile(6, 5, 1);
+  map.setTile(6, 6, 1);
+  map.setTile(6, 7, 1);
+  map.setTile(7, 6, 1);
+  map.setTile(8, 6, 1);
 
   // game
-  Game2D game(&player, &map, renderer);
+  //Game2D game(&player, &map, renderer);
+  Game3D game(&player, &map, renderer);
 
  
   // game loop

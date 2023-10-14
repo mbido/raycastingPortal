@@ -153,6 +153,30 @@ Game2D.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game2D.cpp.s
 .PHONY : Game2D.cpp.s
 
+Game3D.o: Game3D.cpp.o
+.PHONY : Game3D.o
+
+# target to build an object file
+Game3D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game3D.cpp.o
+.PHONY : Game3D.cpp.o
+
+Game3D.i: Game3D.cpp.i
+.PHONY : Game3D.i
+
+# target to preprocess a source file
+Game3D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game3D.cpp.i
+.PHONY : Game3D.cpp.i
+
+Game3D.s: Game3D.cpp.s
+.PHONY : Game3D.s
+
+# target to generate assembly for a file
+Game3D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mygame.dir/build.make CMakeFiles/mygame.dir/Game3D.cpp.s
+.PHONY : Game3D.cpp.s
+
 Main.o: Main.cpp.o
 .PHONY : Main.o
 
@@ -261,6 +285,9 @@ help:
 	@echo "... Game2D.o"
 	@echo "... Game2D.i"
 	@echo "... Game2D.s"
+	@echo "... Game3D.o"
+	@echo "... Game3D.i"
+	@echo "... Game3D.s"
 	@echo "... Main.o"
 	@echo "... Main.i"
 	@echo "... Main.s"

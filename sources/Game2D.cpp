@@ -16,7 +16,7 @@ void Game2D::update(gf::Time dt) {
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 }
 
-gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls) {
+gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls) {
 
     // the tiles position we want to check if it's a wall or not
     int tileX = (int) position[0];
@@ -96,7 +96,7 @@ void Game2D::render() {
         gf::Vector2f position = m_player->getPosition();
         //gf::Vector2f endPoint = castRay(position, angle, m_walls);
 
-        gf::Vector2f endPoint = castRay(position, direction, m_walls);
+        gf::Vector2f endPoint = castRay2D(position, direction, m_walls);
 
         gf::VertexArray line(gf::PrimitiveType::Lines, 2);
         line[0].position = position * m_scaleUnit;

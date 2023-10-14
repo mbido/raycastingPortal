@@ -12,6 +12,7 @@ add_executable(mygame
   MapTemplate.cpp
   MapWalls.cpp
   Game2D.cpp
+  Game3D.cpp
 )
 
 target_link_libraries(mygame

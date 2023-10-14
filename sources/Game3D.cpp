@@ -1,22 +1,24 @@
 #include <iostream>
+#include <cmath>
 
 #include <gf/Vector.h>
 #include <gf/RenderWindow.h>
 #include <gf/Shapes.h>
 
+
 #include "Player.hpp"
 #include "MapWalls.hpp"
-#include "Game2D.hpp"
+#include "Game3D.hpp"
 
 
-void Game2D::update(gf::Time dt) {
+void Game3D::update(gf::Time dt) {
     m_player->update(dt);
 
     m_windowSize = m_renderer.getSize();
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 }
 
-gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls) {
+gf::Vector2f castRay3D(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls) {
 
     // the tiles position we want to check if it's a wall or not
     int tileX = (int) position[0];
@@ -74,15 +76,9 @@ gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_
 
 
 
-void Game2D::render() {
-    // render the map :
-    m_walls->render(m_renderer, m_scaleUnit);
+void Game3D::render() {
 
-    // render the player :
-    m_player->render(m_renderer, m_scaleUnit);
-
-
-    int nbRays = 500;
+    int nbRays = m_renderer.getSize()[0];
     double fov = 60 * gf::Pi / 180;
     double angle = m_player->getAngle() - fov / 2;
     for(int i = 0 ; i < nbRays ; i++) {
@@ -96,16 +92,32 @@ void Game2D::render() {
         gf::Vector2f position = m_player->getPosition();
         //gf::Vector2f endPoint = castRay(position, angle, m_walls);
 
-        gf::Vector2f endPoint = castRay(position, direction, m_walls);
+        gf::Vector2f endPoint = castRay3D(position, direction, m_walls);
 
-        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-        line[0].position = position * m_scaleUnit;
-        line[1].position = endPoint * m_scaleUnit;
-        line[0].color = gf::Color::Blue;
-        line[1].color = gf::Color::Blue;
-        m_renderer.draw(line);
+        // the distance of the wall to the player : 
+        double falseDistance = std::sqrt((endPoint[0] - position[0]) * (endPoint[0] - position[0]) 
+                                + (endPoint[1] - position[1]) * (endPoint[1] - position[1]));
+        // the real distance is the projection of the ray on the direction vector :
+        double realDistance = falseDistance * std::cos(angle - m_player->getAngle());
 
-        angle += fov / nbRays;
+        // the height of the projected wall :
+        // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
+        double height = (1 / realDistance) * 277 * m_scaleUnit / 32;
         
+
+        gf::v1::Color4f color = gf::Color::fromRgba32(255, 50, 50);
+        // defining gradients and colors of the walls 
+        if(endPoint[0] == (int)endPoint[0]) {
+            color = gf::Color::fromRgba32(50, 50, 255);
+        }
+        
+
+        // putting a pixel wide rectangle at i-th pixel of the screen :
+        gf::RectangleShape wall(gf::Vector2f(1, height));
+        wall.setPosition(gf::Vector2f(i, (m_windowSize[1] - height) / 2));
+        wall.setColor(color);
+        m_renderer.draw(wall);
+
+        angle += fov / nbRays;   
     }
 }
