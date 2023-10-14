@@ -20,11 +20,10 @@ class Player : public gf::Entity {
         }
         void setVelocity(const gf::Vector2f& velocity);
         void setAngularVelocity(double delta);
-        double getAngle();
         const gf::Vector2f getPosition();
         void update(gf::Time dt);
         void render(gf::RenderWindow& renderer, int sizeUnit);
-        gf::Vector2f castRay(gf::Vector2f position, double angle);
+        double getAngle();
     private :
         gf::Vector2f m_position;
         gf::Vector2f m_velocity;

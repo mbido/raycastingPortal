@@ -93,8 +93,8 @@ int main() {
   const int nbRows = 10;
   const int nbColumns = 10;
   MapWalls map(nbRows, nbColumns);
-  // this will be the size unit : every entity will be in function of this size
-  int sizeUnit;
+  map.setTile(3, 3, 1);
+  map.setTile(9, 5, 0);
 
   // game
   Game2D game(&player, &map, renderer);

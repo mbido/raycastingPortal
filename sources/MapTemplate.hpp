@@ -1,6 +1,8 @@
 #ifndef MAPTEMPLATE_HPP
 #define MAPTEMPLATE_HPP
 
+#include <iostream>
+
 class MapTemplate {
     public :
         MapTemplate(int nbRows = 10, int nbColumns = 10)
@@ -31,7 +33,9 @@ class MapTemplate {
         }
 
         int getTile(int i, int j) const {
+        if(i >= 0 && i < m_nbColumns && j >= 0 && j < m_nbRows)
             return m_map[i][j];
+        return -1;
         }
 
     protected :

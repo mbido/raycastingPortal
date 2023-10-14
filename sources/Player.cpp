@@ -19,6 +19,7 @@ double Player::getAngle() {
     return m_angle;
 }
 
+
 const gf::Vector2f Player::getPosition(){
     return m_position;
 }
@@ -34,6 +35,11 @@ void Player::update(gf::Time dt){
     }
 
     m_position += newVelocity * dt.asSeconds() * m_speed;
+    m_angle = std::fmod(m_angle, 2 * gf::Pi);
+
+    if (m_angle < 0) {
+        m_angle += 2 * gf::Pi;
+    }
 }
 
 void Player::render(gf::RenderWindow& renderer, int sizeUnit){
@@ -55,8 +61,4 @@ void Player::render(gf::RenderWindow& renderer, int sizeUnit){
     circle.setColor(gf::Color::Blue);
     circle.setAnchor(gf::Anchor::Center);
     renderer.draw(circle);
-}
-
-gf::Vector2f Player::castRay(gf::Vector2f position, double angle){
-    return position;
 }
