@@ -54,14 +54,6 @@ struct castResult Game3D::castRay(gf::Vector2f position, gf::Vector2f direction,
     }
 
     for(int i = 0; i < 100; i++) {
-        if(tileX < 0 || tileX >= m_walls->getNbColumns() || tileY < 0 || tileY >= m_walls->getNbRows()) {
-            // we are outside of the map
-            result.endPoint = position + 100 * direction;
-            result.tileX = -1;
-            result.tileY = -1;
-            result.tileSideHit = -1;
-            return result;
-        }
         if(distX <= distY) {
             tileX += (vX > 0)? 1 : -1;
             if (m_walls->getTile(tileX, tileY) == 1) {

@@ -15,8 +15,8 @@ void MapTemplate::init() {
 }
 
 int MapTemplate::setTile(int i, int j, int value) {
-    if (i >= 0 && i < m_nbRows && j >= 0 && j < m_nbColumns) {
-        m_map[i][j] = value;
+    if (i >= 0 && i < m_nbColumns && j >= 0 && j < m_nbColumns) {
+        m_map[j][i] = value;
         return 0;
     } else {
         return -1;

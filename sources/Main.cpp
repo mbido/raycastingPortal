@@ -29,7 +29,7 @@ int main() {
  
   gf::Window window("Game", ScreenSize);
   window.setVerticalSyncEnabled(true);
-  window.setFramerateLimit(60);
+  window.setFramerateLimit(0);
  
   gf::RenderWindow renderer(window);
  
@@ -87,8 +87,8 @@ int main() {
   lookRightAction.setContinuous();
   actions.addAction(lookRightAction);
  
-  // entities
-  Player player(gf::Vector2f(1.5, 1.5));
+  // entitie
+  Player player(gf::Vector2f(1.5, 1.5), 0, 2.5);
  
   // map
   const int nbRows = 10;
@@ -115,8 +115,8 @@ int main() {
   map.setTile(8, 6, 1);
 
   // game
-  //Game2D game(&player, &map, renderer);
-  Game3D game(&player, &map, renderer);
+  Game2D game(&player, &map, renderer);
+  //Game3D game(&player, &map, renderer);
 
  
   // game loop
@@ -164,10 +164,10 @@ int main() {
 
     float angularVelocity = 0.0f;
     if (lookLeftAction.isActive()) {
-      angularVelocity -= gf::Pi / 4;
+      angularVelocity -= gf::Pi / 2;
     }
     if (lookRightAction.isActive()) {
-      angularVelocity += gf::Pi / 4;
+      angularVelocity += gf::Pi / 2;
     }
     player.setAngularVelocity(angularVelocity);
  
