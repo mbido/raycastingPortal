@@ -121,10 +121,13 @@ int main() {
  
   // game loop
  
-  renderer.clear(gf::Color::White);
+  renderer.clear(gf::Color::Black);
  
   gf::Clock clock;
- 
+
+  gf::Clock fpsClock; 
+  int frameCount = 0;
+
   while (window.isOpen()) {
 
     // 1. input
@@ -171,6 +174,14 @@ int main() {
     // 2. update
  
     gf::Time time = clock.restart();
+
+    // fps :
+    frameCount++;
+    if (fpsClock.getElapsedTime() >= gf::seconds(1.0f)) {
+      float fps = frameCount / fpsClock.restart().asSeconds();
+      std::cout << "FPS: " << fps << std::endl;
+      frameCount = 0;
+    }
 
     game.update(time);
  

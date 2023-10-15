@@ -5,7 +5,12 @@
 #include "Player.hpp"
 #include "MapWalls.hpp"
 
-
+struct castResult {
+    gf::Vector2f endPoint;
+    int tileX;
+    int tileY;
+    int tileSideHit; // 0 ->right, 1 -> bottom, 2 -> left, 3 -> top, -1 -> did not hit a wall
+};
 class Game3D {
     public:
         Game3D(Player *player, MapWalls *walls, gf::RenderWindow& renderer)
@@ -25,4 +30,6 @@ class Game3D {
         gf::RenderWindow& m_renderer;
         int m_scaleUnit;
         gf::Vector2u m_windowSize;
+        
+        struct castResult castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls);
 };

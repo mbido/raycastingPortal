@@ -18,7 +18,9 @@ void Game3D::update(gf::Time dt) {
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 }
 
-gf::Vector2f castRay3D(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls) {
+struct castResult Game3D::castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls) {
+
+    struct castResult result;
 
     // the tiles position we want to check if it's a wall or not
     int tileX = (int) position[0];
@@ -54,24 +56,40 @@ gf::Vector2f castRay3D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
     for(int i = 0; i < 100; i++) {
         if(tileX < 0 || tileX >= m_walls->getNbColumns() || tileY < 0 || tileY >= m_walls->getNbRows()) {
             // we are outside of the map
-            return position + 100 * direction;
+            result.endPoint = position + 100 * direction;
+            result.tileX = -1;
+            result.tileY = -1;
+            result.tileSideHit = -1;
+            return result;
         }
         if(distX <= distY) {
             tileX += (vX > 0)? 1 : -1;
             if (m_walls->getTile(tileX, tileY) == 1) {
-                return position + distX * direction;
+                result.endPoint = position + distX * direction;
+                result.tileX = tileX;
+                result.tileY = tileY;
+                result.tileSideHit = (vX > 0)? 2 : 0;
+                return result;
             }
             distX += unitX;
         } else {
             tileY += (vY > 0)? 1 : -1;
             if (m_walls->getTile(tileX, tileY) == 1) {
-                return position + distY * direction;
+                result.endPoint = position + distY * direction;
+                result.tileX = tileX;
+                result.tileY = tileY;
+                result.tileSideHit = (vY > 0)? 1 : 3;
+                return result;
             }
             distY += unitY;
         }
     }
 
-    return position + 100 * direction;
+    result.endPoint = position + 100 * direction;
+    result.tileX = -1;
+    result.tileY = -1;
+    result.tileSideHit = -1;
+    return result;
 }
 
 
@@ -92,7 +110,10 @@ void Game3D::render() {
         gf::Vector2f position = m_player->getPosition();
         //gf::Vector2f endPoint = castRay(position, angle, m_walls);
 
-        gf::Vector2f endPoint = castRay3D(position, direction, m_walls);
+
+        // ---CASTING THE RAY---
+        struct castResult cast = castRay(position, direction, m_walls);
+        gf::Vector2f endPoint = cast.endPoint;
 
         // the distance of the wall to the player : 
         double falseDistance = std::sqrt((endPoint[0] - position[0]) * (endPoint[0] - position[0]) 
@@ -104,11 +125,16 @@ void Game3D::render() {
         // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
         double height = (1 / realDistance) * 277 * m_scaleUnit / 32;
         
+        // defining gradients and colors of the walls :
+        int gradient = (realDistance * 30 > 255) ? 0 : 255 - realDistance * 30;
 
-        gf::v1::Color4f color = gf::Color::fromRgba32(255, 50, 50);
-        // defining gradients and colors of the walls 
-        if(endPoint[0] == (int)endPoint[0]) {
-            color = gf::Color::fromRgba32(50, 50, 255);
+        gf::v1::Color4f color = gf::Color::fromRgba32(gradient, int(gradient / 8), int(gradient / 4));
+        if(cast.tileSideHit == 0) {
+            color = gf::Color::fromRgba32(int(gradient / 8), gradient, int(gradient / 4));
+        }else if(cast.tileSideHit == 1) {
+            color = gf::Color::fromRgba32(int(gradient / 4), int(gradient / 8), gradient);
+        }else if(cast.tileSideHit == 2) {
+            color = gf::Color::fromRgba32(gradient, int(gradient / 4), gradient);
         }
         
 
