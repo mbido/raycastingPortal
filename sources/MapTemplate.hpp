@@ -2,12 +2,14 @@
 #define MAPTEMPLATE_HPP
 
 #include <iostream>
+#include <gf/Image.h>
 
 class MapTemplate {
     public :
-        MapTemplate(int nbRows = 10, int nbColumns = 10)
-        :m_nbRows(nbRows)
-        ,m_nbColumns(nbColumns)
+        MapTemplate(std::string adress = "image.png")
+        :m_image(gf::Image(adress))
+        ,m_nbRows(m_image.getSize().width + 2)
+        ,m_nbColumns(m_image.getSize().height + 2)
         ,m_map(new int*[m_nbRows])
         {
             for (int i = 0; i < m_nbRows; ++i) {
@@ -39,6 +41,7 @@ class MapTemplate {
         }
 
     protected :
+        gf::Image m_image;
         int m_nbRows;
         int m_nbColumns;
         int **m_map;
