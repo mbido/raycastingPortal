@@ -12,6 +12,9 @@
 #include <gf/RenderTarget.h>
 #include <gf/Math.h>
 
+#include <gf/Texture.h>
+#include <filesystem>
+
 #include <cstdio>
 
 #include "Player.hpp"
@@ -91,9 +94,16 @@ int main() {
   Player player(gf::Vector2f(1.5, 1.5), 0, 2.5);
  
   // map
-  const int nbRows = 10;
+  std::string cheminAbsolu = std::filesystem::absolute("../sources/map/image.png");
+
+  MapWalls map(cheminAbsolu);
+
+  /*const int nbRows = 10;
   const int nbColumns = 10;
+
   MapWalls map(nbRows, nbColumns);
+
+  
   map.setTile(1, 2, 1);
   map.setTile(1, 6, 1);
   map.setTile(2, 2, 1);
@@ -112,11 +122,11 @@ int main() {
   map.setTile(6, 6, 1);
   map.setTile(6, 7, 1);
   map.setTile(7, 6, 1);
-  map.setTile(8, 6, 1);
+  map.setTile(8, 6, 1);*/
 
   // game
-  Game2D game(&player, &map, renderer);
-  //Game3D game(&player, &map, renderer);
+  //Game2D game(&player, &map, renderer);
+  Game3D game(&player, &map, renderer);
 
  
   // game loop
