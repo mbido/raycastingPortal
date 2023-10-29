@@ -64,7 +64,6 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             distY += unitY;
         }
     }
-
     return position + 100 * direction;
 }
 
@@ -78,7 +77,8 @@ void Game2D::render() {
     m_player->render(m_renderer, m_scaleUnit);
 
 
-    int nbRays = m_renderer.getSize()[0];
+    // int nbRays = m_renderer.getSize()[0];
+    int nbRays = 50;
     double fov = 60 * gf::Pi / 180;
     double angle = m_player->getAngle() - fov / 2;
     for(int i = 0 ; i < nbRays ; i++) {

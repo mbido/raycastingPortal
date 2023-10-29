@@ -87,8 +87,7 @@ struct castResult Game3D::castRay(gf::Vector2f position, gf::Vector2f direction,
 
 
 void Game3D::render() {
-
-    int nbRays = m_renderer.getSize()[0];
+    int nbRays = int(m_renderer.getSize()[0]);
     double fov = 60 * gf::Pi / 180;
     double angle = m_player->getAngle() - fov / 2;
     for(int i = 0 ; i < nbRays ; i++) {
@@ -115,10 +114,10 @@ void Game3D::render() {
 
         // the height of the projected wall :
         // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-        double height = (1 / realDistance) * 277 * m_scaleUnit / 32;
+        double height = (realDistance != 0)? m_windowSize[0] / realDistance : m_windowSize[1] * 2;
         
         // defining gradients and colors of the walls :
-        int gradient = (realDistance * 30 > 255) ? 0 : 255 - realDistance * 30;
+        int gradient = (realDistance * 10 > 255) ? 0 : 255 - realDistance * 10;
 
         gf::v1::Color4f color = gf::Color::fromRgba32(gradient, int(gradient / 8), int(gradient / 4));
         if(cast.tileSideHit == 0) {

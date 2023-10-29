@@ -40,6 +40,10 @@ void Player::update(gf::Time dt){
     if (m_angle < 0) {
         m_angle += 2 * gf::Pi;
     }
+
+    gf::Vector2f direction = gf::normalize(gf::Vector2f(std::cos(m_angle), std::sin(m_angle)));
+    gf::Vector2f perpendicular = gf::normalize(gf::Vector2f(-direction.y, direction.x));
+    m_projectionPlane = perpendicular * 0.66;
 }
 
 void Player::render(gf::RenderWindow& renderer, int sizeUnit){
