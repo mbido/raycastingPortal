@@ -1,3 +1,0 @@
-/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles/mygame.dir
-/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles/edit_cache.dir
-/home/bido/licence/L3/projet/raycastingPortal/build/CMakeFiles/rebuild_cache.dir
