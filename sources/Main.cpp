@@ -105,8 +105,8 @@ int main() {
 
   
   map.setTile(1, 2, 1);
-  map.setTile(1, 6, 1);
-  map.setTile(2, 2, 1);
+  map.setTile(1, 6, 1); 
+  map.setTile(2, 2, 1);   
   map.setTile(2, 4, 1);
   map.setTile(2, 5, 1);
   map.setTile(2, 6, 1);
