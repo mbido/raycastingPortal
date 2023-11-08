@@ -117,7 +117,7 @@ void Game3D::render() {
         double height = (realDistance != 0)? m_windowSize[0] / realDistance : m_windowSize[1] * 2;
         
         // defining gradients and colors of the walls :
-        int gradient = (realDistance * 10 > 255) ? 0 : 255 - realDistance * 10;
+        int gradient = (realDistance * 15 > 255 - 20) ? 20 : 255 - realDistance * 15;
 
         gf::v1::Color4f color = gf::Color::fromRgba32(gradient, int(gradient / 8), int(gradient / 4));
         if(cast.tileSideHit == 0) {
