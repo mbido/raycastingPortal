@@ -11,6 +11,7 @@ struct Vertex
     Vertex *prev;
 };
 
+
 class Wall
 {
 public:
@@ -21,8 +22,7 @@ public:
     ~Wall();
 
 private:
-    Vertex *head;
-    Vertex *tail;
+    std::vector<std::pair<int, int>> vertices;
     std::vector<std::pair<int, int>> wallCells;
 };
 
