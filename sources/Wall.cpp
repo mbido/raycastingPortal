@@ -4,7 +4,7 @@
 
 #include "Wall.hpp"
 
-Wall::Wall(std::vector<std::pair<int, int>> occupiedCells) : wallCells(occupiedCells)
+Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
 {
 
     // step 1: sorting the occupied cells by x and y (cf : notes)
@@ -14,20 +14,20 @@ Wall::Wall(std::vector<std::pair<int, int>> occupiedCells) : wallCells(occupiedC
     //          b)-we follow the next direction by priority : Right > Down > Left > Up
     //          c)-we repeat the step b) until we reach the top left vertex of the first cell again
 
-    int currentX = occupiedCells.front().first;
-    int currentY = occupiedCells.front().second;
+    int currentX = occupiedCells.front().x;
+    int currentY = occupiedCells.front().y;
 
-    vertices.push_back(std::make_pair(currentX, currentY));
+    vertices.push_back(gf::Vector2f(currentX, currentY));
 
     std::size_t size = occupiedCells.size();
     char dir = 'r';
     currentX++;
 
     for(std::size_t i = 1; i < size; ++i){
-        std::pair<int, int> currentVertex = {currentX, currentY};
-        std::pair<int, int> currentVertexUp = {currentX, currentY - 1};
-        std::pair<int, int> currentVertexUpLeft = {currentX - 1, currentY - 1};
-        std::pair<int, int> currentVertexLeft = {currentX - 1, currentY};
+        gf::Vector2f currentVertex = {currentX, currentY};
+        gf::Vector2f currentVertexUp = {currentX, currentY - 1};
+        gf::Vector2f currentVertexUpLeft = {currentX - 1, currentY - 1};
+        gf::Vector2f currentVertexLeft = {currentX - 1, currentY};
 
         int j = 0;
 
@@ -92,9 +92,9 @@ Wall::Wall(std::vector<std::pair<int, int>> occupiedCells) : wallCells(occupiedC
 
 }
 
-Wall::~Wall()
+std::vector<gf::Vector2f> Wall::getSortedVertices(gf::Vector2f playerPositions)
 {
-    // Destructor implementation
+    std::vector<gf::Vector2f> sortedVertices = vertices;
+    std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(playerPositions));
+    return sortedVertices;
 }
-
-// Other member function implementations

@@ -1,0 +1,20 @@
+{  
+  "cSpell.enabled": true,
+  "editor.cursorBlinking": "solid",
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 80,
+  "editor.wrappingIndent": "same",
+  "latex-workshop.latex.outDir": "./build",
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": true,
+  "latex-workshop.latex.autoClean.run": "onBuilt",
+  "latex-workshop.latex.clean.subfolder.enabled": true,
+  "latex-workshop.latex.clean.fileTypes": [ "*.aux", "*.toc" ],
+  "latex-workshop.debug.showUpdateMessage": false,
+  "telemetry.enableCrashReporter": false,
+  "telemetry.enableTelemetry": false,
+  "python.pythonPath": "C:\\Users\\me\\AppData\\Local\\Programs\\Python\\Python38\\python.exe",
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "restructuredtext.confPath": ""
+}

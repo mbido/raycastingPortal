@@ -1,0 +1,236 @@
+% BidoTexCourses.sty
+\ProvidesPackage{BidoTexCourses}
+
+% Load the necessary packages
+\RequirePackage{tcolorbox} % for creating colored boxes
+\tcbuselibrary{listings}   % for integration with code listings
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% Definition of colors
+\definecolor{codegray}{gray}{0.95}
+\definecolor{bordergray}{gray}{0.6}
+
+% New environment for code listings
+\newtcblisting{framedCode}{
+  colback=codegray,     % Background color
+  colframe=bordergray,  % Border color
+  listing only,         % Use only for listings
+  arc=2mm,              % Radius of rounded corners
+  top=0mm,              % Space above text
+  bottom=0mm,           % Space below text
+  left=5mm,             % Space to the left of text
+  right=5mm,            % Space to the right of text
+  listing options={     % Options for listings
+      basicstyle=\ttfamily\small,
+      breaklines=true
+      % Add other listing options here if necessary
+    }
+}
+
+
+% \newcommand{\codeFrame}[1]{
+%   \begin{framedCode}{}
+%     #1
+%   \end{framedCode}
+% }
+
+% Modification of hyperlinks 
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true, % Activate colored links instead of frames
+  linkcolor=black,   % Color of internal links (sections, pages, etc.)
+  urlcolor=blue    % Color of hyperlinks
+}
+
+% Definition of margins
+\usepackage{geometry}
+\geometry{
+  top=3cm,    % Top margin
+  bottom=3cm, % Bottom margin
+  left=2cm,   % Left margin
+  right=2cm   % Right margin
+}
+
+% Definitions of framed boxes
+\usepackage{tcolorbox}
+\tcbuselibrary{theorems}
+
+\definecolor{mygreen}{RGB}{4,107,4}
+\newtcolorbox{greenFrame}[1]{
+  colback=mygreen!10,    % Light green background
+  colframe=mygreen, % Frame color
+  arc=2mm,              % Rounded edges
+  title=#1   % Box title
+}
+
+\definecolor{myred}{RGB}{124,4,28}
+\newtcolorbox{redFrame}[1]{
+  colback=myred!10,    % Light red background
+  colframe=myred, % Frame color
+  arc=2mm,              % Rounded edges
+  title=#1   % Box title
+}
+
+\definecolor{myblue}{RGB}{4,28,115}
+\newtcolorbox{blueFrame}[1]{
+  colback=myblue!10,    % Light blue background
+  colframe=myblue, % Frame color
+  arc=2mm,              % Rounded edges
+  title=#1   % Box title
+}
+
+\definecolor{myGrey}{RGB}{100,100,100}
+\newtcolorbox{greyFrame}[1]{
+  colback=myGrey!10,    % Light blue background
+  colframe=myGrey, % Frame color
+  arc=2mm,              % Rounded edges
+  title=#1   % Box title
+} 
+
+\newcounter{codeCounter}
+\newcommand{\codeFrame}[1]{
+  \stepcounter{codeCounter}
+  \begin{greyFrame}{}
+    #1
+  \end{greyFrame}
+  \vspace{-0.5em}
+  \small{\arabic{codeCounter}}
+  \vspace{0.5em}
+}
+
+\newcounter{definitionCounter}
+\newcommand{\definition}[1]{
+  \stepcounter{definitionCounter}
+  \begin{blueFrame}{Definition \Roman{section}.\arabic{definitionCounter}}
+    #1
+  \end{blueFrame}
+}
+
+\newcounter{theoremCounter}
+\newcommand{\theorem}[1]{
+  \stepcounter{theoremCounter}
+  \begin{redFrame}{Theorem \Roman{section}.\arabic{theoremCounter}}
+    #1
+  \end{redFrame}
+}
+
+\newcounter{exampleCounter}
+\newcommand{\example}[1]{
+  \stepcounter{exampleCounter}
+  \begin{greenFrame}{Example \Roman{section}.\arabic{exampleCounter}}
+    #1
+  \end{greenFrame}
+}
+
+
+
+% =================================================================
+% ========================= Sections ==============================
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{titlesec}
+
+
+\definecolor{myviolet}{RGB}{102, 0, 102}
+% Customization of section title
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{myviolet}} % Text formatting
+{} % Label (already managed by \@seccntformat)
+{0pt} % Space between label and title
+{ % Code before title
+  \hspace{-0.67em}
+  \raisebox{-0.25cm}{\begin{tikzpicture}
+      \fill[myviolet] (0,0) rectangle (0.3,0.8);
+    \end{tikzpicture}}\hspace{0.25em}\Roman{section}\hspace{0.25em}
+} % No code after
+[\vspace{-0.075em}
+  \hrule height 0.08em % Adds a line under the current section
+  \vspace{0.2cm}
+  \setcounter{definitionCounter}{0}
+  \setcounter{theoremCounter}{0}
+  \setcounter{exampleCounter}{0}] % Code after title
+
+\renewcommand{\thesection}{\Roman{section}}
+
+% Customization of subsection title
+\titleformat{\subsection}
+{\bf\color{myviolet}} % Text formatting
+{}
+{0pt} % Space between label and title
+{ % Code before title
+  \thesubsection\hspace{0.25em}
+} % No code after
+[\vspace{-0.075em}
+  \hrule height 0.08em % Adds a line under the current subsection
+  \vspace{0.2cm}] % Code after title
+
+\renewcommand{\thesubsection}{\Roman{section}.\roman{subsection}}
+
+% Customization of subsubsection title 
+\titleformat{\subsubsection}
+{\bf\color{myviolet}}{}{0pt}{}[]
+
+%==================================================================
+%===================== Table of contents ==========================
+
+
+% Redefine the \tableofcontents command
+\let\oldtableofcontents\tableofcontents
+\renewcommand{\tableofcontents}{
+  \oldtableofcontents
+  \clearpage % Finish the table of contents on a new page
+}
+
+\renewcommand{\contentsname}{
+  Table of Contents
+}
+
+% Customization of the table of contents
+\usepackage{titletoc}
+
+\titlecontents{section}
+[1.5em] % left indent
+{\bfseries\Large} % formatting before title
+{\thecontentslabel\quad} % title label
+{\hspace*{-1.5em}} % code before title if no label
+{\hspace{\fill}\contentspage} % filler and page number
+
+\titlecontents{subsection}
+[3.5em] % left indent for subsections
+{\large} % formatting before title
+{\thecontentslabel\quad} % title label
+{\hspace*{-2em}} % code before title if no label
+{\titlerule*[1pc]{.}\contentspage} % filler and page number
+
+
+%==================================================================
+%===================== Footer and header ==========================
+
+
+%\renewcommand{\headrulewidth}{0pt} % Supprime la ligne de l'en-tête
+
+% Redefinition of the fancy page style to include section title in the header
+\fancyhf{} % Clear all header and footer fields
+\fancyfoot[C]{\thepage/\pageref{LastPage}} % Right footer
+\fancyhead[L]{\nouppercase{\rightmark}} % Left header with section title
+\setlength{\headheight}{54pt}
+\addtolength{\topmargin}{-42pt}
+
+% Redefine the plain page style to match fancy
+\fancypagestyle{plain}{
+  \fancyhf{} % clear all header and footer fields for plain style
+  \fancyfoot[C]{\thepage/\pageref{LastPage}} % Right footer
+  \fancyhead[L]{\nouppercase{\leftmark}} % Left header
+}
+
+\pagestyle{fancy}
+
+%================================================================
+%====================== Some shortcuts ==========================
+
+\newcommand{\newpar}{
+
+  \vspace{0.2cm}
+
+}

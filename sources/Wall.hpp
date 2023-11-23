@@ -1,7 +1,13 @@
 #ifndef WALL_HPP
 #define WALL_HPP
 
+#include <gf/Vector.h>
+#include <gf/RenderWindow.h>
+#include <gf/Shapes.h>
+
 #include <vector>
+
+#include "CompareVerticesAngle.hpp"
 
 struct Vertex
 {
@@ -16,14 +22,13 @@ class Wall
 {
 public:
     // Constructor
-    Wall(std::vector<std::pair<int, int>> occupiedCells);
+    Wall(std::vector<gf::Vector2f> occupiedCells);
 
-    // Destructor
-    ~Wall();
+    std::vector<gf::Vector2f> getSortedVertices(gf::Vector2f playerPositions);
 
 private:
-    std::vector<std::pair<int, int>> vertices;
-    std::vector<std::pair<int, int>> wallCells;
+    std::vector<gf::Vector2f> vertices;
+    std::vector<gf::Vector2f> wallCells;
 };
 
 #endif // WALL_HPP
