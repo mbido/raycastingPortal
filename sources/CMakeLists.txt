@@ -13,6 +13,8 @@ add_executable(mygame
   MapWalls.cpp
   Game2D.cpp
   Game3D.cpp
+  Wall.cpp
+  CompareVerticesAngle.cpp
 )
 
 target_link_libraries(mygame

@@ -1,12 +1,12 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <set>
 
-#include <gf/Curves.h>
 
 #include "Wall.hpp"
 
-Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
+Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
 {
 
     // step 1: sorting the occupied cells by x and y (cf : notes)
@@ -19,17 +19,17 @@ Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
     int currentX = occupiedCells.front().x;
     int currentY = occupiedCells.front().y;
 
-    vertices.push_back(gf::Vector2f(currentX, currentY));
+    vertices.push_back(gf::Vector2i(currentX, currentY));
 
     std::size_t size = occupiedCells.size();
     char dir = 'r';
     currentX++;
 
     for(std::size_t i = 1; i < size; ++i){
-        gf::Vector2f currentVertex = {currentX, currentY};
-        gf::Vector2f currentVertexUp = {currentX, currentY - 1};
-        gf::Vector2f currentVertexUpLeft = {currentX - 1, currentY - 1};
-        gf::Vector2f currentVertexLeft = {currentX - 1, currentY};
+        gf::Vector2i currentVertex = {currentX, currentY};
+        gf::Vector2i currentVertexUp = {currentX, currentY - 1};
+        gf::Vector2i currentVertexUpLeft = {currentX - 1, currentY - 1};
+        gf::Vector2i currentVertexLeft = {currentX - 1, currentY};
 
         int j = 0;
 
@@ -48,66 +48,71 @@ Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
 
         if(j == 1 || j == 3){
             vertices.push_back(currentVertex);
-            if(dir == 'r'){
-                if(j == 1){
-                    dir = 'd';
-                    currentY++;
-                }else if(j == 3){
-                    dir = 'u';
-                    currentY--;
-                }else{
-                    currentX++;
-                }
-            }else if(dir == 'd'){
-                if(j == 1){
-                    dir = 'l';
-                    currentX--;
-                }else if(j == 3){
-                    dir = 'r';
-                    currentX++;
-                }else{
-                    currentY++;
-                }
-            }else if(dir == 'l'){
-                if(j == 1){
-                    dir = 'd';
-                    currentY++;
-                }else if(j == 3){
-                    dir = 'u';
-                    currentY--;
-                }else{
-                    currentX--;
-                }
-            }else if(dir == 'u'){
-                if(j == 1){
-                    dir = 'r';
-                    currentX++;
-                }else if(j == 3){
-                    dir = 'l';
-                    currentX--;
-                }else{
-                    currentY--;
-                }
-            }
+            // if(dir == 'r'){
+            //     if(j == 1){
+            //         dir = 'd';
+            //     }else if(j == 3){
+            //         dir = 'u';
+            //     }
+            // }else if(dir == 'd'){
+            //     if(j == 1){
+            //         dir = 'l';
+            //     }else if(j == 3){
+            //         dir = 'r';
+            //     }
+            // }else if(dir == 'l'){
+            //     if(j == 1){
+            //         dir = 'd';
+            //     }else if(j == 3){
+            //         dir = 'u';
+            //     }
+            // }else if(dir == 'u'){
+            //     if(j == 1){
+            //         dir = 'r';
+            //     }else if(j == 3){
+            //         dir = 'l';   
+            //     }
+            // }
         }
+
+        // if(dir == 'u'){
+        //     currentY--;
+        // }else if(dir == 'd'){
+        //     currentY++;
+        // }else if(dir == 'r'){
+        //     currentX++;
+        // }else if(dir == 'l'){
+        //     currentX--;
+        // }
     }
+
+    std::cout << "les sommets pour un bloc de murs : " << std::endl;
+
+    for(const auto& vertice : vertices){
+
+        std::cout << "(" << vertice.x << ", " << vertice.y << ")\n";
+
+    }
+
+    std::cout << "\n\n\n";
+
 }
 
 void Wall::render(gf::RenderWindow& window, int scale)
 {
     std::size_t size = vertices.size();
     for(std::size_t i = 0; i < size; ++i){
-        gf::Vector2f currentVertex = vertices[i];
-        gf::Vector2f nextVertex = vertices[(i+1)%size];
+        gf::Vector2i currentVertex = vertices[i];
+        gf::Vector2i nextVertex = vertices[(i+1)%size];
         gf::Line line(currentVertex * scale, nextVertex * scale);
         line.setColor(gf::Color::White);
         window.draw(line);
     }
 }
 
-std::vector<gf::Vector2f> Wall::getSortedVertices(gf::Vector2f playerPositions)
+std::vector<gf::Vector2i> Wall::getSortedVertices(gf::Vector2f playerPositions)
 {
-    std::vector<gf::Vector2f> sortedVertices = vertices;
+    std::vector<gf::Vector2i> sortedVertices = vertices;
     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(playerPositions));
     return sortedVertices;
 }

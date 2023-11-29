@@ -4,6 +4,7 @@
 
 #include "Player.hpp"
 #include "MapWalls.hpp"
+#include "Wall.hpp"
 
 
 class Game2D {

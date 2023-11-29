@@ -4,14 +4,17 @@
 #include <iostream>
 #include <gf/Image.h>
 #include <vector>
+#include <set>
+#include <queue>
+#include <unordered_set>
 #include "Wall.hpp"
 
 class MapTemplate {
     public :
-        MapTemplate(std::string adress = "image.png")
+        MapTemplate(std::string adress = "../sources/map/image.png")
         :m_image(gf::Image(adress))
-        ,m_nbRows(m_image.getSize().width + 2)
-        ,m_nbColumns(m_image.getSize().height + 2)
+        ,m_nbRows(m_image.getSize().width)
+        ,m_nbColumns(m_image.getSize().height)
         ,m_map(new int*[m_nbRows])
         ,m_walls({})
         {
@@ -46,6 +49,8 @@ class MapTemplate {
         std::vector<Wall> getWalls() const {
             return m_walls;
         }
+
+        void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
 
     protected :
         gf::Image m_image;

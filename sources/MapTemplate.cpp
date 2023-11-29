@@ -2,54 +2,90 @@
 #include <gf/Image.h>
 #include <vector>
 #include <map>
+#include <set>
+#include <cmath>
+#include <unordered_set>
 #include "Wall.hpp"
 
 
 void MapTemplate::init() {
     // Initialize the map by setting all the values to 0 and the boundaries to 1
 
-    std::map<int ,std::vector<gf::Vector2f>> cellsWalls;
+    std::map<int ,std::vector<gf::Vector2i>> cellsWalls;
     std::size_t nbWall = 0;
+
+    for(int i = 0; i < m_nbRows; ++i){
+        for(int j = 0; j < m_nbColumns; ++j){
+            m_map[i][j] = 0;
+        }
+    }
 
     for (int i = 0; i < m_nbRows; ++i) {
         for (int j = 0; j < m_nbColumns; ++j) {
-            
-            if (i == 0 || j == 0 || i == m_nbRows - 1 || j == m_nbColumns - 1) {
-                m_map[i][j] = 1;
-                cellsWalls[0].push_back(gf::Vector2f(i,j));
-                if(nbWall == 0){
-                    nbWall++;
+
+            gf::Color4u pixelColor = m_image.getPixel({i, j});
+
+            if(static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0){
+                gf::Vector2i current = gf::Vector2i(i,j);
+                bool hasFound = false;
+                for(int k = 0; k < nbWall; ++k){
+                    if(std::find(cellsWalls[k].begin(), cellsWalls[k].end(), current) != cellsWalls[k].end()){
+                        hasFound = true;
+                        break;
+                    }
                 }
 
-            }
-            else {
-                gf::Color4u pixelColor = m_image.getPixel({(i-1), (j-1)});
-                bool newWall = false;
-                if(static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0){
-                    for(std::size_t i = 0; i < nbWall+1; ++i){
-                        std::pair<int, int> cellToFindUp{i, j-1};
-                        std::pair<int, int> cellToFindRight{i-1, j};
-                        auto itUp = std::find(cellsWalls[i].begin(), cellsWalls[i].end(), cellToFindUp);
-                        auto itRight = std::find(cellsWalls[i].begin(), cellsWalls[i].end(), cellToFindRight);
-                        if(itUp != cellsWalls[i].end() || itRight != cellsWalls[i].end()){
-                            cellsWalls[i].push_back(gf::Vector2f(i,j));
-                            newWall = true;
-                            break;
-                        }
+                if(!hasFound){
+                    std::vector<gf::Vector2i> visited;
+                    std::queue<gf::Vector2i> queue;
+                    depthFirstSearch(current, visited, queue);
+
+                    for(const auto& vertex : visited){
+                        cellsWalls[nbWall].push_back(vertex);
+                        m_map[vertex.x][vertex.y] = 1;
                     }
-                    if(!newWall){
-                        nbWall++;
-                    }
-                    m_map[i][j] = 1;
-                }else{
-                    m_map[i][j] = 0;
+                    ++nbWall;
                 }
             }
+            
         }
     }
 
     for(auto cellWallsEntry : cellsWalls){
         m_walls.push_back(Wall(cellWallsEntry.second));
+    }
+}
+
+void MapTemplate::depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue){
+    queue.push(vertex);
+
+    while(!queue.empty()){
+        gf::Vector2i current = queue.back();
+        visited.push_back(current);
+        queue.pop();
+
+        for(int x = -1; x < 2; ++x){
+            for(int y = -1; y < 2; ++y){
+                if(abs(x) == abs(y)){
+                    continue;
+                }
+                gf::Vector2i neighbor = gf::Vector2i(current.x+x, current.y+y);
+                gf::Color4u pixelColor = m_image.getPixel({(neighbor.x), (neighbor.y)});
+                
+                if(neighbor.x >= 0 && neighbor.y >= 0 && neighbor.x < m_nbColumns && neighbor.y < m_nbRows && static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0){
+                    bool found = false;
+                    for (auto it : visited) {
+                        if (it.x == neighbor.x && it.y == neighbor.y) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        queue.push(neighbor);
+                    }
+                }
+            }
+        }
     }
 }
 

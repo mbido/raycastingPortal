@@ -4,6 +4,7 @@
 #include <gf/Vector.h>
 #include <gf/RenderWindow.h>
 #include <gf/Shapes.h>
+#include <gf/Curves.h>
 
 #include <vector>
 
@@ -22,15 +23,15 @@ class Wall
 {
 public:
     // Constructor
-    Wall(std::vector<gf::Vector2f> occupiedCells);
+    Wall(std::vector<gf::Vector2i> occupiedCells);
 
-    std::vector<gf::Vector2f> getSortedVertices(gf::Vector2f playerPositions);
+    std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
 
     void render(gf::RenderWindow& window, int scale);
 
 private:
-    std::vector<gf::Vector2f> vertices;
-    std::vector<gf::Vector2f> wallCells;
+    std::vector<gf::Vector2i> vertices;
+    std::vector<gf::Vector2i> wallCells;
 };
 
 #endif // WALL_HPP

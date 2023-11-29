@@ -94,7 +94,9 @@ int main() {
   Player player(gf::Vector2f(1.5, 1.5), 0, 2.5);
  
   // map
-  std::string cheminAbsolu = std::filesystem::absolute("../sources/map/image.png");
+  std::string cheminAbsolu = std::filesystem::absolute("./sources/map/image.png");
+
+  
 
   //MapWalls map(cheminAbsolu);
   MapWalls map;
@@ -126,8 +128,8 @@ int main() {
   map.setTile(8, 6, 1);*/
 
   // game
-  //Game2D game(&player, &map, renderer);
-  Game3D game(&player, &map, renderer);
+  Game2D game(&player, &map, renderer);
+  //Game3D game(&player, &map, renderer);
 
  
   // game loop
