@@ -30,6 +30,9 @@ public:
     void render(gf::RenderWindow& window, int scale);
 
 private:
+
+    void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices);
+
     std::vector<gf::Vector2i> vertices;
     std::vector<gf::Vector2i> wallCells;
 };
