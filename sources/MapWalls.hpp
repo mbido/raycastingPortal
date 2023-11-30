@@ -8,11 +8,13 @@
 
 class MapWalls : public MapTemplate {
     public :
-        MapWalls(std::string adress = "image.png"/*int nbRows = 10, int nbColumns = 10*/)
-        : MapTemplate(adress)
+        MapWalls(std::string address = "image.png"/*int nbRows = 10, int nbColumns = 10*/)
+        : MapTemplate(address)
         {
         }
         void render(gf::RenderWindow& renderer, int sizeUnit);
+    private :
+        gf::Image m_image;
 };
 
 #endif

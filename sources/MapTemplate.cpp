@@ -8,7 +8,7 @@
 void MapTemplate::init() {
     // Initialize the map by setting all the values to 0 and the boundaries to 1
 
-    std::map<int ,std::vector<std::pair<int,int>>> cellsWalls;
+    std::map<int ,std::vector<gf::Vector2f>> cellsWalls;
     std::size_t nbWall = 0;
 
     for (int i = 0; i < m_nbRows; ++i) {
@@ -16,7 +16,7 @@ void MapTemplate::init() {
             
             if (i == 0 || j == 0 || i == m_nbRows - 1 || j == m_nbColumns - 1) {
                 m_map[i][j] = 1;
-                cellsWalls[0].push_back(std::make_pair(i,j));
+                cellsWalls[0].push_back(gf::Vector2f(i,j));
                 if(nbWall == 0){
                     nbWall++;
                 }
@@ -32,7 +32,7 @@ void MapTemplate::init() {
                         auto itUp = std::find(cellsWalls[i].begin(), cellsWalls[i].end(), cellToFindUp);
                         auto itRight = std::find(cellsWalls[i].begin(), cellsWalls[i].end(), cellToFindRight);
                         if(itUp != cellsWalls[i].end() || itRight != cellsWalls[i].end()){
-                            cellsWalls[i].push_back(std::make_pair(i, j));
+                            cellsWalls[i].push_back(gf::Vector2f(i,j));
                             newWall = true;
                             break;
                         }
@@ -49,7 +49,7 @@ void MapTemplate::init() {
     }
 
     for(auto cellWallsEntry : cellsWalls){
-        m_walls->push_back(Wall(cellWallsEntry.second));
+        m_walls.push_back(Wall(cellWallsEntry.second));
     }
 }
 

@@ -26,6 +26,8 @@ public:
 
     std::vector<gf::Vector2f> getSortedVertices(gf::Vector2f playerPositions);
 
+    void render(gf::RenderWindow& window, int scale);
+
 private:
     std::vector<gf::Vector2f> vertices;
     std::vector<gf::Vector2f> wallCells;

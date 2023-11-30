@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <vector>
 
+#include <gf/Curves.h>
+
 #include "Wall.hpp"
 
 Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
@@ -89,7 +91,18 @@ Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
             }
         }
     }
+}
 
+void Wall::render(gf::RenderWindow& window, int scale)
+{
+    std::size_t size = vertices.size();
+    for(std::size_t i = 0; i < size; ++i){
+        gf::Vector2f currentVertex = vertices[i];
+        gf::Vector2f nextVertex = vertices[(i+1)%size];
+        gf::Line line(currentVertex * scale, nextVertex * scale);
+        line.setColor(gf::Color::White);
+        window.draw(line);
+    }
 }
 
 std::vector<gf::Vector2f> Wall::getSortedVertices(gf::Vector2f playerPositions)

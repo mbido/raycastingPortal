@@ -2,7 +2,7 @@
 \ProvidesPackage{BidoTexCourses}
 
 % Load the necessary packages
-\RequirePackage{tcolorbox} % for creating colored boxes
+\RequirePackage[most]{tcolorbox} % for creating colored boxes
 \tcbuselibrary{listings}   % for integration with code listings
 \usepackage{fancyhdr}
 \usepackage{lastpage}
@@ -11,29 +11,8 @@
 \definecolor{codegray}{gray}{0.95}
 \definecolor{bordergray}{gray}{0.6}
 
-% New environment for code listings
-\newtcblisting{framedCode}{
-  colback=codegray,     % Background color
-  colframe=bordergray,  % Border color
-  listing only,         % Use only for listings
-  arc=2mm,              % Radius of rounded corners
-  top=0mm,              % Space above text
-  bottom=0mm,           % Space below text
-  left=5mm,             % Space to the left of text
-  right=5mm,            % Space to the right of text
-  listing options={     % Options for listings
-      basicstyle=\ttfamily\small,
-      breaklines=true
-      % Add other listing options here if necessary
-    }
-}
 
 
-% \newcommand{\codeFrame}[1]{
-%   \begin{framedCode}{}
-%     #1
-%   \end{framedCode}
-% }
 
 % Modification of hyperlinks 
 \usepackage{hyperref}
@@ -53,7 +32,7 @@
 }
 
 % Definitions of framed boxes
-\usepackage{tcolorbox}
+\usepackage[most]{tcolorbox}
 \tcbuselibrary{theorems}
 
 \definecolor{mygreen}{RGB}{4,107,4}
@@ -89,14 +68,23 @@
 } 
 
 \newcounter{codeCounter}
-\newcommand{\codeFrame}[1]{
-  \stepcounter{codeCounter}
-  \begin{greyFrame}{}
-    #1
-  \end{greyFrame}
-  \vspace{-0.5em}
-  \small{\arabic{codeCounter}}
-  \vspace{0.5em}
+\setcounter{codeCounter}{1}
+\usepackage{minted}
+\tcbuselibrary{minted,skins}
+\newtcblisting[auto counter]{codeFrame}[3][]{
+    enhanced,
+    minted language=#2,
+    attach boxed title to top left={xshift=6mm,yshift=-3mm},
+    colback=myGrey!10,
+    colframe=myGrey,
+    colbacktitle=myGrey,
+    title=Code \Roman{section}.\arabic{codeCounter}: #3,
+    fonttitle=\bfseries\color{white},
+    boxed title style={size=small,colframe=myGrey,sharp corners},
+    sharp corners,
+    listing only,
+    #1,
+    before upper={\stepcounter{codeCounter}}
 }
 
 \newcounter{definitionCounter}
@@ -149,7 +137,9 @@
   \vspace{0.2cm}
   \setcounter{definitionCounter}{0}
   \setcounter{theoremCounter}{0}
-  \setcounter{exampleCounter}{0}] % Code after title
+  \setcounter{exampleCounter}{0}
+  \setcounter{codeCounter}{1}
+  ]
 
 \renewcommand{\thesection}{\Roman{section}}
 

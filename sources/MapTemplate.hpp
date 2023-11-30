@@ -13,7 +13,7 @@ class MapTemplate {
         ,m_nbRows(m_image.getSize().width + 2)
         ,m_nbColumns(m_image.getSize().height + 2)
         ,m_map(new int*[m_nbRows])
-        ,m_walls(new std::vector<Wall>)
+        ,m_walls({})
         {
             for (int i = 0; i < m_nbRows; ++i) {
                 m_map[i] = new int[m_nbColumns];
@@ -43,12 +43,16 @@ class MapTemplate {
         return -1;
         }
 
+        std::vector<Wall> getWalls() const {
+            return m_walls;
+        }
+
     protected :
         gf::Image m_image;
         int m_nbRows;
         int m_nbColumns;
         int **m_map;
-        std::vector<Wall>* m_walls;
+        std::vector<Wall> m_walls;
     
     private :
         /**

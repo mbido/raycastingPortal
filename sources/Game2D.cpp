@@ -71,7 +71,11 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
 
 void Game2D::render() {
     // render the map :
-    m_walls->render(m_renderer, m_scaleUnit);
+    // m_walls->render(m_renderer, m_scaleUnit);
+    std::vector<Wall> walls = m_walls->getWalls();
+    for(auto wall : walls){
+        wall.render(m_renderer, m_scaleUnit);
+    }
 
     // render the player :
     m_player->render(m_renderer, m_scaleUnit);

@@ -96,7 +96,8 @@ int main() {
   // map
   std::string cheminAbsolu = std::filesystem::absolute("../sources/map/image.png");
 
-  MapWalls map(cheminAbsolu);
+  //MapWalls map(cheminAbsolu);
+  MapWalls map;
 
   /*const int nbRows = 10;
   const int nbColumns = 10;
