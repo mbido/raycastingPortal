@@ -104,43 +104,60 @@ void Game2D::render()
             gf::Vector2f position = m_player->getPosition();
             gf::Vector2f direction = gf::normalize(gf::Vector2f(vertices[i].x - position.x, vertices[i].y - position.y));
 
-            gf::Rotation rotator1(DELTA);
+            gf::Rotation rotator1(DELTA / 15);
             gf::Vector2f direction1 = gf::transform(rotator1, direction);
             gf::Vector2f endPoint1 = castRay2D(position, direction1, m_walls);
 
-            gf::Rotation rotator2(-DELTA);
+            gf::Rotation rotator2(-DELTA / 15);
             gf::Vector2f direction2 = gf::transform(rotator2, direction);
             gf::Vector2f endPoint2 = castRay2D(position, direction2, m_walls);
 
             double dist1 = std::sqrt((endPoint1.x - position.x) * (endPoint1.x - position.x) + (endPoint1.y - position.y) * (endPoint1.y - position.y));
             double dist2 = std::sqrt((endPoint2.x - position.x) * (endPoint2.x - position.x) + (endPoint2.y - position.y) * (endPoint2.y - position.y));
 
-            bool cond1 = std::abs(vertices[i].x - endPoint1.x) < 5 * DELTA * dist1 && std::abs(vertices[i].y - endPoint1.y) < 5 * DELTA * dist1;
-            bool cond2 = std::abs(vertices[i].x - endPoint2.x) < 5 * DELTA * dist2 && std::abs(vertices[i].y - endPoint2.y) < 5 * DELTA * dist2;
+            bool cond1 = std::abs(vertices[i].x - endPoint1.x) < 10 * DELTA * dist1 && std::abs(vertices[i].y - endPoint1.y) < 10 * DELTA * dist1;
+            bool cond2 = std::abs(vertices[i].x - endPoint2.x) < 10 * DELTA * dist2 && std::abs(vertices[i].y - endPoint2.y) < 10 * DELTA * dist2;
+
+            gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+            line[0].color = gf::Color::Blue;
+            line[1].color = gf::Color::Blue;
+
             if (cond1 ^ cond2)
             {
-                gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-                line[0].position = position * m_scaleUnit;
-                line[1].position = endPoint1 * m_scaleUnit;
-                line[0].color = gf::Color::Blue;
-                line[1].color = gf::Color::Blue;
-                m_renderer.draw(line);
+                // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+                // line[0].position = position * m_scaleUnit;
+                // line[1].position = endPoint1 * m_scaleUnit;
+                // line[0].color = gf::Color::Blue;
+                // line[1].color = gf::Color::Blue;
+                // m_renderer.draw(line);
 
-                line[0].position = position * m_scaleUnit;
-                line[1].position = endPoint2 * m_scaleUnit;
-                line[0].color = gf::Color::Blue;
-                line[1].color = gf::Color::Blue;
-                m_renderer.draw(line);
+                // line[0].position = position * m_scaleUnit;
+                // line[1].position = endPoint2 * m_scaleUnit;
+                // line[0].color = gf::Color::Blue;
+                // line[1].color = gf::Color::Blue;
+                // m_renderer.draw(line);
+                line[0].color = gf::Color::Green;
+                line[1].color = gf::Color::Green;
             }
             else if (cond1 || cond2)
             {
-                gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-                line[0].position = position * m_scaleUnit;
-                line[1].position = endPoint2 * m_scaleUnit;
-                line[0].color = gf::Color::Blue;
-                line[1].color = gf::Color::Blue;
-                m_renderer.draw(line);
+                // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+                // line[0].position = position * m_scaleUnit;
+                // line[1].position = endPoint2 * m_scaleUnit;
+                // line[0].color = gf::Color::Blue;
+                // line[1].color = gf::Color::Blue;
+                // m_renderer.draw(line);
+                line[0].color = gf::Color::Red;
+                line[1].color = gf::Color::Red;
             }
+
+            line[0].position = position * m_scaleUnit;
+            line[1].position = endPoint1 * m_scaleUnit;
+            m_renderer.draw(line);
+
+            line[0].position = position * m_scaleUnit;
+            line[1].position = endPoint2 * m_scaleUnit;
+            m_renderer.draw(line);
         }
     }
 
