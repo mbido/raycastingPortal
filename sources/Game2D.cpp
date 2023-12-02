@@ -8,7 +8,21 @@
 #include "MapWalls.hpp"
 #include "Game2D.hpp"
 
-#define DELTA 0.000001
+#define DELTA 0.0001
+
+struct PairComparator {
+    bool operator() (const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>& a, const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>& b) const {
+        if (a.first.x < b.first.x) return true;
+        if (a.first.x > b.first.x) return false;
+        if (a.first.y < b.first.y) return true;
+        if (a.first.y > b.first.y) return false;
+        if (a.second.x < b.second.x) return true;
+        if (a.second.x > b.second.x) return false;
+        return a.second.y < b.second.y;
+    }
+};
+
+std::map<std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>, std::vector<gf::Vector<int, 2>>, PairComparator> segments;
 
 void Game2D::update(gf::Time dt)
 {
@@ -94,6 +108,8 @@ void Game2D::render()
     // render the player :
     m_player->render(m_renderer, m_scaleUnit);
 
+    std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2f>, PairComparator> segments;
+
     // render the rays :
     for (auto wall : walls)
     {
@@ -104,11 +120,11 @@ void Game2D::render()
             gf::Vector2f position = m_player->getPosition();
             gf::Vector2f direction = gf::normalize(gf::Vector2f(vertices[i].x - position.x, vertices[i].y - position.y));
 
-            gf::Rotation rotator1(DELTA / 15);
+            gf::Rotation rotator1(DELTA / 5);
             gf::Vector2f direction1 = gf::transform(rotator1, direction);
             gf::Vector2f endPoint1 = castRay2D(position, direction1, m_walls);
 
-            gf::Rotation rotator2(-DELTA / 15);
+            gf::Rotation rotator2(-DELTA / 5);
             gf::Vector2f direction2 = gf::transform(rotator2, direction);
             gf::Vector2f endPoint2 = castRay2D(position, direction2, m_walls);
 
@@ -118,45 +134,47 @@ void Game2D::render()
             bool cond1 = std::abs(vertices[i].x - endPoint1.x) < 10 * DELTA * dist1 && std::abs(vertices[i].y - endPoint1.y) < 10 * DELTA * dist1;
             bool cond2 = std::abs(vertices[i].x - endPoint2.x) < 10 * DELTA * dist2 && std::abs(vertices[i].y - endPoint2.y) < 10 * DELTA * dist2;
 
-            gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-            line[0].color = gf::Color::Blue;
-            line[1].color = gf::Color::Blue;
-
-            if (cond1 ^ cond2)
+            if (cond1 || cond2)
             {
-                // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-                // line[0].position = position * m_scaleUnit;
-                // line[1].position = endPoint1 * m_scaleUnit;
-                // line[0].color = gf::Color::Blue;
-                // line[1].color = gf::Color::Blue;
-                // m_renderer.draw(line);
+                gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+                line[0].color = gf::Color::Blue;
+                line[1].color = gf::Color::Blue;
+                line[0].position = position * m_scaleUnit;
+                line[1].position = endPoint1 * m_scaleUnit;
+                //m_renderer.draw(line);
 
-                // line[0].position = position * m_scaleUnit;
-                // line[1].position = endPoint2 * m_scaleUnit;
-                // line[0].color = gf::Color::Blue;
-                // line[1].color = gf::Color::Blue;
-                // m_renderer.draw(line);
-                line[0].color = gf::Color::Green;
-                line[1].color = gf::Color::Green;
+                std::pair<gf::Vector2i, gf::Vector2i> segment;
+                if (m_walls->getSegment(endPoint1, segment))
+                {
+                    segments[segment].push_back(endPoint1);
+                }
+
+                
+                line[0].position = position * m_scaleUnit;
+                line[1].position = endPoint2 * m_scaleUnit;
+                //m_renderer.draw(line);
+
+                if (m_walls->getSegment(endPoint2, segment))
+                {
+                    segments[segment].push_back(endPoint2);
+                }
             }
-            else if (cond1 || cond2)
-            {
-                // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-                // line[0].position = position * m_scaleUnit;
-                // line[1].position = endPoint2 * m_scaleUnit;
-                // line[0].color = gf::Color::Blue;
-                // line[1].color = gf::Color::Blue;
-                // m_renderer.draw(line);
-                line[0].color = gf::Color::Red;
-                line[1].color = gf::Color::Red;
-            }
+        }
+    }
 
-            line[0].position = position * m_scaleUnit;
-            line[1].position = endPoint1 * m_scaleUnit;
-            m_renderer.draw(line);
+    // render the segments :
+    for (auto segment : segments)
+    {
+        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+        line[0].color = gf::Color::Yellow;
+        line[1].color = gf::Color::Yellow;
 
-            line[0].position = position * m_scaleUnit;
-            line[1].position = endPoint2 * m_scaleUnit;
+        for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
+        {
+            // std::cout << "(" << segment.second[i].x << ", " << segment.second[i].y << ") -> ";
+            // std::cout << "(" << segment.second[i + 1].x << " " << segment.second[i + 1].y << ")" << std::endl;
+            line[0].position = segment.second[i] * m_scaleUnit;
+            line[1].position = segment.second[i + 1] * m_scaleUnit;
             m_renderer.draw(line);
         }
     }

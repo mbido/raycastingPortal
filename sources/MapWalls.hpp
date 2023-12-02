@@ -13,6 +13,8 @@ class MapWalls : public MapTemplate {
         {
         }
         void render(gf::RenderWindow& renderer, int sizeUnit);
+
+
     private :
         gf::Image m_image;
 };

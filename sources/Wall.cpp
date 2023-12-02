@@ -229,3 +229,39 @@ std::vector<gf::Vector2i> Wall::getSortedVertices(gf::Vector2f playerPositions)
     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(playerPositions));
     return sortedVertices;
 }
+
+bool Wall::getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i> &segment)
+{
+    std::size_t size = vertices.size();
+    int endAt = size - 1;
+    for (int i = perimetersStart.size() - 1; i >= 0; --i)
+    {
+        int start = perimetersStart[i];
+        int subSize = endAt - start + 1;
+        for (int j = endAt; j >= start; --j)
+        {
+            gf::Vector2i currentVertex = vertices[j];
+            gf::Vector2i nextVertex = vertices[(j + 1) % subSize + start];
+            if (currentVertex.x == nextVertex.x && currentVertex.x == point.x)
+            {
+                // the segment is vertical
+                if (point.y <= currentVertex.y && point.y >= nextVertex.y || point.y >= currentVertex.y && point.y <= nextVertex.y)
+                {
+                    segment = {currentVertex, nextVertex};
+                    return true;
+                }
+            }
+            else if (currentVertex.y == nextVertex.y && currentVertex.y == point.y)
+            {
+                // the segment is vertical
+                if (point.x <= currentVertex.x && point.x >= nextVertex.x || point.x >= currentVertex.x && point.x <= nextVertex.x)
+                {
+                    segment = {currentVertex, nextVertex};
+                    return true;
+                }
+            }
+        }
+        endAt = start - 1;
+    }
+    return false;
+}

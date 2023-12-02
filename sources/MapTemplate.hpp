@@ -52,6 +52,8 @@ class MapTemplate {
 
         void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
 
+        bool getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i>& segment);
+
     protected :
         gf::Image m_image;
         int m_nbRows;

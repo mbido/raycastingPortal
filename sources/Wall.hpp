@@ -18,7 +18,6 @@ struct Vertex
     Vertex *prev;
 };
 
-
 class Wall
 {
 public:
@@ -27,10 +26,11 @@ public:
 
     std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
 
-    void render(gf::RenderWindow& window, int scale);
+    void render(gf::RenderWindow &window, int scale);
+
+    bool getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i> &segment);
 
 private:
-
     void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices);
 
     std::vector<gf::Vector2i> vertices;

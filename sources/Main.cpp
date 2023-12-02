@@ -22,6 +22,7 @@
 #include "MapWalls.hpp"
 #include "Game2D.hpp"
 #include "Game3D.hpp"
+#include <unistd.h>
  
 int main() {
   static constexpr gf::Vector2i ScreenSize(1024, 576);
