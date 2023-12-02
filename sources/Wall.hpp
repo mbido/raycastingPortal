@@ -35,6 +35,7 @@ private:
 
     std::vector<gf::Vector2i> vertices;
     std::vector<gf::Vector2i> wallCells;
+    std::vector<int> perimetersStart;
 };
 
 #endif // WALL_HPP

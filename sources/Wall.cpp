@@ -110,7 +110,7 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
     //          c)-we repeat the step b) until we reach the top left vertex of the first cell again
 
     // step 1
-
+    perimetersStart = {};
     std::vector<gf::Vector2i> usefulVertices;
 
     for (auto cell : occupiedCells)
@@ -173,6 +173,7 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
 
         if (found)
         {
+            perimetersStart.push_back(vertices.size());
             setSortedVertices(vertex, usefulVertices);
         }
         else
@@ -180,107 +181,6 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
             break;
         }
     }
-
-    // int counter = 0;
-    // // step 2
-    // while(usefulVertices.size() > vertices.size())
-    // {
-    //     if(counter++ > 10000)
-    //     {
-    //         std::cout << "counter = " << counter << std::endl;
-    //         std::cout << "usefulVertices.size() = " << usefulVertices.size() << std::endl;
-    //         std::cout << "vertices.size() = " << usefulVertices.size() << std::endl;
-    //         break;
-    //     }
-    //     gf::Vector2i vertex;
-    //     for(auto &vx : usefulVertices)
-    //     {
-    //         if(std::find(vertices.begin(), vertices.end(), vx) == vertices.end())
-    //         {
-    //             vertex = vx;
-    //             break;
-    //         }
-    //     }
-    //     setSortedVertices(vertex, usefulVertices);
-    // }
-
-    // std::cout << "current x : " << currentVertex.x << std::endl;
-    // std::cout << "current y : " << currentVertex.y << std::endl;
-
-    // gf::Vector2i newVertex;
-    // std::cout << "can go right ? : " << canGo(currentVertex, 'r', usefulVertices, newVertex) << std::endl;
-    // std::cout << "new x : " << newVertex.x << std::endl;
-    // std::cout << "new y : " << newVertex.y << std::endl;
-
-    // int currentX = occupiedCells.front().x;
-    // int currentY = occupiedCells.front().y;
-
-    // vertices.push_back(gf::Vector2i(currentX, currentY));
-
-    // std::size_t size = occupiedCells.size();
-    // char dir = 'r';
-    // currentX++;
-
-    // for(std::size_t i = 1; i < size; ++i){
-    //     gf::Vector2i currentVertex = {currentX, currentY};
-    //     gf::Vector2i currentVertexUp = {currentX, currentY - 1};
-    //     gf::Vector2i currentVertexUpLeft = {currentX - 1, currentY - 1};
-    //     gf::Vector2i currentVertexLeft = {currentX - 1, currentY};
-
-    //     int j = 0;
-
-    //     if(std::find(occupiedCells.begin(), occupiedCells.end(), currentVertex) != occupiedCells.end()){
-    //         ++j;
-    //     }
-    //     if(std::find(occupiedCells.begin(), occupiedCells.end(), currentVertexUp) != occupiedCells.end()){
-    //         ++j;
-    //     }
-    //     if(std::find(occupiedCells.begin(), occupiedCells.end(), currentVertexUpLeft) != occupiedCells.end()){
-    //         ++j;
-    //     }
-    //     if(std::find(occupiedCells.begin(), occupiedCells.end(), currentVertexLeft) != occupiedCells.end()){
-    //         ++j;
-    //     }
-
-    //     if(j == 1 || j == 3){
-    //         vertices.push_back(currentVertex);
-    //         // if(dir == 'r'){
-    //         //     if(j == 1){
-    //         //         dir = 'd';
-    //         //     }else if(j == 3){
-    //         //         dir = 'u';
-    //         //     }
-    //         // }else if(dir == 'd'){
-    //         //     if(j == 1){
-    //         //         dir = 'l';
-    //         //     }else if(j == 3){
-    //         //         dir = 'r';
-    //         //     }
-    //         // }else if(dir == 'l'){
-    //         //     if(j == 1){
-    //         //         dir = 'd';
-    //         //     }else if(j == 3){
-    //         //         dir = 'u';
-    //         //     }
-    //         // }else if(dir == 'u'){
-    //         //     if(j == 1){
-    //         //         dir = 'r';
-    //         //     }else if(j == 3){
-    //         //         dir = 'l';
-    //         //     }
-    //         // }
-    //     }
-
-    //     // if(dir == 'u'){
-    //     //     currentY--;
-    //     // }else if(dir == 'd'){
-    //     //     currentY++;
-    //     // }else if(dir == 'r'){
-    //     //     currentX++;
-    //     // }else if(dir == 'l'){
-    //     //     currentX--;
-    //     // }
-    // }
 
     std::cout
         << "les sommets pour un bloc de murs : " << std::endl;
@@ -296,15 +196,31 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
 
 void Wall::render(gf::RenderWindow &window, int scale)
 {
+
     std::size_t size = vertices.size();
-    for (std::size_t i = 0; i < size; ++i)
+    int endAt = size - 1;
+    for (int i = perimetersStart.size() - 1; i >= 0; --i)
     {
-        gf::Vector2i currentVertex = vertices[i];
-        gf::Vector2i nextVertex = vertices[(i + 1) % size];
-        gf::Line line(currentVertex * scale, nextVertex * scale);
-        line.setColor(gf::Color::White);
-        window.draw(line);
+        int start = perimetersStart[i];
+        int subSize = endAt - start + 1;
+        for (int j = endAt; j >= start; --j)
+        {
+            gf::Vector2i currentVertex = vertices[j];
+            gf::Vector2i nextVertex = vertices[(j + 1) % subSize + start];
+            gf::Line line(currentVertex * scale, nextVertex * scale);
+            line.setColor(gf::Color::White);
+            window.draw(line);
+        }
+        endAt = start - 1;
     }
+    // for (std::size_t i = 0; i < size; ++i)
+    // {
+    //     gf::Vector2i currentVertex = vertices[i];
+    //     gf::Vector2i nextVertex = vertices[(i + 1) % size];
+    //     gf::Line line(currentVertex * scale, nextVertex * scale);
+    //     line.setColor(gf::Color::White);
+    //     window.draw(line);
+    // }
 }
 
 std::vector<gf::Vector2i> Wall::getSortedVertices(gf::Vector2f playerPositions)

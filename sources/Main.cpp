@@ -245,7 +245,7 @@ int main() {
       //std::cout << "Player Position : (" << player.getPosition().x << ";" << player.getPosition().y << ")" << std::endl;
       //std::cout << "Next Player Position : (" << nextPosition.x << ";" << nextPosition.y << ")" << std::endl;
       //std::cout << "Direction : (" << direction.x << ";" << direction.y << ")" << std::endl;
-      std::cout << "Next Correct direction : (" << nextCorrectDir.x << ";" << nextCorrectDir.y << ")" << std::endl;
+      //std::cout << "Next Correct direction : (" << nextCorrectDir.x << ";" << nextCorrectDir.y << ")" << std::endl;
       nextCorrectDir = gf::Vector2f(0.0f,0.0f);
       //std::cout << "Angle : " << player.getAngle() << std::endl;
       if (map.getTile(intXPartNextPos,intYPartNextPos) != 0)
