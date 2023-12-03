@@ -8,7 +8,7 @@
 #include "MapWalls.hpp"
 #include "Game2D.hpp"
 
-#define DELTA 0.0001
+#define DELTA 0.00001
 
 struct PairComparator {
     bool operator() (const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>& a, const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>& b) const {
@@ -98,16 +98,8 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
 
 void Game2D::render()
 {
-    // render the map :
+
     std::vector<Wall> walls = m_walls->getWalls();
-    for (auto wall : walls)
-    {
-        wall.render(m_renderer, m_scaleUnit);
-    }
-
-    // render the player :
-    m_player->render(m_renderer, m_scaleUnit);
-
     std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2f>, PairComparator> segments;
 
     // render the rays :
@@ -120,11 +112,11 @@ void Game2D::render()
             gf::Vector2f position = m_player->getPosition();
             gf::Vector2f direction = gf::normalize(gf::Vector2f(vertices[i].x - position.x, vertices[i].y - position.y));
 
-            gf::Rotation rotator1(DELTA / 5);
+            gf::Rotation rotator1(DELTA);
             gf::Vector2f direction1 = gf::transform(rotator1, direction);
             gf::Vector2f endPoint1 = castRay2D(position, direction1, m_walls);
 
-            gf::Rotation rotator2(-DELTA / 5);
+            gf::Rotation rotator2(-DELTA);
             gf::Vector2f direction2 = gf::transform(rotator2, direction);
             gf::Vector2f endPoint2 = castRay2D(position, direction2, m_walls);
 
@@ -141,7 +133,7 @@ void Game2D::render()
                 line[1].color = gf::Color::Blue;
                 line[0].position = position * m_scaleUnit;
                 line[1].position = endPoint1 * m_scaleUnit;
-                //m_renderer.draw(line);
+                m_renderer.draw(line);
 
                 std::pair<gf::Vector2i, gf::Vector2i> segment;
                 if (m_walls->getSegment(endPoint1, segment))
@@ -152,7 +144,7 @@ void Game2D::render()
                 
                 line[0].position = position * m_scaleUnit;
                 line[1].position = endPoint2 * m_scaleUnit;
-                //m_renderer.draw(line);
+                m_renderer.draw(line);
 
                 if (m_walls->getSegment(endPoint2, segment))
                 {
@@ -165,45 +157,39 @@ void Game2D::render()
     // render the segments :
     for (auto segment : segments)
     {
+        // draw the triangles :
+        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+        triangle[0].color = gf::Color::Yellow;
+        triangle[1].color = gf::Color::Yellow;
+
         gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-        line[0].color = gf::Color::Yellow;
-        line[1].color = gf::Color::Yellow;
+        line[0].color = gf::Color::Blue;
+        line[1].color = gf::Color::Blue;
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
-            // std::cout << "(" << segment.second[i].x << ", " << segment.second[i].y << ") -> ";
-            // std::cout << "(" << segment.second[i + 1].x << " " << segment.second[i + 1].y << ")" << std::endl;
+            triangle[0].position = segment.second[i] * m_scaleUnit;
+            triangle[1].position = segment.second[i + 1] * m_scaleUnit;
+            triangle[2].position = m_player->getPosition() * m_scaleUnit;
+            m_renderer.draw(triangle);
+
             line[0].position = segment.second[i] * m_scaleUnit;
             line[1].position = segment.second[i + 1] * m_scaleUnit;
+            m_renderer.draw(line);
+
+            line[0].position = segment.second[i + 1] * m_scaleUnit;
+            line[1].position = m_player->getPosition() * m_scaleUnit;
             m_renderer.draw(line);
         }
     }
 
-    // int nbRays = m_renderer.getSize()[0];
-    // int nbRays = 50;
-    // double fov = 60 * gf::Pi / 180;
-    // double angle = m_player->getAngle() - fov / 2;
-    // for(int i = 0 ; i < nbRays ; i++) {
-    //     angle = std::fmod(angle, 2 * gf::Pi);
-    //     if (angle < 0) {
-    //         angle += 2 * gf::Pi;
-    //     }
-    //     gf::Vector2f direction = gf::normalize(gf::Vector2f(std::cos(angle), std::sin(angle)));
+    // render the map :
+    // m_walls->render(m_renderer, m_scaleUnit);
+    for (auto wall : walls)
+    {
+        wall.render(m_renderer, m_scaleUnit);
+    }
 
-    //     // render the ray :
-    //     gf::Vector2f position = m_player->getPosition();
-    //     //gf::Vector2f endPoint = castRay(position, angle, m_walls);
-
-    //     gf::Vector2f endPoint = castRay2D(position, direction, m_walls);
-
-    //     gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-    //     line[0].position = position * m_scaleUnit;
-    //     line[1].position = endPoint * m_scaleUnit;
-    //     line[0].color = gf::Color::Blue;
-    //     line[1].color = gf::Color::Blue;
-    //     m_renderer.draw(line);
-
-    //     angle += fov / nbRays;
-
-    // }
+    // render the player :
+    m_player->render(m_renderer, m_scaleUnit);
 }
