@@ -5,13 +5,13 @@
 #include <gf/Image.h>
 #include <vector>
 #include <set>
-#include <queue>
+#include <stack>
 #include <unordered_set>
 #include "Wall.hpp"
 
 class MapTemplate {
     public :
-        MapTemplate(std::string adress = "../sources/map/image.png")
+        MapTemplate(std::string adress = "../sources/map/image1.png")
         :m_image(gf::Image(adress))
         ,m_nbRows(m_image.getSize().width)
         ,m_nbColumns(m_image.getSize().height)
@@ -50,7 +50,7 @@ class MapTemplate {
             return m_walls;
         }
 
-        void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
+        void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::stack<gf::Vector2i> stack);
 
         bool getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i>& segment);
 

@@ -95,7 +95,7 @@ int main() {
   Player player(gf::Vector2f(1.5, 1.5), 0, 2.5);
  
   // map
-  std::string cheminAbsolu = std::filesystem::absolute("./sources/map/image.png");
+  //std::string cheminAbsolu = std::filesystem::absolute("./sources/map/image2.png");
 
   
 
