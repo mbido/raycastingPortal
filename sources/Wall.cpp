@@ -36,8 +36,6 @@ bool canGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &u
         return false;
     }
 
-    std::cout << "direction " << deltaX << "," << deltaY << " isHorizontal " << isHorizontal << std::endl;
-
     where = {-1, -1};
 
     for (const auto &vx : usefulVertices)
@@ -72,7 +70,6 @@ bool canGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &u
 
 void Wall::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices)
 {
-    std::cout << "setSortedVertices from " << from.x << ", " << from.y << std::endl;
     gf::Vector2i currentVertex = from;
     gf::Vector2i nextVertex = {0, 0};
     std::vector<char> directions = {'r', 'd', 'l', 'u'};
@@ -81,7 +78,6 @@ void Wall::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i> useful
     int nbTries = 0;
     do
     {
-        std::cout << "currentVertex : " << currentVertex.x << ", " << currentVertex.y << std::endl;
         if (canGo(currentVertex, directions[currentDirection], usefulVertices, nextVertex))
         {
             if (std::find(vertices.begin(), vertices.end(), nextVertex) != vertices.end())
@@ -160,28 +156,11 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
         }
     }
 
-    std::cout << "usefulVertices :" << std::endl;
-    for(const auto &vertex : usefulVertices){
-        std::cout << vertex.x << ", " << vertex.y << std::endl;
-    }
-
-    
-
     int counter = 0;
-    int t = 0;
     // step 2
     while (usefulVertices.size() > vertices.size())
     {
-        ++t;
-        if(t > 20){
-            exit(1);
-        }
-        std::cout << "vertices :" << std::endl;
-        for(const auto &vertex : vertices){
-            std::cout << vertex.x << ", " << vertex.y << std::endl;
-        }
 
-        //std::cout << usefulVertices.size() << ">" << vertices.size() << std::endl; 
         gf::Vector2i vertex;
         bool found = false;
         for (auto &vx : usefulVertices)
@@ -206,16 +185,16 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
         }
     }
 
-    std::cout << "les sommets pour un bloc de murs : " << std::endl;
-
-    std::cout << "Nombre de sommets : " << vertices.size() << std::endl;
+    std::cout
+        << "les sommets pour un bloc de murs : " << std::endl;
 
     for (const auto &vertice : vertices)
     {
+
         std::cout << "(" << vertice.x << ", " << vertice.y << ")\n";
     }
 
-    std::cout << "end\n\n\n";
+    std::cout << "\n\n\n";
 }
 
 void Wall::render(gf::RenderWindow &window, int scale)
