@@ -217,44 +217,43 @@ void Wall::render(gf::RenderWindow &window, int scale)
     }
 }
 
-std::vector<gf::Vector2i> Wall::getSortedVertices(gf::Vector2f playerPositions)
+std::vector<gf::Vector2i> Wall::getVertices()
 {
-    std::vector<gf::Vector2i> sortedVertices = vertices;
-    std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(playerPositions));
-    return sortedVertices;
+    return vertices;
 }
 
-bool Wall::getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i> &segment)
+// std::vector<gf::Vector2i> Wall::getSortedVertices(gf::Vector2f playerPositions)
+// {
+//     std::vector<gf::Vector2i> sortedVertices = vertices;
+//     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(playerPositions));
+//     return sortedVertices;
+// }
+
+bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments)
 {
+    segments.clear();
     std::size_t size = vertices.size();
     int endAt = size - 1;
-    for (size_t i = perimetersSize.size() - 1; i < perimetersSize.size(); --i)
+    for (int i = static_cast<int>(perimetersSize.size()) - 1; i >= 0; --i)
     {   
         size_t s = perimetersSize[i];
         for (size_t j = 0; j < s; ++j)
         {
             gf::Vector2i currentVertex = vertices[endAt - j];
             gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
-            if (std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON)
+            bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
+            bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
+
+            if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
             {
-                // the segment is vertical
-                if (point.y <= currentVertex.y && point.y >= prevVertex.y || point.y >= currentVertex.y && point.y <= prevVertex.y)
-                {
-                    segment = {currentVertex, prevVertex};
-                    return true;
-                }
+                segments.push_back({currentVertex, prevVertex});
             }
-            else if (std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON)
+            else if (isHorizontal && ((point.x <= currentVertex.x && point.x >= prevVertex.x) || (point.x >= currentVertex.x && point.x <= prevVertex.x)))
             {
-                // the segment is horizontal
-                if (point.x <= currentVertex.x && point.x >= prevVertex.x || point.x >= currentVertex.x && point.x <= prevVertex.x)
-                {
-                    segment = {currentVertex, prevVertex};
-                    return true;
-                }
+                segments.push_back({currentVertex, prevVertex});
             }
         }
         endAt -= s;
     }
-    return false;
+    return !segments.empty();
 }

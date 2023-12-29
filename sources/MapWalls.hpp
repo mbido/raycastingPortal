@@ -13,7 +13,7 @@ class MapWalls : public MapTemplate {
         {
         }
         void render(gf::RenderWindow& renderer, int sizeUnit);
-
+        std::vector<gf::Vector2i> getVertices();
 
     private :
         gf::Image m_image;

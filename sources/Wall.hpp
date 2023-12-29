@@ -24,11 +24,13 @@ public:
     // Constructor
     Wall(std::vector<gf::Vector2i> occupiedCells);
 
-    std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
+    // std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
+
+    std::vector<gf::Vector2i> getVertices();
 
     void render(gf::RenderWindow &window, int scale);
 
-    bool getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i> &segment);
+    bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments);
 
 private:
     void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices);

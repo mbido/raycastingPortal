@@ -90,7 +90,7 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             // is the point very close to an intersection on the grid ?
             double decX = hitPoint.x - (long)hitPoint.x;
             double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) && 
+            if ((decX < DELTA || 1 - decX < DELTA) &&
                 (decY < DELTA || 1 - decY < DELTA) &&
                 (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA))
             {
@@ -112,8 +112,8 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             // is the point very close to an intersection on the grid ?
             double decX = hitPoint.x - (long)hitPoint.x;
             double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) && 
-                (decY < DELTA || 1 - decY < DELTA) && 
+            if ((decX < DELTA || 1 - decX < DELTA) &&
+                (decY < DELTA || 1 - decY < DELTA) &&
                 (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA))
             {
                 return hitPoint;
@@ -138,96 +138,111 @@ void Game2D::render()
     // int nbSupplementaryRays = 0;
 
     // render the rays :
-    for (auto wall : walls)
+    gf::Vector2f position = m_player->getPosition();
+    std::vector<gf::Vector2i> sortedVertices = m_walls->getVertices();
+    std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(position));
+
+    // std::vector<gf::Vector2i> sortedVertices = wall.getSortedVertices(m_player->getPosition());
+
+    for (int i = 0; i < sortedVertices.size(); i++)
     {
-        std::vector<gf::Vector2i> vertices = wall.getSortedVertices(m_player->getPosition());
-        for (int i = 0; i < vertices.size(); i++)
+        gf::Vector2f direction = gf::normalize(gf::Vector2f(sortedVertices[i].x - position.x, sortedVertices[i].y - position.y));
+
+        gf::Vector2f endPoint = castRay2D(position, direction, m_walls);
+        double dist = std::sqrt((sortedVertices[i].x - position.x) * (sortedVertices[i].x - position.x) + (sortedVertices[i].y - position.y) * (sortedVertices[i].y - position.y));
+
+        if (std::abs(sortedVertices[i].x - endPoint.x) < DELTA && std::abs(sortedVertices[i].y - endPoint.y) < DELTA)
         {
+            // we hit the vertex aimed
+            gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+            line[0].color = gf::Color::Blue;
+            line[1].color = gf::Color::Blue;
+            line[0].position = position * m_scaleUnit;
+            line[1].position = sortedVertices[i] * m_scaleUnit;
+            m_renderer.draw(line);
 
-            gf::Vector2f position = m_player->getPosition();
-            gf::Vector2f direction = gf::normalize(gf::Vector2f(vertices[i].x - position.x, vertices[i].y - position.y));
-
-            gf::Vector2f endPoint = castRay2D(position, direction, m_walls);
-            double dist = std::sqrt((endPoint.x - position.x) * (endPoint.x - position.x) + (endPoint.y - position.y) * (endPoint.y - position.y));
-
-            if (std::abs(vertices[i].x - endPoint.x) < DELTA && std::abs(vertices[i].y - endPoint.y) < DELTA)
+            std::vector<std::pair<gf::Vector2i, gf::Vector2i>> segmentsHit;
+            if (m_walls->getSegments(sortedVertices[i], segmentsHit))
             {
-                // we hit the vertex aimed
-                gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-                line[0].color = gf::Color::Blue;
-                line[1].color = gf::Color::Blue;
-                line[0].position = position * m_scaleUnit;
-                line[1].position = endPoint * m_scaleUnit;
-                m_renderer.draw(line);
-
-                std::pair<gf::Vector2i, gf::Vector2i> segment;
-                if (m_walls->getSegment(endPoint, segment))
+                for (auto segment : segmentsHit)
                 {
-                    segments[segment].push_back(endPoint);
+                    std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
+                    std::cout << " with point : (" << sortedVertices[i].x << ", " << sortedVertices[i].y << ")" << std::endl;
+                    segments[segment].push_back(sortedVertices[i]);
+                }
+            }
+
+            // send a new ray if needed :
+            // we know that the vertex hit is a corner of a wall
+            // we check how many walls are connected to this corner
+            // if there is 1 wall AND we are not opposite to the wall we hit
+            //       we send a new ray to the next wall
+
+            int nbWalls = 0;
+            gf::Vector2i cells[] = {
+                gf::Vector2i(sortedVertices[i].x - 1, sortedVertices[i].y - 1),
+                gf::Vector2i(sortedVertices[i].x - 1, sortedVertices[i].y),
+                gf::Vector2i(sortedVertices[i].x, sortedVertices[i].y - 1),
+                gf::Vector2i(sortedVertices[i].x, sortedVertices[i].y)};
+
+            for (const auto &cell : cells)
+            {
+                if (m_walls->getTile(cell.x, cell.y) != 0)
+                {
+                    nbWalls++;
+                }
+            }
+
+            if (nbWalls < 2)
+            {
+                // looking what kind of vertex we hit :
+                // NW -> 0 (the vertex has the same coordinates as the cell)
+                // NE -> 1 (the vertex has the same x coordinate as the cell but not the same y coordinate)
+                // SE -> 2 (the vertex has neither the same x coordinate nor the same y coordinate as the cell)
+                // SW -> 3 (the vertex has the same y coordinate as the cell but not the same x coordinate)
+                int vertexType;
+                if (sortedVertices[i].x != endPoint.x)
+                {
+                    vertexType = 3;
+                    if (sortedVertices[i].y != endPoint.y)
+                    {
+                        vertexType = 2;
+                    }
+                }
+                else
+                {
+                    vertexType = 0;
+                    if (sortedVertices[i].y != endPoint.y)
+                    {
+                        vertexType = 1;
+                    }
                 }
 
-                // send a new ray if needed :
-                // we know that the vertex hit is a corner of a wall
-                // we check how many walls are connected to this corner
-                // if there is 1 wall AND we are not opposite to the wall we hit
-                //       we send a new ray to the next wall
-
-                int nbWalls = 0;
-                gf::Vector2i cells[] = {
-                    gf::Vector2i(vertices[i].x - 1, vertices[i].y - 1),
-                    gf::Vector2i(vertices[i].x - 1, vertices[i].y),
-                    gf::Vector2i(vertices[i].x, vertices[i].y - 1),
-                    gf::Vector2i(vertices[i].x, vertices[i].y)};
-
-                for (const auto &cell : cells)
+                // we check if we are opposing the vertex :
+                gf::Vector2f checkPosition(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
+                gf::Vector2i checkCell((int)checkPosition.x, (int)checkPosition.y);
+                if (m_walls->getTile(checkCell.x, checkCell.y) == 0)
                 {
-                    if (m_walls->getTile(cell.x, cell.y) != 0)
-                    {
-                        nbWalls++;
-                    }
-                }
+                    gf::Vector2f newStartPoint(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
+                    gf::Vector2f newEndPoint = castRay2D(newStartPoint, direction, m_walls);
 
-                if (nbWalls < 2)
-                {
-                    // looking what kind of vertex we hit :
-                    // NW -> 0 (the vertex has the same coordinates as the cell)
-                    // NE -> 1 (the vertex has the same x coordinate as the cell but not the same y coordinate)
-                    // SE -> 2 (the vertex has neither the same x coordinate nor the same y coordinate as the cell)
-                    // SW -> 3 (the vertex has the same y coordinate as the cell but not the same x coordinate)
-                    int vertexType;
-                    if (vertices[i].x != endPoint.x)
+                    line[0].color = gf::Color::Green;
+                    line[1].color = gf::Color::Green;
+                    line[0].position = sortedVertices[i] * m_scaleUnit;
+                    line[1].position = newEndPoint * m_scaleUnit;
+                    m_renderer.draw(line);
+
+                    if (m_walls->getSegments(newEndPoint, segmentsHit))
                     {
-                        vertexType = 3;
-                        if (vertices[i].y != endPoint.y)
+                        for (auto segment : segmentsHit)
                         {
-                            vertexType = 2;
-                        }
-                    }
-                    else
-                    {
-                        vertexType = 0;
-                        if (vertices[i].y != endPoint.y)
-                        {
-                            vertexType = 1;
+                            std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
+                            std::cout << " with point : (" << newEndPoint.x << ", " << newEndPoint.y << ")" << std::endl;
+                            segments[segment].push_back(newEndPoint);
                         }
                     }
 
-                    // we check if we are opposing the vertex :
-                    gf::Vector2f checkPosition(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
-                    gf::Vector2i checkCell((int)checkPosition.x, (int)checkPosition.y);
-                    if (m_walls->getTile(checkCell.x, checkCell.y) == 0)
-                    {
-                        gf::Vector2f newStartPoint(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
-                        gf::Vector2f newEndPoint = castRay2D(newStartPoint, direction, m_walls);
-
-                        line[0].color = gf::Color::Green;
-                        line[1].color = gf::Color::Green;
-                        line[0].position = vertices[i] * m_scaleUnit;
-                        line[1].position = newEndPoint * m_scaleUnit;
-                        m_renderer.draw(line);
-
-                        // nbSupplementaryRays++;
-                    }
+                    // nbSupplementaryRays++;
                 }
             }
         }
@@ -241,15 +256,15 @@ void Game2D::render()
     {
         wall.render(m_renderer, m_scaleUnit);
     }
-
+    std::cout << std::endl;
     // render the segments :
     for (auto segment : segments)
     {
-        // // draw the triangles :
-        // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-        // triangle[0].color = gf::Color::Yellow;
-        // triangle[1].color = gf::Color::Yellow;
-        // triangle[2].color = gf::Color::Yellow;
+        // draw the triangles :
+        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+        triangle[0].color = gf::Color::fromRgba32(0x80808080);
+        triangle[1].color = gf::Color::fromRgba32(0x80808080);
+        triangle[2].color = gf::Color::fromRgba32(0x80808080);
 
         gf::VertexArray line(gf::PrimitiveType::Lines, 2);
         line[0].color = gf::Color::Yellow;
@@ -257,10 +272,10 @@ void Game2D::render()
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
-            // triangle[0].position = segment.second[i] * m_scaleUnit;
-            // triangle[1].position = segment.second[i + 1] * m_scaleUnit;
-            // triangle[2].position = m_player->getPosition() * m_scaleUnit;
-            // m_renderer.draw(triangle);
+            triangle[0].position = segment.second[i] * m_scaleUnit;
+            triangle[1].position = segment.second[i + 1] * m_scaleUnit;
+            triangle[2].position = m_player->getPosition() * m_scaleUnit;
+            m_renderer.draw(triangle);
 
             line[0].position = segment.second[i] * m_scaleUnit;
             line[1].position = segment.second[i + 1] * m_scaleUnit;
@@ -271,8 +286,6 @@ void Game2D::render()
             // m_renderer.draw(line);
         }
     }
-
-    
 
     // render the player :
     m_player->render(m_renderer, m_scaleUnit);

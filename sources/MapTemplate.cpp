@@ -120,11 +120,11 @@ int MapTemplate::setTile(int i, int j, int value)
     }
 }
 
-bool MapTemplate::getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i> &segment)
+bool MapTemplate::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments)
 {
     for (auto wall : m_walls)
     {
-        if (wall.getSegment(point, segment))
+        if (wall.getSegments(point, segments))
         {
             return true;
         }
