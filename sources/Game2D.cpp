@@ -10,14 +10,22 @@
 
 #define DELTA 0.00001
 
-struct PairComparator {
-    bool operator() (const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>& a, const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>& b) const {
-        if (a.first.x < b.first.x) return true;
-        if (a.first.x > b.first.x) return false;
-        if (a.first.y < b.first.y) return true;
-        if (a.first.y > b.first.y) return false;
-        if (a.second.x < b.second.x) return true;
-        if (a.second.x > b.second.x) return false;
+struct PairComparator
+{
+    bool operator()(const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>> &a, const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>> &b) const
+    {
+        if (a.first.x < b.first.x)
+            return true;
+        if (a.first.x > b.first.x)
+            return false;
+        if (a.first.y < b.first.y)
+            return true;
+        if (a.first.y > b.first.y)
+            return false;
+        if (a.second.x < b.second.x)
+            return true;
+        if (a.second.x > b.second.x)
+            return false;
         return a.second.y < b.second.y;
     }
 };
@@ -77,18 +85,43 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
         if (distX <= distY)
         {
             tileX += (vX > 0) ? 1 : -1;
-            if (m_walls->getTile(tileX, tileY) == 1)
+            gf::Vector2f hitPoint = position + distX * direction;
+
+            // is the point very close to an intersection on the grid ?
+            double decX = hitPoint.x - (long)hitPoint.x;
+            double decY = hitPoint.y - (long)hitPoint.y;
+            if ((decX < DELTA || 1 - decX < DELTA) && 
+                (decY < DELTA || 1 - decY < DELTA) &&
+                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA))
             {
-                return position + distX * direction;
+                return hitPoint;
+            }
+
+            if (m_walls->getTile(tileX, tileY) != 0)
+            {
+                return hitPoint;
             }
             distX += unitX;
         }
         else
         {
+
             tileY += (vY > 0) ? 1 : -1;
-            if (m_walls->getTile(tileX, tileY) == 1)
+            gf::Vector2f hitPoint = position + distY * direction;
+
+            // is the point very close to an intersection on the grid ?
+            double decX = hitPoint.x - (long)hitPoint.x;
+            double decY = hitPoint.y - (long)hitPoint.y;
+            if ((decX < DELTA || 1 - decX < DELTA) && 
+                (decY < DELTA || 1 - decY < DELTA) && 
+                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA))
             {
-                return position + distY * direction;
+                return hitPoint;
+            }
+
+            if (m_walls->getTile(tileX, tileY) != 0)
+            {
+                return hitPoint;
             }
             distY += unitY;
         }
@@ -102,6 +135,8 @@ void Game2D::render()
     std::vector<Wall> walls = m_walls->getWalls();
     std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2f>, PairComparator> segments;
 
+    // int nbSupplementaryRays = 0;
+
     // render the rays :
     for (auto wall : walls)
     {
@@ -112,76 +147,93 @@ void Game2D::render()
             gf::Vector2f position = m_player->getPosition();
             gf::Vector2f direction = gf::normalize(gf::Vector2f(vertices[i].x - position.x, vertices[i].y - position.y));
 
-            gf::Rotation rotator1(DELTA);
-            gf::Vector2f direction1 = gf::transform(rotator1, direction);
-            gf::Vector2f endPoint1 = castRay2D(position, direction1, m_walls);
+            gf::Vector2f endPoint = castRay2D(position, direction, m_walls);
+            double dist = std::sqrt((endPoint.x - position.x) * (endPoint.x - position.x) + (endPoint.y - position.y) * (endPoint.y - position.y));
 
-            gf::Rotation rotator2(-DELTA);
-            gf::Vector2f direction2 = gf::transform(rotator2, direction);
-            gf::Vector2f endPoint2 = castRay2D(position, direction2, m_walls);
-
-            double dist1 = std::sqrt((endPoint1.x - position.x) * (endPoint1.x - position.x) + (endPoint1.y - position.y) * (endPoint1.y - position.y));
-            double dist2 = std::sqrt((endPoint2.x - position.x) * (endPoint2.x - position.x) + (endPoint2.y - position.y) * (endPoint2.y - position.y));
-
-            bool cond1 = std::abs(vertices[i].x - endPoint1.x) < 10 * DELTA * dist1 && std::abs(vertices[i].y - endPoint1.y) < 10 * DELTA * dist1;
-            bool cond2 = std::abs(vertices[i].x - endPoint2.x) < 10 * DELTA * dist2 && std::abs(vertices[i].y - endPoint2.y) < 10 * DELTA * dist2;
-
-            if (cond1 || cond2)
+            if (std::abs(vertices[i].x - endPoint.x) < DELTA && std::abs(vertices[i].y - endPoint.y) < DELTA)
             {
+                // we hit the vertex aimed
                 gf::VertexArray line(gf::PrimitiveType::Lines, 2);
                 line[0].color = gf::Color::Blue;
                 line[1].color = gf::Color::Blue;
                 line[0].position = position * m_scaleUnit;
-                line[1].position = endPoint1 * m_scaleUnit;
+                line[1].position = endPoint * m_scaleUnit;
                 m_renderer.draw(line);
 
                 std::pair<gf::Vector2i, gf::Vector2i> segment;
-                if (m_walls->getSegment(endPoint1, segment))
+                if (m_walls->getSegment(endPoint, segment))
                 {
-                    segments[segment].push_back(endPoint1);
+                    segments[segment].push_back(endPoint);
                 }
 
-                
-                line[0].position = position * m_scaleUnit;
-                line[1].position = endPoint2 * m_scaleUnit;
-                m_renderer.draw(line);
+                // send a new ray if needed :
+                // we know that the vertex hit is a corner of a wall
+                // we check how many walls are connected to this corner
+                // if there is 1 wall AND we are not opposite to the wall we hit
+                //       we send a new ray to the next wall
 
-                if (m_walls->getSegment(endPoint2, segment))
+                int nbWalls = 0;
+                gf::Vector2i cells[] = {
+                    gf::Vector2i(vertices[i].x - 1, vertices[i].y - 1),
+                    gf::Vector2i(vertices[i].x - 1, vertices[i].y),
+                    gf::Vector2i(vertices[i].x, vertices[i].y - 1),
+                    gf::Vector2i(vertices[i].x, vertices[i].y)};
+
+                for (const auto &cell : cells)
                 {
-                    segments[segment].push_back(endPoint2);
+                    if (m_walls->getTile(cell.x, cell.y) != 0)
+                    {
+                        nbWalls++;
+                    }
+                }
+
+                if (nbWalls < 2)
+                {
+                    // looking what kind of vertex we hit :
+                    // NW -> 0 (the vertex has the same coordinates as the cell)
+                    // NE -> 1 (the vertex has the same x coordinate as the cell but not the same y coordinate)
+                    // SE -> 2 (the vertex has neither the same x coordinate nor the same y coordinate as the cell)
+                    // SW -> 3 (the vertex has the same y coordinate as the cell but not the same x coordinate)
+                    int vertexType;
+                    if (vertices[i].x != endPoint.x)
+                    {
+                        vertexType = 3;
+                        if (vertices[i].y != endPoint.y)
+                        {
+                            vertexType = 2;
+                        }
+                    }
+                    else
+                    {
+                        vertexType = 0;
+                        if (vertices[i].y != endPoint.y)
+                        {
+                            vertexType = 1;
+                        }
+                    }
+
+                    // we check if we are opposing the vertex :
+                    gf::Vector2f checkPosition(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
+                    gf::Vector2i checkCell((int)checkPosition.x, (int)checkPosition.y);
+                    if (m_walls->getTile(checkCell.x, checkCell.y) == 0)
+                    {
+                        gf::Vector2f newStartPoint(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
+                        gf::Vector2f newEndPoint = castRay2D(newStartPoint, direction, m_walls);
+
+                        line[0].color = gf::Color::Green;
+                        line[1].color = gf::Color::Green;
+                        line[0].position = vertices[i] * m_scaleUnit;
+                        line[1].position = newEndPoint * m_scaleUnit;
+                        m_renderer.draw(line);
+
+                        // nbSupplementaryRays++;
+                    }
                 }
             }
         }
     }
 
-    // render the segments :
-    for (auto segment : segments)
-    {
-        // draw the triangles :
-        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-        triangle[0].color = gf::Color::Yellow;
-        triangle[1].color = gf::Color::Yellow;
-
-        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-        line[0].color = gf::Color::Blue;
-        line[1].color = gf::Color::Blue;
-
-        for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
-        {
-            triangle[0].position = segment.second[i] * m_scaleUnit;
-            triangle[1].position = segment.second[i + 1] * m_scaleUnit;
-            triangle[2].position = m_player->getPosition() * m_scaleUnit;
-            m_renderer.draw(triangle);
-
-            line[0].position = segment.second[i] * m_scaleUnit;
-            line[1].position = segment.second[i + 1] * m_scaleUnit;
-            m_renderer.draw(line);
-
-            line[0].position = segment.second[i + 1] * m_scaleUnit;
-            line[1].position = m_player->getPosition() * m_scaleUnit;
-            m_renderer.draw(line);
-        }
-    }
+    // std::cout << "nbSupplementaryRays : " << nbSupplementaryRays << std::endl;
 
     // render the map :
     // m_walls->render(m_renderer, m_scaleUnit);
@@ -189,6 +241,38 @@ void Game2D::render()
     {
         wall.render(m_renderer, m_scaleUnit);
     }
+
+    // render the segments :
+    for (auto segment : segments)
+    {
+        // // draw the triangles :
+        // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+        // triangle[0].color = gf::Color::Yellow;
+        // triangle[1].color = gf::Color::Yellow;
+        // triangle[2].color = gf::Color::Yellow;
+
+        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+        line[0].color = gf::Color::Yellow;
+        line[1].color = gf::Color::Yellow;
+
+        for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
+        {
+            // triangle[0].position = segment.second[i] * m_scaleUnit;
+            // triangle[1].position = segment.second[i + 1] * m_scaleUnit;
+            // triangle[2].position = m_player->getPosition() * m_scaleUnit;
+            // m_renderer.draw(triangle);
+
+            line[0].position = segment.second[i] * m_scaleUnit;
+            line[1].position = segment.second[i + 1] * m_scaleUnit;
+            m_renderer.draw(line);
+
+            // line[0].position = segment.second[i + 1] * m_scaleUnit;
+            // line[1].position = m_player->getPosition() * m_scaleUnit;
+            // m_renderer.draw(line);
+        }
+    }
+
+    
 
     // render the player :
     m_player->render(m_renderer, m_scaleUnit);

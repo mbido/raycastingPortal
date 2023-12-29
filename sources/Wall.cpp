@@ -5,7 +5,7 @@
 
 #include "Wall.hpp"
 
-#define EPSILON 0.00001
+#define EPSILON 0.001
 
 bool canGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &usefulVertices, gf::Vector2i &where)
 {

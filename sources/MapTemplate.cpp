@@ -45,8 +45,8 @@ void MapTemplate::init()
                 if (!hasFound)
                 {
                     std::vector<gf::Vector2i> visited;
-                    std::stack<gf::Vector2i> stack;
-                    depthFirstSearch(current, visited, stack);
+                    std::queue<gf::Vector2i> queue;
+                    depthFirstSearch(current, visited, queue);
 
                     for (const auto &vertex : visited)
                     {
@@ -62,20 +62,18 @@ void MapTemplate::init()
     for (auto cellWallsEntry : cellsWalls)
     {
         m_walls.push_back(Wall(cellWallsEntry.second));
-        
     }
-    
 }
 
-void MapTemplate::depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i> &visited, std::stack<gf::Vector2i> stack)
+void MapTemplate::depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i> &visited, std::queue<gf::Vector2i> queue)
 {
-    stack.push(vertex);
+    queue.push(vertex);
 
-    while (!stack.empty())
+    while (!queue.empty())
     {
-        gf::Vector2i current = stack.top();
+        gf::Vector2i current = queue.back();
         visited.push_back(current);
-        stack.pop();
+        queue.pop();
 
         for (int x = -1; x < 2; ++x)
         {
@@ -101,7 +99,7 @@ void MapTemplate::depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i
                     }
                     if (!found)
                     {
-                        stack.push(neighbor);
+                        queue.push(neighbor);
                     }
                 }
             }

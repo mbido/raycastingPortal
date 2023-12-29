@@ -5,7 +5,7 @@
 #include <gf/Image.h>
 #include <vector>
 #include <set>
-#include <stack>
+#include <queue>
 #include <unordered_set>
 #include "Wall.hpp"
 
@@ -50,7 +50,7 @@ class MapTemplate {
             return m_walls;
         }
 
-        void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::stack<gf::Vector2i> stack);
+        void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
 
         bool getSegment(gf::Vector2f point, std::pair<gf::Vector2i, gf::Vector2i>& segment);
 
