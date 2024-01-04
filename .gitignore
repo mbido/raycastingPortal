@@ -1,11 +1,6 @@
 build/
 .vscode/
-compte-rendu/_minted-compte-rendu
-compte-rendu/*.aux
-compte-rendu/*.fdb_latexmk
-compte-rendu/*.fls
-compte-rendu/*.listing
-compte-rendu/*.log
-compte-rendu/*.out
-compte-rendu/*.synctex.gz
-compte-rendu/*.toc
+compte-rendu/*
+!compte-rendu/*.tex
+!compte-rendu/*.sty
+!compte-rendu/*.pdf
