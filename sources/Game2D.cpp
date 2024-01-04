@@ -90,11 +90,19 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             // is the point very close to an intersection on the grid ?
             double decX = hitPoint.x - (long)hitPoint.x;
             double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) &&
-                (decY < DELTA || 1 - decY < DELTA) &&
-                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA))
+            if ((decX < DELTA || 1 - decX < DELTA) && // the point X is very close to an intersection on the grid
+                (decY < DELTA || 1 - decY < DELTA) && // the point Y is very close to an intersection on the grid
+                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA)) // the point is not the starting point
             {
-                return hitPoint;
+                // is there a wall around the intersection ? -> if yes, we return the intersection
+                gf::Vector2i intersection((int)(hitPoint.x + 0.5), (int)(hitPoint.y + 0.5));
+                if (m_walls->getTile(intersection.x, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x, intersection.y - 1) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y - 1) != 0)
+                {
+                    return intersection;
+                }
             }
 
             if (m_walls->getTile(tileX, tileY) != 0)
@@ -112,11 +120,19 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             // is the point very close to an intersection on the grid ?
             double decX = hitPoint.x - (long)hitPoint.x;
             double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) &&
-                (decY < DELTA || 1 - decY < DELTA) &&
-                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA))
+            if ((decX < DELTA || 1 - decX < DELTA) && // the point X is very close to an intersection on the grid
+                (decY < DELTA || 1 - decY < DELTA) && // the point Y is very close to an intersection on the grid
+                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA)) // the point is not the starting point
             {
-                return hitPoint;
+                // is there a wall around the intersection ? -> if yes, we return the intersection
+                gf::Vector2i intersection((int)(hitPoint.x + 0.5), (int)(hitPoint.y + 0.5));
+                if (m_walls->getTile(intersection.x, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x, intersection.y - 1) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y - 1) != 0)
+                {
+                    return intersection;
+                }
             }
 
             if (m_walls->getTile(tileX, tileY) != 0)
@@ -151,7 +167,7 @@ void Game2D::render()
         gf::Vector2f endPoint = castRay2D(position, direction, m_walls);
         double dist = std::sqrt((sortedVertices[i].x - position.x) * (sortedVertices[i].x - position.x) + (sortedVertices[i].y - position.y) * (sortedVertices[i].y - position.y));
 
-        if (std::abs(sortedVertices[i].x - endPoint.x) < DELTA && std::abs(sortedVertices[i].y - endPoint.y) < DELTA)
+        if (sortedVertices[i].x == endPoint.x && sortedVertices[i].y == endPoint.y)
         {
             // we hit the vertex aimed
             gf::VertexArray line(gf::PrimitiveType::Lines, 2);
