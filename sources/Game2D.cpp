@@ -8,11 +8,13 @@
 #include "MapWalls.hpp"
 #include "Game2D.hpp"
 
+#include <iomanip>
+
 #define DELTA 0.00001
 
 struct PairComparator
 {
-    bool operator()(const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>> &a, const std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>> &b) const
+    bool operator()(const std::pair<gf::Vector2i, gf::Vector2i> &a, const std::pair<gf::Vector2i, gf::Vector2i> &b) const
     {
         if (a.first.x < b.first.x)
             return true;
@@ -30,7 +32,7 @@ struct PairComparator
     }
 };
 
-std::map<std::pair<gf::Vector<int, 2>, gf::Vector<int, 2>>, std::vector<gf::Vector<int, 2>>, PairComparator> segments;
+std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2i>, PairComparator> segments;
 
 void Game2D::update(gf::Time dt)
 {
@@ -90,8 +92,8 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             // is the point very close to an intersection on the grid ?
             double decX = hitPoint.x - (long)hitPoint.x;
             double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) && // the point X is very close to an intersection on the grid
-                (decY < DELTA || 1 - decY < DELTA) && // the point Y is very close to an intersection on the grid
+            if ((decX < DELTA || 1 - decX < DELTA) &&                                                     // the point X is very close to an intersection on the grid
+                (decY < DELTA || 1 - decY < DELTA) &&                                                     // the point Y is very close to an intersection on the grid
                 (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA)) // the point is not the starting point
             {
                 // is there a wall around the intersection ? -> if yes, we return the intersection
@@ -120,8 +122,8 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             // is the point very close to an intersection on the grid ?
             double decX = hitPoint.x - (long)hitPoint.x;
             double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) && // the point X is very close to an intersection on the grid
-                (decY < DELTA || 1 - decY < DELTA) && // the point Y is very close to an intersection on the grid
+            if ((decX < DELTA || 1 - decX < DELTA) &&                                                     // the point X is very close to an intersection on the grid
+                (decY < DELTA || 1 - decY < DELTA) &&                                                     // the point Y is very close to an intersection on the grid
                 (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA)) // the point is not the starting point
             {
                 // is there a wall around the intersection ? -> if yes, we return the intersection
@@ -143,6 +145,54 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
         }
     }
     return position + 100 * direction;
+}
+
+bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
+{
+    // std::cout << "Subsegments vector: [";
+    // for (const auto &segment : subSegments)
+    // {
+    //     std::cout << "(" << segment.x << ", " << segment.y << "), ";
+    // }
+    // std::cout << "]" << std::endl;
+
+    for (int i = 0; i < subSegments.size() - 1; i += 2)
+    {
+        gf::Vector2f start1 = subSegments[i];
+        gf::Vector2f end1 = subSegments[i + 1];
+
+        for (int j = 0; j < subSegments.size() - 1; j += 2)
+        {
+            if (i == j)
+            {
+                continue;
+            }
+            gf::Vector2f start2 = subSegments[j];
+            gf::Vector2f end2 = subSegments[j + 1];
+
+            // std::cout << std::fixed << std::setprecision(8);
+            // std::cout << "start1 : (" << start1.x << ", " << start1.y << ") end1 : (" << end1.x << ", " << end1.y << ")" << std::endl;
+            // std::cout << "start2 : (" << start2.x << ", " << start2.y << ") end2 : (" << end2.x << ", " << end2.y << ")" << std::endl;
+            // std::cout << std::endl;
+
+            bool a = (start1.x <= start2.x && start2.x <= end1.x) || std::abs(start1.x - start2.x) < DELTA || std::abs(start2.x - end1.x) < DELTA;
+            bool b = (start1.x >= start2.x && start2.x >= end1.x) || std::abs(start1.x - start2.x) < DELTA || std::abs(start2.x - end1.x) < DELTA;
+            bool c = (start1.y <= start2.y && start2.y <= end1.y) || std::abs(start1.y - start2.y) < DELTA || std::abs(start2.y - end1.y) < DELTA;
+            bool d = (start1.y >= start2.y && start2.y >= end1.y) || std::abs(start1.y - start2.y) < DELTA || std::abs(start2.y - end1.y) < DELTA;
+
+            // std::cout << "a : " << a << std::endl;
+            // std::cout << "b : " << b << std::endl;
+            // std::cout << "c : " << c << std::endl;
+            // std::cout << "d : " << d << std::endl;
+
+            if ((a || b) && (c || d))
+            {
+                // std::cout << "start2 is included in [start1, end1]" << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void Game2D::render()
@@ -182,8 +232,8 @@ void Game2D::render()
             {
                 for (auto segment : segmentsHit)
                 {
-                    std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
-                    std::cout << " with point : (" << sortedVertices[i].x << ", " << sortedVertices[i].y << ")" << std::endl;
+                    // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
+                    // std::cout << " with point : (" << sortedVertices[i].x << ", " << sortedVertices[i].y << ")" << std::endl;
                     segments[segment].push_back(sortedVertices[i]);
                 }
             }
@@ -252,8 +302,8 @@ void Game2D::render()
                     {
                         for (auto segment : segmentsHit)
                         {
-                            std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
-                            std::cout << " with point : (" << newEndPoint.x << ", " << newEndPoint.y << ")" << std::endl;
+                            // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
+                            // std::cout << " with point : (" << newEndPoint.x << ", " << newEndPoint.y << ")" << std::endl;
                             segments[segment].push_back(newEndPoint);
                         }
                     }
@@ -272,19 +322,49 @@ void Game2D::render()
     {
         wall.render(m_renderer, m_scaleUnit);
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
+    
     // render the segments :
     for (auto segment : segments)
     {
+
+        // std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2f>, PairComparator> segments;
+        // bool print = segment.first.first == gf::Vector2i(1, 5) && segment.first.second == gf::Vector2i(1, 1);
+        
+        // if (print)
+        // {
+        //     std::cout << "INCLUDED ? " << std::endl;
+        // }
+
+        //  does one part of the segment is included in another segment ?
+        if (isPartIncluded(segment.second))
+        {
+            // if (print)
+            // {
+            //     std::cout << "! YES !" << std::endl;
+            // }
+            // we put the first point of the segment at the end of the vector
+            gf::Vector2f firstPoint = segment.second[0];
+            segment.second.erase(segment.second.begin());
+            segment.second.push_back(firstPoint);
+        }
+        // else
+        // {
+        //     if (print)
+        //     {
+        //         std::cout << "no" << std::endl;
+        //     }
+        // }
+
         // draw the triangles :
         gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-        triangle[0].color = gf::Color::fromRgba32(0x80808080);
-        triangle[1].color = gf::Color::fromRgba32(0x80808080);
-        triangle[2].color = gf::Color::fromRgba32(0x80808080);
+        triangle[0].color = gf::Color::fromRgba32(0x77777777);
+        triangle[1].color = gf::Color::fromRgba32(0x77777777);
+        triangle[2].color = gf::Color::fromRgba32(0x77777777);
 
         gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-        line[0].color = gf::Color::Yellow;
-        line[1].color = gf::Color::Yellow;
+        line[0].color = gf::Color::fromRgba32(0xFFFFAAFF);
+        line[1].color = gf::Color::fromRgba32(0xFFFFAAFF);
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
