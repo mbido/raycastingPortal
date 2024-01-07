@@ -11,6 +11,7 @@
 #include <iomanip>
 
 #define DELTA 0.00001
+#define RENDER_BEHIND_PLAYER false
 
 struct PairComparator
 {
@@ -195,6 +196,33 @@ bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
     return false;
 }
 
+
+bool isSegmentBehindPlayer(gf::Vector2f start, gf::Vector2f end, gf::Vector2f playerPosition, double playerAngle)
+{
+    // is the player looking upward or downward ?
+    bool isLookingDown = playerAngle < gf::Pi;
+
+    // we create the line equation perpendicular to the player's direction
+    double a = -1 / std::tan(playerAngle);
+    double b = playerPosition.y - a * playerPosition.x;
+
+    // we check if the segment is behind the player
+    if (isLookingDown)
+    {
+        // the player is looking downward
+        // the segment is behind the player if the y coordinate of the segment is lower than 
+        // the image of the x coordinate of the segment by the perpendicular line
+        return (start.y < a * start.x + b) && (end.y < a * end.x + b);
+    }
+    else
+    {
+        // the player is looking upward
+        // the segment is behind the player if the y coordinate of the segment is greater than 
+        // the image of the x coordinate of the segment by the perpendicular line
+        return (start.y > a * start.x + b) && (end.y > a * end.x + b);
+    }
+}
+
 void Game2D::render()
 {
 
@@ -323,7 +351,7 @@ void Game2D::render()
         wall.render(m_renderer, m_scaleUnit);
     }
     // std::cout << std::endl;
-    
+
     // render the segments :
     for (auto segment : segments)
     {
@@ -368,6 +396,12 @@ void Game2D::render()
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
+            // skip the segment if it is behind the player if needed
+            if(!RENDER_BEHIND_PLAYER && isSegmentBehindPlayer(segment.second[i], segment.second[i + 1], m_player->getPosition(), m_player->getAngle()))
+            {
+                continue;
+            }
+
             triangle[0].position = segment.second[i] * m_scaleUnit;
             triangle[1].position = segment.second[i + 1] * m_scaleUnit;
             triangle[2].position = m_player->getPosition() * m_scaleUnit;
