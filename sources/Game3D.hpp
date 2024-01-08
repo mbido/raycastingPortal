@@ -30,6 +30,6 @@ class Game3D {
         gf::RenderWindow& m_renderer;
         int m_scaleUnit;
         gf::Vector2u m_windowSize;
-        
-        struct castResult castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls);
+        bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b);
+        bool isPartIncluded(std::vector<gf::Vector2f> subSegments);
 };

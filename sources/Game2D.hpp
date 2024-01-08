@@ -26,4 +26,6 @@ class Game2D {
         gf::RenderWindow& m_renderer;
         int m_scaleUnit;
         gf::Vector2u m_windowSize;
+        bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b);
+        bool isPartIncluded(std::vector<gf::Vector2f> subSegments);
 };

@@ -148,7 +148,7 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
     return position + 100 * direction;
 }
 
-bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
+bool Game2D::isPartIncluded(std::vector<gf::Vector2f> subSegments)
 {
     // std::cout << "Subsegments vector: [";
     // for (const auto &segment : subSegments)
@@ -212,7 +212,7 @@ bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
  *
  * \return True if the segment is visible to the player, false otherwise.
  */
-bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b)
+bool Game2D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b)
 {
     // is the player looking upward or downward ?
     bool isLookingDown = playerAngle < gf::Pi;
