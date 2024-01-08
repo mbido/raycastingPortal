@@ -196,81 +196,98 @@ bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
     return false;
 }
 
-
-bool isSegmentBehindPlayer(gf::Vector2f start, gf::Vector2f end, gf::Vector2f playerPosition, double playerAngle)
+/**
+ * \brief Determines if a segment is visible to the player.
+ *
+ * This function checks if a segment defined by two points, start and end, is visible to the player.
+ * The visibility is determined based on the player's position, player's angle, and the equation of a line (a * x + b).
+ * The segment is considered to have a visible part and an invisible part.
+ *
+ * \param start The starting point of the segment. -> modifiable
+ * \param end The ending point of the segment. -> modifiable
+ * \param playerPosition The position of the player.
+ * \param playerAngle The angle at which the player is looking.
+ * \param a The coefficient 'a' in the equation of the line (a * x + b).
+ * \param b The coefficient 'b' in the equation of the line (a * x + b).
+ *
+ * \return True if the segment is visible to the player, false otherwise.
+ */
+bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b)
 {
     // is the player looking upward or downward ?
     bool isLookingDown = playerAngle < gf::Pi;
 
-    // we create the line equation perpendicular to the player's direction
-    double a = -1 / std::tan(playerAngle);
-    double b = playerPosition.y - a * playerPosition.x;
+    // we consider that the segment has a part visible and a part invisible
+    gf::Vector2f visiblePoint;
+    gf::Vector2f invisiblePoint;
+    gf::Vector2f intersectionPoint;
 
-    // we check if the segment is behind the player
+    // is the segment vertical ?
+    bool isVertical = std::abs(start.x - end.x) < DELTA;
+
     if (isLookingDown)
     {
-        // the player is looking downward
-        // the segment is behind the player if the y coordinate of the segment is lower than 
-        // the image of the x coordinate of the segment by the perpendicular line
-        return (start.y < a * start.x + b) && (end.y < a * end.x + b);
+        if ((start.y < a * start.x + b) && (end.y < a * end.x + b))
+        {
+            // the segment is completely invisible (behind the player)
+            return false;
+        }
+        else if ((start.y > a * start.x + b) && (end.y > a * end.x + b))
+        {
+            // the segment is completely visible
+            return true;
+        }
+        else if (start.y > a * start.x + b)
+        {
+            // the start point is visible and the end point is invisible
+            visiblePoint = start;
+            invisiblePoint = end;
+        }
+        else
+        {
+            // the start point is invisible and the end point is visible
+            visiblePoint = end;
+            invisiblePoint = start;
+        }
     }
     else
     {
-        // the player is looking upward
-        // the segment is behind the player if the y coordinate of the segment is greater than 
-        // the image of the x coordinate of the segment by the perpendicular line
-        return (start.y > a * start.x + b) && (end.y > a * end.x + b);
+        if ((start.y > a * start.x + b) && (end.y > a * end.x + b))
+        {
+            // the segment is completely invisible (behind the player)
+            return false;
+        }
+        else if ((start.y < a * start.x + b) && (end.y < a * end.x + b))
+        {
+            // the segment is completely visible
+            return true;
+        }
+        else if (start.y < a * start.x + b)
+        {
+            // the start point is visible and the end point is invisible
+            visiblePoint = start;
+            invisiblePoint = end;
+        }
+        else
+        {
+            // the start point is invisible and the end point is visible
+            visiblePoint = end;
+            invisiblePoint = start;
+        }
     }
-}
-
-bool isStartSegmentBehindPlayer(gf::Vector2f start, gf::Vector2f playerPosition, double playerAngle){
-    // is the player looking upward or downward ?
-    bool isLookingDown = playerAngle < gf::Pi;
-
-    // we create the line equation perpendicular to the player's direction
-    double a = -1 / std::tan(playerAngle);
-    double b = playerPosition.y - a * playerPosition.x;
-
-    // we check if the segment is behind the player
-    if (isLookingDown)
+    if (isVertical)
     {
-        // the player is looking downward
-        // the segment is behind the player if the y coordinate of the segment is lower than 
-        // the image of the x coordinate of the segment by the perpendicular line
-        return (start.y < a * start.x + b);
+        intersectionPoint = gf::Vector2f(start.x, a * start.x + b);
     }
     else
     {
-        // the player is looking upward
-        // the segment is behind the player if the y coordinate of the segment is greater than 
-        // the image of the x coordinate of the segment by the perpendicular line
-        return (start.y > a * start.x + b);
+        if (a == 0) // !!! have to check if even possible
+            a = DELTA/2;
+        intersectionPoint = gf::Vector2f((start.y - b) / a, start.y);
     }
-}
-
-bool isEndSegmentBehindPlayer(gf::Vector2f end, gf::Vector2f playerPosition, double playerAngle){
-    // is the player looking upward or downward ?
-    bool isLookingDown = playerAngle < gf::Pi;
-
-    // we create the line equation perpendicular to the player's direction
-    double a = -1 / std::tan(playerAngle);
-    double b = playerPosition.y - a * playerPosition.x;
-
-    // we check if the segment is behind the player
-    if (isLookingDown)
-    {
-        // the player is looking downward
-        // the segment is behind the player if the y coordinate of the segment is lower than 
-        // the image of the x coordinate of the segment by the perpendicular line
-        return (end.y < a * end.x + b);
-    }
-    else
-    {
-        // the player is looking upward
-        // the segment is behind the player if the y coordinate of the segment is greater than 
-        // the image of the x coordinate of the segment by the perpendicular line
-        return (end.y > a * end.x + b);
-    }
+    start = visiblePoint;
+    end = intersectionPoint;
+    return true;
 }
 
 void Game2D::render()
@@ -408,7 +425,7 @@ void Game2D::render()
 
         // std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2f>, PairComparator> segments;
         // bool print = segment.first.first == gf::Vector2i(1, 5) && segment.first.second == gf::Vector2i(1, 1);
-        
+
         // if (print)
         // {
         //     std::cout << "INCLUDED ? " << std::endl;
@@ -446,24 +463,18 @@ void Game2D::render()
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
-            double a = -1 / std::tan(m_player->getAngle());
-            double b = m_player->getPosition().y - a * m_player->getPosition().x;
+            double angle = m_player->getAngle();
+            if (angle == 0 || angle == gf::Pi || angle == 2 * gf::Pi || angle == -gf::Pi)
+            {
+                angle += DELTA/2;
+            }
+            gf::Vector2f pos = m_player->getPosition();
+            double a = -1 / std::tan(angle);
+            double b = pos.y - a * pos.x;
             // skip the segment if it is behind the player if needed
-            if(!RENDER_BEHIND_PLAYER && isSegmentBehindPlayer(segment.second[i], segment.second[i + 1], m_player->getPosition(), m_player->getAngle()))
+            if (!RENDER_BEHIND_PLAYER && !getVisibleSegment(segment.second[i], segment.second[i + 1], pos, angle, a, b))
             {
                 continue;
-            }else if(isStartSegmentBehindPlayer(segment.second[i], m_player->getPosition(), m_player->getAngle())){
-                if(segment.second[i].x == segment.second[i+1].x){
-                    segment.second[i] = gf::Vector2f(segment.second[i].x, a*m_player->getPosition().y+b);
-                }else if(segment.second[i].y == segment.second[i+1].y){
-                    segment.second[i] = gf::Vector2f(a*m_player->getPosition().x+b, segment.second[i].y);
-                }
-            }else if(isEndSegmentBehindPlayer(segment.second[i+1], m_player->getPosition(), m_player->getAngle())){
-                if(segment.second[i].x == segment.second[i+1].x){
-                    segment.second[i+1] = gf::Vector2f(segment.second[i+1].x, a*m_player->getPosition().y+b);
-                }else if(segment.second[i].y == segment.second[i+1].y){
-                    segment.second[i+1] = gf::Vector2f(a*m_player->getPosition().x+b, segment.second[i+1].y);
-                }
             }
 
             triangle[0].position = segment.second[i] * m_scaleUnit;
