@@ -7,11 +7,14 @@
 
 #define EPSILON 0.001
 
-bool canGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &usefulVertices, gf::Vector2i &where)
+
+bool fctCanGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &usefulVertices, gf::Vector2i &where)
 {
     int deltaX = 0;
     int deltaY = 0;
     bool isHorizontal; // true -> horizontal, false -> vertical
+
+    std::cout << "direction before: " << direction << std::endl;
 
     switch (direction)
     {
@@ -40,6 +43,7 @@ bool canGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &u
 
     for (const auto &vx : usefulVertices)
     {
+        std::cout << "vx: (" << vx.x << ", " << vx.y << ")" << std::endl;
         if (vx == from)
         {
             continue;
@@ -62,44 +66,112 @@ bool canGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &u
             ((deltaX > 0 || deltaY > 0) && vx[1 - axisIndex] < where[1 - axisIndex]))
         {
             where = vx;
+            //break;
         }
     }
-
+    std::cout << "from (" << from.x << ", " << from.y << ")" << std::endl
+              << "direction: " << direction << std::endl
+              << "where (" << where.x << ", " << where.y << ")" << std::endl;
+    std::cout << "canGo?: " << (where.x != -1 || where.y != -1) << std::endl;
     return where.x != -1 || where.y != -1;
 }
 
-void Wall::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices)
+void ICanGo(std::vector<gf::Vector2i>& vertices, gf::Vector2i& currentVertex, gf::Vector2i& nextVertex, int& nbTries, int& alreadyHave, int& currentDirection, int& lastDirection){
+    currentVertex = nextVertex;
+    vertices.push_back(currentVertex);
+    lastDirection = currentDirection;
+    nbTries = 0;
+    alreadyHave = 0;
+}
+
+void Wall::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices, std::vector<gf::Vector2i> occupiedCells)
 {
     gf::Vector2i currentVertex = from;
     gf::Vector2i nextVertex = {0, 0};
+    gf::Vector2i nextVertex2 = {0, 0};
+    // gf::Vector2i lastVertex = {0, 0};
     std::vector<char> directions = {'r', 'd', 'l', 'u'};
     int lastDirection = -1;
     int currentDirection = 0;
     int nbTries = 0;
+    int alreadyHave = 0;
+    std::cout << "FROM: (" << from.x << ", " << from.y << ") usefulVertices.size() = " << usefulVertices.size() << std::endl;
     do
     {
-        if (canGo(currentVertex, directions[currentDirection], usefulVertices, nextVertex))
-        {
-            if (std::find(vertices.begin(), vertices.end(), nextVertex) != vertices.end())
-            {
+        bool canGo = fctCanGo(currentVertex, directions[currentDirection], usefulVertices, nextVertex);
+        bool canGo2 = fctCanGo(currentVertex, directions[(currentDirection + 2) % 4], usefulVertices, nextVertex2);
+        int currentDirection2 = (currentDirection + 2) % 4;
+        bool br = (canGo && std::find(vertices.begin(), vertices.end(), nextVertex) != vertices.end());
+        bool br2 = (canGo2 && std::find(vertices.begin(), vertices.end(), nextVertex2) != vertices.end());
+        std::cout << "while: " << nbTries  << "< 4 && " << alreadyHave << " < 4)" << std::endl;
+        std::cout << "br = " << br << std::endl << "br2 = " << br2 << std::endl;
+        if(br || br2){
+            // std::cout << "break" << std::endl;
+            // break;
+            if((vertices.size() == 4 && from.x == 0 && from.y == 0) || (vertices.size() == usefulVertices.size() && from.x == 1 && from.y == 1)){
+                std::cout << "break" << std::endl;
+                std::cout << "vertices.size() = " << vertices.size() << std::endl;
+                std::cout << "EXTERIEUR" << std::endl;
                 break;
             }
-            currentVertex = nextVertex;
-            vertices.push_back(currentVertex);
-            lastDirection = currentDirection;
-            nbTries = 0;
+
+            if((vertices.size() == usefulVertices.size() && from.x != 0 && from.y != 0)){
+                std::cout << "break" << std::endl;
+                std::cout << "NON EXTERIEUR" << std::endl;
+                vertices.push_back(vertices.at(0));
+                break;
+            }
+            // alreadyHave++;
         }
-        else
-        {
-            ++nbTries;
-        }
+        // if((br && !br2 && canGo2) || (br2 && !br && canGo)){
+            if(canGo && !canGo2){
+                ICanGo(vertices, currentVertex, nextVertex, nbTries, alreadyHave, currentDirection, lastDirection);
+            }else if(!canGo && canGo2){
+                ICanGo(vertices, currentVertex, nextVertex2, nbTries, alreadyHave, currentDirection2, lastDirection);
+                currentDirection = currentDirection2;
+                //patterDirectionModify = true;
+            }else if(canGo2 && canGo){
+                std::cout << "Two direction possible" << std::endl;
+                if(nextVertex2.x != 1 && nextVertex2.y != 1 && std::find(vertices.begin(), vertices.end(), nextVertex2) == vertices.end()){
+                    ICanGo(vertices, currentVertex, nextVertex2, nbTries, alreadyHave, currentDirection2, lastDirection);
+                    currentDirection = currentDirection2;
+                    //patterDirectionModify = true;
+                }else{
+                    ICanGo(vertices, currentVertex, nextVertex, nbTries, alreadyHave, currentDirection, lastDirection);
+                }     
+                std::cout << "currentDirection: " << currentDirection << std::endl;         
+            }else{
+                ++nbTries;
+            }
+        // }
+        // if (canGo)
+        // {
+        //     if (std::find(vertices.begin(), vertices.end(), nextVertex) != vertices.end())
+        //     {
+        //         std::cout << "break" << std::endl;
+        //         br = true;
+        //         //break;
+        //     }
+        //     if(!br){
+        //         currentVertex = nextVertex;
+        //         vertices.push_back(currentVertex);
+        //         lastDirection = currentDirection;
+        //         nbTries = 0;
+        //     }
+            
+        // }else{
+        //     ++nbTries;
+        // }
         currentDirection = (currentDirection + 1) % 4;
         // Skip the last successful direction
         if (currentDirection == lastDirection)
         {
             currentDirection = (currentDirection + 1) % 4;
         }
-    } while (nbTries < 4);
+        
+    } while (nbTries < 4 /*&& alreadyHave < 4*/);
+    std::cout << "nbTries: " << nbTries << std::endl;
+    std::cout << "setSortedVertices, vertices.size() = " << vertices.size() << std::endl;
 }
 
 Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
@@ -150,17 +222,27 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
 
                 if (count == 1 || count == 3)
                 {
-                    usefulVertices.push_back(vertex);
+                    if(std::find(usefulVertices.begin(), usefulVertices.end(), vertex) == usefulVertices.end()){
+                        usefulVertices.push_back(vertex);
+                    }
                 }
             }
         }
     }
 
+    std::cout << "usefulVertices :" << std::endl;
+
+    for(auto v : usefulVertices){
+        std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
+    }
+
+    std::cout << "Wall before step 2" << std::endl;
+
     int counter = 0;
     // step 2
     while (usefulVertices.size() > vertices.size())
     {
-
+        std::cout << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
         gf::Vector2i vertex;
         bool found = false;
         for (auto &vx : usefulVertices)
@@ -176,7 +258,7 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
         if (found)
         {
             std::size_t prevSize = vertices.size();
-            setSortedVertices(vertex, usefulVertices);
+            setSortedVertices(vertex, usefulVertices, occupiedCells);
             perimetersSize.push_back(vertices.size() - prevSize);
         }
         else
@@ -184,6 +266,12 @@ Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
             break;
         }
     }
+
+    std::cout << "Wall after step 2 " << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
+
+    std::cout << "Nombre de sommets: " << vertices.size() << std::endl;
+    std::cout << "Nombre de title: " << wallCells.size() << std::endl;
+    std::cout << "Nombre de perimetre: " << perimetersSize.size() << std::endl;
 
     std::cout
         << "les sommets pour un bloc de murs : " << std::endl;

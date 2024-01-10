@@ -11,7 +11,7 @@
 
 class MapTemplate {
     public :
-        MapTemplate(std::string adress = "../sources/map/image.png")
+        MapTemplate(std::string adress = "../sources/map/image1.png")
         :m_image(gf::Image(adress))
         ,m_nbRows(m_image.getSize().width)
         ,m_nbColumns(m_image.getSize().height)
