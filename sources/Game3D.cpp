@@ -287,7 +287,8 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
         if (a == 0) // !!! have to check if even possible
             a = DELTA/2;
         intersectionPoint = gf::Vector2f((start.y - b) / a, start.y);
-        if (isLookingDown)
+        bool isLookingRight = playerAngle < gf::Pi / 2 || playerAngle > 3 * gf::Pi / 2;
+        if (isLookingRight)
         {
             intersectionPoint.x += DELTA;
         }
@@ -504,7 +505,13 @@ void Game3D::render()
                 continue;
             }
 
-            std::cout << "start : (" << start.x << ", " << start.y << ") end : (" << end.x << ", " << end.y << ")" << std::endl;
+            gf::Vector2i viewSize = m_renderer.getView().getSize();
+            double viewWidth = viewSize.x;
+            double viewHeight = viewSize.y;
+            // std::cout << "viewWidth : " << viewWidth << std::endl;
+            // std::cout << "viewHeight : " << viewHeight << std::endl;
+
+            // std::cout << "start : (" << start.x << ", " << start.y << ") end : (" << end.x << ", " << end.y << ")" << std::endl;
             // --- For the first point of the segment ---
 
             // the angle of the ray to the player:
@@ -517,26 +524,18 @@ void Game3D::render()
 
             // the height of the projected wall :
             // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height1 = (realDistance1 != 0) ? 100.0f / realDistance1 : 200.0f;
+            double height1 = (realDistance1 != 0) ? viewHeight / realDistance1 / 2 : viewHeight * 2;
 
             // the x position of the column from the center of the screen :
-            double xPos1 = std::tan(rayAngle1 - angle) * 100.0f / 2;
-            // if (xPos1 > 100.0f)
-            // {
-            //     xPos1 = 100.0f;
-            // }
-            // else if (xPos1 < -100.0f)
-            // {
-            //     xPos1 = -100.0f;
-            // }
+            double xPos1 = std::tan(rayAngle1 - angle) * viewWidth / 2;
 
             // drawing the column :
             gf::VertexArray column1(gf::PrimitiveType::Lines, 2);
             column1[0].color = gf::Color::fromRgba32(0x7777FFFF);
             column1[1].color = gf::Color::fromRgba32(0x7777FFFF);
 
-            column1[0].position = gf::Vector2f(50.0f + xPos1, 50.0f - height1 / 2);
-            column1[1].position = gf::Vector2f(50.0f + xPos1, 50.0f + height1 / 2);
+            column1[0].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 - height1 / 2);
+            column1[1].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 + height1 / 2);
             
             m_renderer.draw(column1);
 
@@ -552,26 +551,18 @@ void Game3D::render()
 
             // the height of the projected wall :
             // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height2 = (realDistance2 != 0) ? 100.0f / realDistance2 : 200.0f;
+            double height2 = (realDistance2 != 0) ? viewHeight / realDistance2 / 2: viewHeight;
 
             // the x position of the column from the center of the screen :
-            double xPos2 = std::tan(rayAngle2 - angle) * 50.0f;
-            // if (xPos2 > 100.0f)
-            // {
-            //     xPos2 = 100.0f;
-            // }
-            // else if (xPos2 < -100.0f)
-            // {
-            //     xPos2 = -100.0f;
-            // }
+            double xPos2 = std::tan(rayAngle2 - angle) * viewWidth / 2;
 
             // drawing the column :
             gf::VertexArray column2(gf::PrimitiveType::Lines, 2);
             column2[0].color = gf::Color::fromRgba32(0x77FF77FF);
             column2[1].color = gf::Color::fromRgba32(0x77FF77FF);
 
-            column2[0].position = gf::Vector2f(50.0f + xPos2, 50.0f - height2 / 2);
-            column2[1].position = gf::Vector2f(50.0f + xPos2, 50.0f + height2 / 2);
+            column2[0].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 - height2 / 2);
+            column2[1].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 + height2 / 2);
             m_renderer.draw(column2);
 
             // linking the two columns :
@@ -586,7 +577,7 @@ void Game3D::render()
             link[0].position = column1[0].position;
             link[1].position = column2[0].position;
             m_renderer.draw(link);
-
+            // std::cout << "posX1 : " << column1[0].position.x << " posX2 : " << column2[0].position.x << std::endl;
 
             // // --- For the triangles ---
             // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
@@ -600,8 +591,6 @@ void Game3D::render()
             // triangle[1].position = column1[1].position;
             // triangle[2].position = column2[0].position;
             // m_renderer.draw(triangle);
-
         }
     }
-
 }
