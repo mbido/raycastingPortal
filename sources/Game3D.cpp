@@ -359,7 +359,7 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 
 void Game3D::render()
 {
-    std::cout << std::endl;
+    // std::cout << std::endl;
     std::vector<Wall> walls = m_walls->getWalls();
     std::map<std::pair<gf::Vector2i, gf::Vector2i>, std::vector<gf::Vector2f>, PairComparator> segments;
 
@@ -537,7 +537,7 @@ void Game3D::render()
             column1[0].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 - height1 / 2);
             column1[1].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 + height1 / 2);
             
-            m_renderer.draw(column1);
+            // m_renderer.draw(column1);
 
             // --- For the second point of the segment ---
 
@@ -563,34 +563,43 @@ void Game3D::render()
 
             column2[0].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 - height2 / 2);
             column2[1].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 + height2 / 2);
-            m_renderer.draw(column2);
+            // m_renderer.draw(column2);
 
             // linking the two columns :
-            gf::VertexArray link(gf::PrimitiveType::Lines, 2);
-            link[0].color = gf::Color::fromRgba32(0xFF7777FF);
-            link[1].color = gf::Color::fromRgba32(0xFF7777FF);
+            // gf::VertexArray link(gf::PrimitiveType::Lines, 2);
+            // link[0].color = gf::Color::fromRgba32(0xFF7777FF);
+            // link[1].color = gf::Color::fromRgba32(0xFF7777FF);
 
-            link[0].position = column1[1].position;
-            link[1].position = column2[1].position;
-            m_renderer.draw(link);
+            // link[0].position = column1[1].position;
+            // link[1].position = column2[1].position;
+            // m_renderer.draw(link);
 
-            link[0].position = column1[0].position;
-            link[1].position = column2[0].position;
-            m_renderer.draw(link);
+            // link[0].position = column1[0].position;
+            // link[1].position = column2[0].position;
+            // m_renderer.draw(link);
             // std::cout << "posX1 : " << column1[0].position.x << " posX2 : " << column2[0].position.x << std::endl;
 
-            // // --- For the triangles ---
-            // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-            // triangle[0].color = gf::Color::fromRgba32(0x777777FF);
-            // triangle[1].color = gf::Color::fromRgba32(0x777777FF);
-            // triangle[2].color = gf::Color::fromRgba32(0x777777FF);
+            bool isVertical = std::abs(start.x - end.x) < DELTA;
 
-            // // we draw the trapezoid with two triangles :
+            auto color = (isVertical)? gf::Color::fromRgba32(0x77FF77FF) : gf::Color::fromRgba32(0x7777FFFF);
 
-            // triangle[0].position = column1[0].position;
-            // triangle[1].position = column1[1].position;
-            // triangle[2].position = column2[0].position;
-            // m_renderer.draw(triangle);
+            // --- For the triangles ---
+            gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+            triangle[0].color = color;
+            triangle[1].color = color;
+            triangle[2].color = color;
+
+            // we draw the trapezoid with two triangles :
+
+            triangle[0].position = column1[0].position;
+            triangle[1].position = column1[1].position;
+            triangle[2].position = column2[0].position;
+            m_renderer.draw(triangle);
+
+            triangle[0].position = column1[1].position;
+            triangle[1].position = column2[0].position;
+            triangle[2].position = column2[1].position;
+            m_renderer.draw(triangle);
         }
     }
 }
