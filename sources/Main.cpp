@@ -23,11 +23,13 @@
 #include "Game2D.hpp"
 #include "Game3D.hpp"
 #include <unistd.h>
+
+// #define RENDER_IN_3D
  
 int main() {
   static constexpr gf::Vector2i ScreenSize(1024, 576);
-  static constexpr gf::Vector2f ViewSize(100.0f, 100.0f); // dummy values
-  static constexpr gf::Vector2f ViewCenter(0.0f, 0.0f); // dummy values
+  static constexpr gf::Vector2f ViewSize(1024.0f, 576.0f);
+  static constexpr gf::Vector2f ViewCenter(512.0f, 278.0f);
  
   // initialization
  
@@ -40,6 +42,9 @@ int main() {
   // views
  
   gf::ViewContainer views;
+
+  gf::ExtendView mainView(ViewCenter, ViewSize);
+  views.addView(mainView);
  
   gf::ScreenView hudView;
   views.addView(hudView);
@@ -95,8 +100,8 @@ int main() {
   Player player(gf::Vector2f(1.5, 1.5), 0, 2.5);
  
   // map
-  std::string cheminAbsolu = std::filesystem::absolute("./sources/map/image.png");
-
+  std::filesystem::path cheminRelatif("./sources/map/image.png");
+  std::string cheminAbsolu = std::filesystem::absolute(cheminRelatif).string();
   
 
   //MapWalls map(cheminAbsolu);
@@ -129,8 +134,12 @@ int main() {
   map.setTile(8, 6, 1);*/
 
   // game
+  
+  #ifdef RENDER_IN_3D
+  Game3D game(&player, &map, renderer);
+  #else
   Game2D game(&player, &map, renderer);
-  //Game3D game(&player, &map, renderer);
+  #endif
 
  
   // game loop
@@ -262,7 +271,12 @@ int main() {
  
     renderer.clear();
 
+    
+    #ifdef RENDER_IN_3D
+    renderer.setView(mainView);
+    #else
     renderer.setView(hudView);
+    #endif
 
     game.render();
 
