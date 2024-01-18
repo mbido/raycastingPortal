@@ -19,6 +19,7 @@ public:
     }
     void setVelocity(const gf::Vector2f &velocity);
     void setAngularVelocity(double delta);
+    void setPosition(const gf::Vector2f &position);
     const gf::Vector2f getPosition();
     void update(gf::Time dt);
     void render(gf::RenderWindow &renderer, int sizeUnit);

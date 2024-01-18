@@ -15,6 +15,10 @@ void Player::setAngularVelocity(double delta) {
     m_angularVelocity = delta;
 }
 
+void Player::setPosition(const gf::Vector2f &position) {
+    m_position = position;
+}
+
 double Player::getAngle() {
     return m_angle;
 }
@@ -65,4 +69,12 @@ void Player::render(gf::RenderWindow& renderer, int sizeUnit){
     circle.setColor(gf::Color::Blue);
     circle.setAnchor(gf::Anchor::Center);
     renderer.draw(circle);
+
+    gf::CircleShape range(sizeUnit / 5);
+    range.setPosition(m_position * sizeUnit);
+    range.setColor(gf::Color::Transparent);
+    range.setOutlineColor(gf::Color::Cyan);
+    range.setOutlineThickness(1);
+    range.setAnchor(gf::Anchor::Center);
+    renderer.draw(range);
 }

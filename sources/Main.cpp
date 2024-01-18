@@ -24,7 +24,7 @@
 #include "Game3D.hpp"
 #include <unistd.h>
 
-// #define RENDER_IN_3D
+#define RENDER_IN_3D
  
 int main() {
   static constexpr gf::Vector2i ScreenSize(1024, 576);
@@ -198,72 +198,67 @@ int main() {
  
     gf::Time time = clock.restart();
 
-    // <-- We test the collisions here !
-    float nextAngle = player.getAngle() + angularVelocity * time.asSeconds();
+    // // <-- We test the collisions here !
+    // float nextAngle = player.getAngle() + angularVelocity * time.asSeconds();
 
-    gf::Rotation nextRotator(nextAngle + gf::Pi / 2);
-    gf::Vector2f nextNewVelocity = gf::transform(nextRotator, direction);
+    // gf::Rotation nextRotator(nextAngle + gf::Pi / 2);
+    // gf::Vector2f nextNewVelocity = gf::transform(nextRotator, direction);
 
-    if (nextNewVelocity != gf::vec(0.0f, 0.0f)) {
-      nextNewVelocity = gf::normalize(nextNewVelocity);
-    }
+    // if (nextNewVelocity != gf::vec(0.0f, 0.0f)) {
+    //   nextNewVelocity = gf::normalize(nextNewVelocity);
+    // }
 
-    gf::Vector2f nextPosition = player.getPosition() + (nextNewVelocity * time.asSeconds());
+    // gf::Vector2f nextPosition = player.getPosition() + (nextNewVelocity * time.asSeconds());
 
-    int intXPartNextPos = (int) floorf(nextPosition.x);
-    int intYPartNextPos = (int) floorf(nextPosition.y);
-    gf::Vector2f nextCorrectDir = gf::Vector2f(0.0f,1.0f);
+    // int intXPartNextPos = (int) floorf(nextPosition.x);
+    // int intYPartNextPos = (int) floorf(nextPosition.y);
+    // gf::Vector2f nextCorrectDir = gf::Vector2f(0.0f,1.0f);
 
-    if (map.getTile(intXPartNextPos,intYPartNextPos) != 0)
-    {
-      // In a wall or outside of the map (same treatment)
-      double currentAngle = player.getAngle();
-      int currentIntXPart = (int) floorf(player.getPosition().x);
-      int currentIntYPart = (int) floorf(player.getPosition().y);
+    // if (map.getTile(intXPartNextPos,intYPartNextPos) != 0)
+    // {
+    //   // In a wall or outside of the map (same treatment)
+    //   double currentAngle = player.getAngle();
+    //   int currentIntXPart = (int) floorf(player.getPosition().x);
+    //   int currentIntYPart = (int) floorf(player.getPosition().y);
       
-      if (currentIntYPart == intYPartNextPos) //currentIntXPart != intXPartNextPos && 
-      {
-        if (currentAngle < gf::Pi / 2 || currentAngle >= 3 * gf::Pi / 2) {
-          nextCorrectDir.x += 2*sinf(currentAngle);
-        }
-        else {
-          nextCorrectDir.x += -2*sinf(currentAngle);
-        }
-      }
+    //   if (currentIntYPart == intYPartNextPos) //currentIntXPart != intXPartNextPos && 
+    //   {
+    //     if (currentAngle < gf::Pi / 2 || currentAngle >= 3 * gf::Pi / 2) {
+    //       nextCorrectDir.x += 2*sinf(currentAngle);
+    //     }
+    //     else {
+    //       nextCorrectDir.x += -2*sinf(currentAngle);
+    //     }
+    //   }
 
-      if (currentIntXPart == intXPartNextPos) //currentIntYPart != intYPartNextPos && 
-      {
-        if (currentAngle < gf::Pi) {
-          nextCorrectDir.x += -2*cosf(currentAngle);
-        }
-        else {
-          nextCorrectDir.x += 2*cosf(currentAngle);
-        }
-      }
-      player.setVelocity(nextCorrectDir);
-    }
+    //   if (currentIntXPart == intXPartNextPos) //currentIntYPart != intYPartNextPos && 
+    //   {
+    //     if (currentAngle < gf::Pi) {
+    //       nextCorrectDir.x += -2*cosf(currentAngle);
+    //     }
+    //     else {
+    //       nextCorrectDir.x += 2*cosf(currentAngle);
+    //     }
+    //   }
+    //   player.setVelocity(nextCorrectDir);
+    // }
     
 
      
     
 
     // fps :
-    frameCount++;
-    if (fpsClock.getElapsedTime() >= gf::seconds(1.0f)) {
-      float fps = frameCount / fpsClock.restart().asSeconds();
-      //std::cout << "FPS: " << fps << std::endl;
-      //std::cout << "Player Position : (" << player.getPosition().x << ";" << player.getPosition().y << ")" << std::endl;
-      //std::cout << "Next Player Position : (" << nextPosition.x << ";" << nextPosition.y << ")" << std::endl;
-      //std::cout << "Direction : (" << direction.x << ";" << direction.y << ")" << std::endl;
-      //std::cout << "Next Correct direction : (" << nextCorrectDir.x << ";" << nextCorrectDir.y << ")" << std::endl;
-      nextCorrectDir = gf::Vector2f(0.0f,0.0f);
-      //std::cout << "Angle : " << player.getAngle() << std::endl;
-      if (map.getTile(intXPartNextPos,intYPartNextPos) != 0)
-      {
-        //std::cout << "In the wall or outside of the map !!!!" << std::endl;
-      }
-      frameCount = 0;
-    }
+    // frameCount++;
+    // if (fpsClock.getElapsedTime() >= gf::seconds(1.0f)) {
+    //   float fps = frameCount / fpsClock.restart().asSeconds();
+    //   //std::cout << "FPS: " << fps << std::endl;
+    //   //std::cout << "Player Position : (" << player.getPosition().x << ";" << player.getPosition().y << ")" << std::endl;
+    //   //std::cout << "Next Player Position : (" << nextPosition.x << ";" << nextPosition.y << ")" << std::endl;
+    //   //std::cout << "Direction : (" << direction.x << ";" << direction.y << ")" << std::endl;
+    //   //std::cout << "Next Correct direction : (" << nextCorrectDir.x << ";" << nextCorrectDir.y << ")" << std::endl;
+    //   //std::cout << "Angle : " << player.getAngle() << std::endl;
+    //   frameCount = 0;
+    // }
 
     game.update(time);
  
@@ -271,14 +266,15 @@ int main() {
  
     renderer.clear();
 
-    
     #ifdef RENDER_IN_3D
     renderer.setView(mainView);
+    game.render();
     #else
     renderer.setView(hudView);
+    // game.render(true, std::make_pair(gf::Vector2i(3, 2), gf::Vector2i(3, 3)));
+    game.render();
     #endif
 
-    game.render();
 
     renderer.display();
  

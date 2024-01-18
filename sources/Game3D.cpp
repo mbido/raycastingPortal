@@ -5,12 +5,59 @@
 #include <gf/RenderWindow.h>
 #include <gf/Shapes.h>
 
-
 #include "Player.hpp"
 #include "MapWalls.hpp"
 #include "Game3D.hpp"
 
 #define DELTA 0.00001
+#define RANGE 0.2
+
+// clamp function used for collisions
+float clamp3D(float min, float max, float value)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
+}
+gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position)
+{
+    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y));
+    if (RANGE > distanceBetweenWallAndPlayer)
+    {
+        if (distanceBetweenWallAndPlayer == 0)
+            return gf::Vector2f(-1.0f, -1.0f);
+        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x - closestPointOfTheWall.x, p_position.y - closestPointOfTheWall.y);
+        coordToAddToPos = (coordToAddToPos / distanceBetweenWallAndPlayer) * (RANGE - distanceBetweenWallAndPlayer);
+        return coordToAddToPos;
+    }
+    return gf::Vector2f(-1.0f, -1.0f);
+}
+
+gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position)
+{
+    gf::Vector2f closestPointOfTheWall = gf::Vector2f(0.0f, 0.0f);
+
+    std::vector<gf::Vector2i> vertices = wall.getVertices();
+    for (auto vertex1 : vertices)
+    {
+        for (auto vertex2 : vertices)
+        {
+            if (vertex1 != vertex2)
+            {
+                float x = clamp3D((float)vertex1.x, (float)vertex2.x, p_position.x);
+                float y = clamp3D((float)vertex1.y, (float)vertex2.y, p_position.y);
+                if ((p_position.x - x) * (p_position.x - x) + (p_position.y - y) * (p_position.y - y) < (p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y))
+                {
+                    closestPointOfTheWall = gf::Vector2f(x, y);
+                }
+            }
+        }
+    }
+
+    return closestPointOfTheWall;
+}
 
 struct PairComparator
 {
@@ -80,11 +127,19 @@ bool Game3D::isPartIncluded(std::vector<gf::Vector2f> subSegments)
     return false;
 }
 
-void Game3D::update(gf::Time dt) {
+void Game3D::update(gf::Time dt)
+{
     m_player->update(dt);
 
     m_windowSize = m_renderer.getSize();
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
+
+    for (auto wall : m_walls->getWalls()) {
+        gf::Vector2f newPos = checkingCollisionsForEachWall3D(getClosestPointOfWall3D(wall,m_player->getPosition()),m_player->getPosition());
+        if (newPos != gf::Vector2f(-1.0f, -1.0f)) {
+            m_player->setPosition(m_player->getPosition() + newPos);
+        }
+    }
 }
 
 gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls)
@@ -285,7 +340,7 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
     else
     {
         if (a == 0) // !!! have to check if even possible
-            a = DELTA/2;
+            a = DELTA / 2;
         intersectionPoint = gf::Vector2f((start.y - b) / a, start.y);
         bool isLookingRight = playerAngle < gf::Pi / 2 || playerAngle > 3 * gf::Pi / 2;
         if (isLookingRight)
@@ -317,13 +372,12 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 //         gf::Vector2f position = m_player->getPosition();
 //         //gf::Vector2f endPoint = castRay(position, angle, m_walls);
 
-
 //         // ---CASTING THE RAY---
 //         struct castResult cast = castRay(position, direction, m_walls);
 //         gf::Vector2f endPoint = cast.endPoint;
 
-//         // the distance of the wall to the player : 
-//         double falseDistance = std::sqrt((endPoint[0] - position[0]) * (endPoint[0] - position[0]) 
+//         // the distance of the wall to the player :
+//         double falseDistance = std::sqrt((endPoint[0] - position[0]) * (endPoint[0] - position[0])
 //                                 + (endPoint[1] - position[1]) * (endPoint[1] - position[1]));
 //         // the real distance is the projection of the ray on the direction vector :
 //         double realDistance = falseDistance * std::cos(angle - m_player->getAngle());
@@ -331,7 +385,7 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 //         // the height of the projected wall :
 //         // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
 //         double height = (realDistance != 0)? m_windowSize[0] / realDistance : m_windowSize[1] * 2;
-        
+
 //         // defining gradients and colors of the walls :
 //         int gradient = (realDistance * 15 > 255 - 20) ? 20 : 255 - realDistance * 15;
 
@@ -343,7 +397,6 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 //         }else if(cast.tileSideHit == 2) {
 //             color = gf::Color::fromRgba32(gradient, int(gradient / 4), gradient);
 //         }
-        
 
 //         // putting a pixel wide rectangle at i-th pixel of the screen :
 //         gf::RectangleShape wall(gf::Vector2f(1, height));
@@ -351,11 +404,9 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 //         wall.setColor(color);
 //         m_renderer.draw(wall);
 
-//         angle += fov / nbRays;   
+//         angle += fov / nbRays;
 //     }
 // }
-
-
 
 void Game3D::render()
 {
@@ -464,7 +515,6 @@ void Game3D::render()
         }
     }
 
-
     // render the segments :
     for (auto segment : segments)
     {
@@ -494,7 +544,7 @@ void Game3D::render()
             double angle = m_player->getAngle();
             if (angle == 0 || angle == gf::Pi || angle == 2 * gf::Pi || angle == -gf::Pi)
             {
-                angle += DELTA/2;
+                angle += DELTA / 2;
             }
             gf::Vector2f pos = m_player->getPosition();
             double a = -1 / std::tan(angle);
@@ -536,7 +586,7 @@ void Game3D::render()
 
             column1[0].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 - height1 / 2);
             column1[1].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 + height1 / 2);
-            
+
             // m_renderer.draw(column1);
 
             // --- For the second point of the segment ---
@@ -551,7 +601,7 @@ void Game3D::render()
 
             // the height of the projected wall :
             // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height2 = (realDistance2 != 0) ? viewHeight / realDistance2 / 2: viewHeight;
+            double height2 = (realDistance2 != 0) ? viewHeight / realDistance2 / 2 : viewHeight;
 
             // the x position of the column from the center of the screen :
             double xPos2 = std::tan(rayAngle2 - angle) * viewWidth / 2;
@@ -581,7 +631,7 @@ void Game3D::render()
 
             bool isVertical = std::abs(start.x - end.x) < DELTA;
 
-            auto color = (isVertical)? gf::Color::fromRgba32(0x77FF77FF) : gf::Color::fromRgba32(0x7777FFFF);
+            auto color = (isVertical) ? gf::Color::fromRgba32(0x77FF77FF) : gf::Color::fromRgba32(0x7777FFFF);
 
             // --- For the triangles ---
             gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
