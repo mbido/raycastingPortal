@@ -11,7 +11,7 @@
 
 class MapTemplate {
     public :
-        MapTemplate(std::string adress = "../sources/map/image.png")
+        MapTemplate(std::string adress = "../sources/map/image5.png")
         :m_image(gf::Image(adress))
         ,m_nbRows(m_image.getSize().width)
         ,m_nbColumns(m_image.getSize().height)
@@ -50,6 +50,8 @@ class MapTemplate {
             return m_walls;
         }
 
+        
+
         void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
 
         bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments);
@@ -66,6 +68,9 @@ class MapTemplate {
          * @brief Initialize the map by setting all the values to 0 and the boundaries to 1
         */
         void init();
+
+        void createWall(std::vector<gf::Vector2i> occupiedCells);
+        void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices, std::vector<gf::Vector2i>& sortedVertices);
 };
 
 #endif

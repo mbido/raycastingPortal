@@ -22,7 +22,8 @@ class Wall
 {
 public:
     // Constructor
-    Wall(std::vector<gf::Vector2i> occupiedCells);
+    // Wall(std::vector<gf::Vector2i> occupiedCells);
+    Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupiedCells, std::vector<std::size_t> perimetersSize);
 
     // std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
 
@@ -33,7 +34,7 @@ public:
     bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments);
 
 private:
-    void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices);
+    // void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices);
 
     std::vector<gf::Vector2i> vertices;
     std::vector<gf::Vector2i> wallCells;

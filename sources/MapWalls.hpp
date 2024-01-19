@@ -8,7 +8,7 @@
 
 class MapWalls : public MapTemplate {
     public :
-        MapWalls(std::string address = "../sources/map/image.png")
+        MapWalls(std::string address = "../sources/map/image5.png")
         : MapTemplate(address)
         {
         }
