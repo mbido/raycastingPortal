@@ -28,6 +28,7 @@ public:
     // std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
 
     std::vector<gf::Vector2i> getVertices();
+    std::vector<gf::Vector2i> getOccupiedCells();
 
     void render(gf::RenderWindow &window, int scale);
 
