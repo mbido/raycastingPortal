@@ -10,18 +10,21 @@
 #include "Game3D.hpp"
 
 #define DELTA 0.00001
-#define RANGE 0.09
+#define RANGE 0.06
 
 // clamp function used for collisions
-float clamp3D (float min, float max, float value) {
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
+float clamp3D(float min, float max, float value)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
 }
-
 gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position) {
     float distanceBetweenWallAndPlayer = std::sqrt((p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y));
     if (RANGE > distanceBetweenWallAndPlayer) {
+        if (distanceBetweenWallAndPlayer == 0) return gf::Vector2f(0.0f,0.0f);
         gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x-closestPointOfTheWall.x, p_position.y-closestPointOfTheWall.y);
         coordToAddToPos = (coordToAddToPos / distanceBetweenWallAndPlayer) * (RANGE - distanceBetweenWallAndPlayer);
         return coordToAddToPos;
@@ -32,15 +35,18 @@ gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall,
 gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position) {
     gf::Vector2f closestPointOfTheWall = gf::Vector2f(0.0f, 0.0f);
 
-    std::vector<gf::Vector2i> blocs = wall.getOccupiedCells();
+    std::vector<gf::Vector2i> blocs = wall.getWallCells();
+
     for (auto bloc : blocs) {
         float x = clamp3D((float) bloc.x, (float) bloc.x + 1, p_position.x);
         float y = clamp3D((float) bloc.y, (float) bloc.y + 1, p_position.y);
-        if ((p_position.x-x)*(p_position.x-x) + (p_position.y-y)*(p_position.y-y) < (p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y)) {
+        float distPlayerClampedPos = (p_position.x-x)*(p_position.x-x) + (p_position.y-y)*(p_position.y-y);
+        float distPlayerCurrClosestPos = (p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y);
+        
+        if (distPlayerClampedPos <= distPlayerCurrClosestPos) {
             closestPointOfTheWall = gf::Vector2f(x, y);
         }
     }
-
     return closestPointOfTheWall;
 }
 
@@ -125,8 +131,14 @@ void Game3D::update(gf::Time dt)
     }
 }
 
-gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls)
+gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls, std::pair<gf::Vector2f, gf::Vector2f> portalSegment = std::make_pair(gf::Vector2f(0, 0), gf::Vector2f(0, 0)))
 {
+    bool isPortalVertical = std::abs(portalSegment.first.x - portalSegment.second.x) < DELTA;
+    bool isPlayerLeft = position.x < portalSegment.first.x;
+    bool isPlayerUp = position.y < portalSegment.first.y;
+    bool isHitPointBehindThePortal = true;
+    bool isPortal = portalSegment != std::make_pair(gf::Vector2f(0, 0), gf::Vector2f(0, 0));
+
     // the tiles position we want to check if it's a wall or not
     int tileX = (int)position[0];
     int tileY = (int)position[1];
@@ -164,34 +176,78 @@ gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_
         distY = ((double)(tileY + 1) - position[1]) * unitY;
     }
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 1000; i++)
     {
         if (distX <= distY)
         {
             tileX += (vX > 0) ? 1 : -1;
             gf::Vector2f hitPoint = position + distX * direction;
 
-            // is the point very close to an intersection on the grid ?
-            double decX = hitPoint.x - (long)hitPoint.x;
-            double decY = hitPoint.y - (long)hitPoint.y;
-            if ((decX < DELTA || 1 - decX < DELTA) &&                                                     // the point X is very close to an intersection on the grid
-                (decY < DELTA || 1 - decY < DELTA) &&                                                     // the point Y is very close to an intersection on the grid
-                (std::abs(hitPoint.x - position.x) > DELTA || std::abs(hitPoint.y - position.y) > DELTA)) // the point is not the starting point
+            isHitPointBehindThePortal = true;
+            if (isPortalVertical)
             {
-                // is there a wall around the intersection ? -> if yes, we return the intersection
-                gf::Vector2i intersection((int)(hitPoint.x + 0.5), (int)(hitPoint.y + 0.5));
-                if (m_walls->getTile(intersection.x, intersection.y) == 1 ||
-                    m_walls->getTile(intersection.x - 1, intersection.y) == 1 ||
-                    m_walls->getTile(intersection.x, intersection.y - 1) == 1 ||
-                    m_walls->getTile(intersection.x - 1, intersection.y - 1) == 1)
+                if (isPlayerLeft)
                 {
-                    return intersection;
+                    if (hitPoint.x >= portalSegment.first.x)
+                    {
+                        isHitPointBehindThePortal = false;
+                    }
+                }
+                else
+                {
+                    if (hitPoint.x <= portalSegment.first.x)
+                    {
+                        isHitPointBehindThePortal = false;
+                    }
+                }
+            }
+            else
+            {
+                if (isPlayerUp)
+                {
+                    if (hitPoint.y >= portalSegment.first.y)
+                    {
+                        isHitPointBehindThePortal = false;
+                    }
+                }
+                else
+                {
+                    if (hitPoint.y <= portalSegment.first.y)
+                    {
+                        isHitPointBehindThePortal = false;
+                    }
                 }
             }
 
-            if (m_walls->getTile(tileX, tileY) == 1)
+            // is the point very close to an intersection on the grid ?
+            double decX = hitPoint.x - (long)hitPoint.x;
+            double decY = hitPoint.y - (long)hitPoint.y;
+            if ((decX < DELTA / 2 || 1 - decX < DELTA / 2) &&                                                     // the point X is very close to an intersection on the grid
+                (decY < DELTA / 2 || 1 - decY < DELTA / 2) &&                                                     // the point Y is very close to an intersection on the grid
+                (std::abs(hitPoint.x - position.x) > DELTA / 2 || std::abs(hitPoint.y - position.y) > DELTA / 2)) // the point is not the starting point
             {
-                return hitPoint;
+                // is there a wall around the intersection ? -> if yes, we return the intersection
+                gf::Vector2i intersection((int)(hitPoint.x + 0.5), (int)(hitPoint.y + 0.5));
+                if (m_walls->getTile(intersection.x, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x, intersection.y - 1) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y - 1) != 0)
+                {
+                    if (!isHitPointBehindThePortal || !isPortal)
+                    {
+                        return intersection;
+                    }
+                }
+            }
+
+            if (m_walls->getTile(tileX, tileY) != 0)
+            {
+                // if we are using a portal, we check if the point is before the segment of the portal
+                // if yes, we ignore the collision and continue the ray
+                if (!isHitPointBehindThePortal || !isPortal)
+                {
+                    return hitPoint;
+                }
             }
             distX += unitX;
         }
@@ -210,24 +266,35 @@ gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_
             {
                 // is there a wall around the intersection ? -> if yes, we return the intersection
                 gf::Vector2i intersection((int)(hitPoint.x + 0.5), (int)(hitPoint.y + 0.5));
-                if (m_walls->getTile(intersection.x, intersection.y) == 1 ||
-                    m_walls->getTile(intersection.x - 1, intersection.y) == 1 ||
-                    m_walls->getTile(intersection.x, intersection.y - 1) == 1 ||
-                    m_walls->getTile(intersection.x - 1, intersection.y - 1) == 1)
+                if (m_walls->getTile(intersection.x, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y) != 0 ||
+                    m_walls->getTile(intersection.x, intersection.y - 1) != 0 ||
+                    m_walls->getTile(intersection.x - 1, intersection.y - 1) != 0)
                 {
-                    return intersection;
+                    // if we are using a portal, we check if the point is before the segment of the portal
+                    // if yes, we ignore the collision and continue the ray
+                    if (!isHitPointBehindThePortal || !isPortal)
+                    {
+                        return intersection;
+                    }
                 }
             }
 
-            if (m_walls->getTile(tileX, tileY) == 1)
+            if (m_walls->getTile(tileX, tileY) != 0)
             {
-                return hitPoint;
+                // if we are using a portal, we check if the point is before the segment of the portal
+                // if yes, we ignore the collision and continue the ray
+                if (!isHitPointBehindThePortal || !isPortal)
+                {
+                    return hitPoint;
+                }
             }
             distY += unitY;
         }
     }
     return position + 100 * direction;
 }
+
 
 /**
  * \brief Determines if a segment is visible to the player.
@@ -367,7 +434,7 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 
 //         // the height of the projected wall :
 //         // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-//         double height = (realDistance == 1)? m_windowSize[0] / realDistance : m_windowSize[1] * 2;
+//         double height = (realDistance != 0)? m_windowSize[0] / realDistance : m_windowSize[1] * 2;
 
 //         // defining gradients and colors of the walls :
 //         int gradient = (realDistance * 15 > 255 - 20) ? 20 : 255 - realDistance * 15;
@@ -391,6 +458,77 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 //     }
 // }
 
+
+gf::Vector2f getIntersectionForPortals3D(std::pair<gf::Vector2i, gf::Vector2i> portalSegment, std::pair<gf::Vector2i, gf::Vector2i> segmentToIntersect, gf::Vector2f playerPosition)
+{
+    bool isPortalVertical = std::abs(portalSegment.first.x - portalSegment.second.x) < DELTA;
+    bool isSegmentVertical = std::abs(segmentToIntersect.first.x - segmentToIntersect.second.x) < DELTA;
+    bool isPlayerLeft = playerPosition.x < portalSegment.first.x;
+    bool isPlayerUp = playerPosition.y < portalSegment.first.y;
+    // std::cout << "segment : (" << segmentToIntersect.first.x << ", " << segmentToIntersect.first.y << ") -> (" << segmentToIntersect.second.x << ", " << segmentToIntersect.second.y << ")" << std::endl;
+
+    if (isPortalVertical && !isSegmentVertical && (segmentToIntersect.first.x <= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA) && segmentToIntersect.second.x >= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA) || segmentToIntersect.first.x >= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA) && segmentToIntersect.second.x <= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA)))
+    {
+        // std::cout << "INTERSECTION" << std::endl;
+        return gf::Vector2f(portalSegment.first.x, segmentToIntersect.first.y);
+    }
+    else if (!isPortalVertical && isSegmentVertical && (portalSegment.first.y + (isPlayerUp ? DELTA : -DELTA) <= segmentToIntersect.first.y && portalSegment.second.y + (isPlayerUp ? DELTA : -DELTA) >= segmentToIntersect.first.y || portalSegment.first.y + (isPlayerUp ? DELTA : -DELTA) >= segmentToIntersect.first.y && portalSegment.second.y + (isPlayerUp ? DELTA : -DELTA) <= segmentToIntersect.first.y))
+    {
+        return gf::Vector2f(segmentToIntersect.first.x, portalSegment.first.y);
+    }
+    return gf::Vector2f(0, 0);
+}
+
+
+void removeVerticesBefore3D(std::vector<gf::Vector2f> &vertices, std::pair<gf::Vector2i, gf::Vector2i> portalSegment, gf::Vector2f playerPosition)
+{
+    bool isPortalVertical = std::abs(portalSegment.first.x - portalSegment.second.x) < DELTA;
+    bool isPlayerLeft = playerPosition.x < portalSegment.first.x;
+    bool isPlayerUp = playerPosition.y < portalSegment.first.y;
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        if (isPortalVertical)
+        {
+            if (isPlayerLeft)
+            {
+                if (vertices[i].x <= portalSegment.first.x)
+                {
+                    vertices.erase(vertices.begin() + i);
+                    i--;
+                }
+            }
+            else
+            {
+                if (vertices[i].x >= portalSegment.first.x)
+                {
+                    vertices.erase(vertices.begin() + i);
+                    i--;
+                }
+            }
+        }
+        else
+        {
+            if (isPlayerUp)
+            {
+                if (vertices[i].y <= portalSegment.first.y)
+                {
+                    vertices.erase(vertices.begin() + i);
+                    i--;
+                }
+            }
+            else
+            {
+                if (vertices[i].y >= portalSegment.first.y)
+                {
+                    vertices.erase(vertices.begin() + i);
+                    i--;
+                }
+            }
+        }
+    }
+}
+
+
 void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalSegment)
 {
     // std::cout << std::endl;
@@ -401,7 +539,69 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
     // render the rays :
     gf::Vector2f position = m_player->getPosition();
-    std::vector<gf::Vector2i> sortedVertices = m_walls->getVertices();
+    // we offset the position if needed
+    if((int)(position.x * 1000) == position.x * 1000) 
+    {
+        position.x = position.x + DELTA;
+    }
+    if((int)(position.y * 1000) == position.y * 1000) 
+    {
+        position.y = position.y - DELTA;
+    }
+
+    std::vector<gf::Vector2i> sV = m_walls->getVertices();
+    std::vector<gf::Vector2f> sortedVertices;
+    // std::cout << "sV : " << std::endl;
+    for (auto v : sV)
+    {
+        // std::cout << "-\t(" << v.x << ", " << v.y << ")" << std::endl;
+        sortedVertices.push_back(gf::Vector2f(v.x, v.y));
+    }
+    // if we are in a portal, we add a vertex at every intersection between a segment and the line defined by the segment of the portal
+    // then we remove every vertices that are before that line
+    if (isPortal)
+    {
+        // adding the vertices :
+        std::set<std::pair<gf::Vector2i, gf::Vector2i>, PairComparator> seenSegments;
+        // a copy of sortedVertices is needed because we are adding vertices to the vector while iterating over it
+        std::vector<gf::Vector2f> sortedVerticesCopy = sortedVertices;
+        // removing the vertices not needed :
+        removeVerticesBefore3D(sortedVertices, portalSegment, m_player->getPosition());
+        for (auto v : sortedVerticesCopy)
+        {
+            // std::cout << "vertex : (" << v.x << ", " << v.y << ")" << std::endl;
+            std::vector<std::pair<gf::Vector2i, gf::Vector2i>> vertexSegments;
+            if (m_walls->getSegments(v, vertexSegments))
+            {
+                for (auto segment : vertexSegments)
+                {
+                    // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")" << std::endl;
+                    if (seenSegments.insert(segment).second)
+                    {
+                        gf::Vector2f intersection = getIntersectionForPortals3D(portalSegment, segment, m_player->getPosition());
+                        if (intersection != gf::Vector2f(0, 0))
+                        {
+                            sortedVertices.push_back(gf::Vector2f(intersection.x, intersection.y));
+                            // // rendering a small circle
+                            // double radius = 3.0f;
+                            // gf::CircleShape circle(radius * 2);
+                            // circle.setPosition(intersection * m_scaleUnit - gf::Vector2f(radius, radius));
+                            // circle.setColor(gf::Color::Red);
+                            // m_renderer.draw(circle);
+                        }
+                    }
+                }
+            }
+        }
+        // for (auto v : sortedVertices)
+        // {
+        //     double radius = 3.0f;
+        //     gf::CircleShape circle(radius * 2);
+        //     circle.setPosition(v * m_scaleUnit - gf::Vector2f(radius, radius));
+        //     circle.setColor(gf::Color::White);
+        //     m_renderer.draw(circle);
+        // }
+    }
     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(position));
 
     // std::vector<gf::Vector2i> sortedVertices = wall.getSortedVertices(m_player->getPosition());
@@ -410,7 +610,16 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
     {
         gf::Vector2f direction = gf::normalize(gf::Vector2f(sortedVertices[i].x - position.x, sortedVertices[i].y - position.y));
 
-        gf::Vector2f endPoint = castRay(position, direction, m_walls);
+        gf::Vector2f endPoint;
+        
+        if (isPortal)
+        {
+            endPoint = castRay(position, direction, m_walls, portalSegment);
+        }
+        else
+        {
+            endPoint = castRay(position, direction, m_walls);
+        }
         double dist = std::sqrt((sortedVertices[i].x - position.x) * (sortedVertices[i].x - position.x) + (sortedVertices[i].y - position.y) * (sortedVertices[i].y - position.y));
 
         if (sortedVertices[i].x == endPoint.x && sortedVertices[i].y == endPoint.y)
@@ -443,7 +652,7 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
             for (const auto &cell : cells)
             {
-                if (m_walls->getTile(cell.x, cell.y) == 1)
+                if (m_walls->getTile(cell.x, cell.y) != 0)
                 {
                     nbWalls++;
                 }
@@ -557,7 +766,7 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
             // the height of the projected wall :
             // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height1 = (realDistance1 == 1) ? viewHeight / realDistance1 / 2 : viewHeight * 2;
+            double height1 = (realDistance1 != 0) ? viewHeight / realDistance1 / 2 : viewHeight * 2;
 
             // the x position of the column from the center of the screen :
             double xPos1 = std::tan(rayAngle1 - angle) * viewWidth / 2;
@@ -584,7 +793,7 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
             // the height of the projected wall :
             // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height2 = (realDistance2 == 1) ? viewHeight / realDistance2 / 2 : viewHeight;
+            double height2 = (realDistance2 != 0) ? viewHeight / realDistance2 / 2 : viewHeight;
 
             // the x position of the column from the center of the screen :
             double xPos2 = std::tan(rayAngle2 - angle) * viewWidth / 2;

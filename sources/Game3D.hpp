@@ -23,7 +23,7 @@ class Game3D {
         }
 
         void update(gf::Time dt);
-        void render();
+        void render(bool isPortal = false, std::pair<gf::Vector2i, gf::Vector2i> portalSegment = std::make_pair(gf::Vector2i(0, 0), gf::Vector2i(0, 0)));
     private:
         Player *m_player;
         MapWalls *m_walls;
