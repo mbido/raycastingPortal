@@ -312,47 +312,49 @@ Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupie
 
 void Wall::render(gf::RenderWindow &window, int scale)
 {
-    // gf::Vector2i origin = {0, 0};
-    // if(std::find(vertices.begin(), vertices.end(), origin) != vertices.end()){
-    //     for(std::size_t i = 0; i < 4; ++i){
-    //         gf::Vector2i currentVertex = vertices[i];
-    //         gf::Vector2i prevVertex = vertices[(i+1)%4];
-    //         gf::Line line(currentVertex * scale, prevVertex * scale);
-    //         line.setColor(gf::Color::White);
-    //         window.draw(line);
-    //     }
-    //     for(std::size_t i = 4; i < vertices.size(); ++i){
-    //         gf::Vector2i currentVertex = vertices[i];
-    //         gf::Vector2i prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
-    //         gf::Line line(currentVertex * scale, prevVertex * scale);
-    //         line.setColor(gf::Color::White);
-    //         window.draw(line);
-    //     }
-    // }else{
-    //     for(std::size_t i = 0; i < vertices.size(); ++i){
-    //         gf::Vector2i currentVertex = vertices[i];
-    //         gf::Vector2i prevVertex = vertices[(i+1)%vertices.size()];
-    //         gf::Line line(currentVertex * scale, prevVertex * scale);
-    //         line.setColor(gf::Color::White);
-    //         window.draw(line);
-    //     }
-    // }
-
-    std::size_t size = vertices.size();
-    int endAt = size - 1;
-    for (size_t i = perimetersSize.size() - 1; i < perimetersSize.size(); --i)
-    {
-        size_t s = perimetersSize[i];
-        for (size_t j = 0; j < s; ++j)
-        {
-            gf::Vector2i currentVertex = vertices[endAt - j];
-            gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
+    gf::Vector2i origin = {0, 0};
+    if(std::find(vertices.begin(), vertices.end(), origin) != vertices.end()){
+        for(std::size_t i = 0; i < 4; ++i){
+            gf::Vector2i currentVertex = vertices[i];
+            gf::Vector2i prevVertex = vertices[(i+1)%4];
             gf::Line line(currentVertex * scale, prevVertex * scale);
             line.setColor(gf::Color::White);
             window.draw(line);
         }
-        endAt -= s;
+        for(std::size_t i = 4; i < vertices.size(); ++i){
+            gf::Vector2i currentVertex = vertices[i];
+            gf::Vector2i prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
+            gf::Line line(currentVertex * scale, prevVertex * scale);
+            line.setColor(gf::Color::White);
+            window.draw(line);
+        }
+    }else{
+        for(std::size_t i = 0; i < vertices.size(); ++i){
+            gf::Vector2i currentVertex = vertices[i];
+            gf::Vector2i prevVertex = vertices[(i+1)%vertices.size()];
+            gf::Line line(currentVertex * scale, prevVertex * scale);
+            line.setColor(gf::Color::White);
+            window.draw(line);
+        }
     }
+
+    // std::size_t size = vertices.size();
+    // int endAt = size - 1;
+    // for (size_t i = perimetersSize.size() - 1; i < perimetersSize.size(); --i)
+    // {
+    //     size_t s = perimetersSize[i];
+    //     for (size_t j = 0; j < s; ++j)
+    //     {
+    //         gf::Vector2i currentVertex = vertices[endAt - j];
+    //         gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
+    //         gf::Line line(currentVertex * scale, prevVertex * scale);
+    //         line.setColor(gf::Color::White);
+    //         window.draw(line);
+    //         // std::cout << "Wall render: (" << currentVertex.x << ", " << currentVertex.y << ")" << std::endl
+    //         //             << "-> (" << prevVertex.x << ", " << prevVertex.y << ")" << std::endl;
+    //     }
+    //     endAt -= s;
+    // }
 }
 
 std::vector<gf::Vector2i> Wall::getVertices()
@@ -373,32 +375,80 @@ std::vector<gf::Vector2i> Wall::getOccupiedCells(){
 
 bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments)
 {
+    gf::Vector2i origin = {0, 0};
     segments.clear();
-    std::size_t size = vertices.size();
-    int endAt = size - 1;
-    for (int i = static_cast<int>(perimetersSize.size()) - 1; i >= 0; --i)
-    {   
-        size_t s = perimetersSize[i];
-        for (size_t j = 0; j < s; ++j)
-        {
-            gf::Vector2i currentVertex = vertices[endAt - j];
-            gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
+    if(std::find(vertices.begin(), vertices.end(), origin) != vertices.end()){
+        for(std::size_t i = 0; i < 4; ++i){
+            gf::Vector2i currentVertex = vertices[i];
+            gf::Vector2i prevVertex = vertices[(i+1) % 4];
             bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
             bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
-            // std::cout << "currentVertex: (" << currentVertex.x << ", " << currentVertex.y << ")" << std::endl
-            //             << "prevVertex: (" << prevVertex.x << ", " << prevVertex.y << ")" << std::endl
-            //             << "isVertical: " << isVertical << std::endl
-            //             << "isHorizontal: " << isHorizontal << std::endl;
             if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
             {
                 segments.push_back({currentVertex, prevVertex});
             }
             else if (isHorizontal && ((point.x <= currentVertex.x && point.x >= prevVertex.x) || (point.x >= currentVertex.x && point.x <= prevVertex.x)))
             {
-                segments.push_back({currentVertex, prevVertex});
+                segments.push_back({currentVertex, prevVertex});            
             }
         }
-        endAt -= s;
+        for(std::size_t i = 4; i < vertices.size(); ++i){
+            gf::Vector2i currentVertex = vertices[i];
+            gf::Vector2i prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
+            bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
+            bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
+            if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
+            {
+                segments.push_back({currentVertex, prevVertex});
+            }
+            else if (isHorizontal && ((point.x <= currentVertex.x && point.x >= prevVertex.x) || (point.x >= currentVertex.x && point.x <= prevVertex.x)))
+            {
+                segments.push_back({currentVertex, prevVertex});            
+            }
+        }
+    }else{
+        for(std::size_t i = 0; i < vertices.size(); ++i){
+            gf::Vector2i currentVertex = vertices[i];
+            gf::Vector2i prevVertex = vertices[(i+1) % vertices.size()];
+            bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
+            bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
+            if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
+            {
+                segments.push_back({currentVertex, prevVertex});
+            }
+            else if (isHorizontal && ((point.x <= currentVertex.x && point.x >= prevVertex.x) || (point.x >= currentVertex.x && point.x <= prevVertex.x)))
+            {
+                segments.push_back({currentVertex, prevVertex});            
+            }
+        }
     }
     return !segments.empty();
+    // segments.clear();
+    // std::size_t size = vertices.size();
+    // int endAt = size - 1;
+    // for (int i = static_cast<int>(perimetersSize.size()) - 1; i >= 0; --i)
+    // {   
+    //     size_t s = perimetersSize[i];
+    //     for (size_t j = 0; j < s; ++j)
+    //     {
+    //         gf::Vector2i currentVertex = vertices[endAt - j];
+    //         gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
+    //         bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
+    //         bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
+    //         // std::cout << "currentVertex: (" << currentVertex.x << ", " << currentVertex.y << ")" << std::endl
+    //         //             << "prevVertex: (" << prevVertex.x << ", " << prevVertex.y << ")" << std::endl
+    //         //             << "isVertical: " << isVertical << std::endl
+    //         //             << "isHorizontal: " << isHorizontal << std::endl;
+    //         if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
+    //         {
+    //             segments.push_back({currentVertex, prevVertex});
+    //         }
+    //         else if (isHorizontal && ((point.x <= currentVertex.x && point.x >= prevVertex.x) || (point.x >= currentVertex.x && point.x <= prevVertex.x)))
+    //         {
+    //             segments.push_back({currentVertex, prevVertex});
+    //         }
+    //     }
+    //     endAt -= s;
+    // }
+    // return !segments.empty();
 }

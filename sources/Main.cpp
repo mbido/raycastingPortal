@@ -24,7 +24,7 @@
 #include "Game3D.hpp"
 #include <unistd.h>
 
-// #define RENDER_IN_3D
+#define RENDER_IN_3D
  
 int main() {
   static constexpr gf::Vector2i ScreenSize(1024, 576);
@@ -43,7 +43,7 @@ int main() {
  
   gf::ViewContainer views;
 
-  gf::ExtendView mainView(ViewCenter, ViewSize);
+  gf::FitView mainView(ViewCenter, ViewSize);
   views.addView(mainView);
  
   gf::ScreenView hudView;
