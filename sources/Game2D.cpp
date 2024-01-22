@@ -401,6 +401,8 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
     // int nbSupplementaryRays = 0;
 
     gf::Vector2f position = m_player->getPosition();
+    position.x = position.x + DELTA;
+    position.y = position.y - DELTA;
 
     // getting the vertices of the walls sorted by angle :
     std::vector<gf::Vector2i> sV = m_walls->getVertices();
