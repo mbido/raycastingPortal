@@ -10,49 +10,34 @@
 #include "Game3D.hpp"
 
 #define DELTA 0.00001
-#define RANGE 0.2
+#define RANGE 0.09
 
 // clamp function used for collisions
-float clamp3D(float min, float max, float value)
-{
-    if (value < min)
-        return min;
-    if (value > max)
-        return max;
-    return value;
+float clamp3D (float min, float max, float value) {
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
 }
-gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position)
-{
-    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y));
-    if (RANGE > distanceBetweenWallAndPlayer)
-    {
-        if (distanceBetweenWallAndPlayer == 0)
-            return gf::Vector2f(-1.0f, -1.0f);
-        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x - closestPointOfTheWall.x, p_position.y - closestPointOfTheWall.y);
+
+gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position) {
+    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y));
+    if (RANGE > distanceBetweenWallAndPlayer) {
+        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x-closestPointOfTheWall.x, p_position.y-closestPointOfTheWall.y);
         coordToAddToPos = (coordToAddToPos / distanceBetweenWallAndPlayer) * (RANGE - distanceBetweenWallAndPlayer);
         return coordToAddToPos;
     }
-    return gf::Vector2f(-1.0f, -1.0f);
+    return gf::Vector2f(0.0f, 0.0f);
 }
 
-gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position)
-{
+gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position) {
     gf::Vector2f closestPointOfTheWall = gf::Vector2f(0.0f, 0.0f);
 
-    std::vector<gf::Vector2i> vertices = wall.getVertices();
-    for (auto vertex1 : vertices)
-    {
-        for (auto vertex2 : vertices)
-        {
-            if (vertex1 != vertex2)
-            {
-                float x = clamp3D((float)vertex1.x, (float)vertex2.x, p_position.x);
-                float y = clamp3D((float)vertex1.y, (float)vertex2.y, p_position.y);
-                if ((p_position.x - x) * (p_position.x - x) + (p_position.y - y) * (p_position.y - y) < (p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y))
-                {
-                    closestPointOfTheWall = gf::Vector2f(x, y);
-                }
-            }
+    std::vector<gf::Vector2i> blocs = wall.getOccupiedCells();
+    for (auto bloc : blocs) {
+        float x = clamp3D((float) bloc.x, (float) bloc.x + 1, p_position.x);
+        float y = clamp3D((float) bloc.y, (float) bloc.y + 1, p_position.y);
+        if ((p_position.x-x)*(p_position.x-x) + (p_position.y-y)*(p_position.y-y) < (p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y)) {
+            closestPointOfTheWall = gf::Vector2f(x, y);
         }
     }
 
@@ -136,9 +121,7 @@ void Game3D::update(gf::Time dt)
 
     for (auto wall : m_walls->getWalls()) {
         gf::Vector2f newPos = checkingCollisionsForEachWall3D(getClosestPointOfWall3D(wall,m_player->getPosition()),m_player->getPosition());
-        if (newPos != gf::Vector2f(-1.0f, -1.0f)) {
-            m_player->setPosition(m_player->getPosition() + newPos);
-        }
+        m_player->setPosition(m_player->getPosition() + newPos);
     }
 }
 
