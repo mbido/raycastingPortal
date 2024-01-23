@@ -16,30 +16,38 @@
 #define RANGE 0.09
 
 // clamp function used for collisions
-float clamp (float min, float max, float value) {
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
+float clamp(float min, float max, float value)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
 }
 
-gf::Vector2f checkingCollisionsForEachWall(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position) {
-    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y));
-    if (RANGE > distanceBetweenWallAndPlayer) {
-        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x-closestPointOfTheWall.x, p_position.y-closestPointOfTheWall.y);
+gf::Vector2f checkingCollisionsForEachWall(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position)
+{
+    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y));
+    if (RANGE > distanceBetweenWallAndPlayer)
+    {
+        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x - closestPointOfTheWall.x, p_position.y - closestPointOfTheWall.y);
         coordToAddToPos = (coordToAddToPos / distanceBetweenWallAndPlayer) * (RANGE - distanceBetweenWallAndPlayer);
         return coordToAddToPos;
     }
     return gf::Vector2f(0.0f, 0.0f);
 }
 
-gf::Vector2f getClosestPointOfWall(Wall wall, gf::Vector2f p_position) {
+gf::Vector2f getClosestPointOfWall(Wall wall, gf::Vector2f p_position)
+{
     gf::Vector2f closestPointOfTheWall = gf::Vector2f(0.0f, 0.0f);
 
     std::vector<gf::Vector2i> blocs = wall.getOccupiedCells();
-    for (auto bloc : blocs) {
-        float x = clamp((float) bloc.x, (float) bloc.x + 1, p_position.x);
-        float y = clamp((float) bloc.y, (float) bloc.y + 1, p_position.y);
-        if ((p_position.x-x)*(p_position.x-x) + (p_position.y-y)*(p_position.y-y) < (p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y)) {
+    for (auto bloc : blocs)
+    {
+        float x = clamp((float)bloc.x, (float)bloc.x + 1, p_position.x);
+        float y = clamp((float)bloc.y, (float)bloc.y + 1, p_position.y);
+        if ((p_position.x - x) * (p_position.x - x) + (p_position.y - y) * (p_position.y - y) < (p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y))
+        {
             closestPointOfTheWall = gf::Vector2f(x, y);
         }
     }
@@ -76,10 +84,13 @@ void Game2D::update(gf::Time dt)
     m_windowSize = m_renderer.getSize();
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 
-    for (auto wall : m_walls->getWalls()) {
-        gf::Vector2f newPos = checkingCollisionsForEachWall(getClosestPointOfWall(wall,m_player->getPosition()),m_player->getPosition());
+    for (auto wall : m_walls->getWalls())
+    {
+        gf::Vector2f newPos = checkingCollisionsForEachWall(getClosestPointOfWall(wall, m_player->getPosition()), m_player->getPosition());
         m_player->setPosition(m_player->getPosition() + newPos);
     }
+
+    
 }
 
 gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_walls)
@@ -321,7 +332,7 @@ bool Game2D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
     else
     {
         if (a == 0) // !!! have to check if even possible
-            a = DELTA/2;
+            a = DELTA / 2;
         intersectionPoint = gf::Vector2f((start.y - b) / a, start.y);
     }
     start = visiblePoint;
@@ -402,6 +413,14 @@ void Game2D::castPortal(bool isFirstPortal)
     if (portal == NULL)
     {
         portal = new struct portal;
+        if (isFirstPortal)
+        {
+            m_firstPortal = portal;
+        }
+        else
+        {
+            m_secondPortal = portal;
+        }
     }
 
     // -- cast a ray to find the closest wall
@@ -423,7 +442,7 @@ void Game2D::castPortal(bool isFirstPortal)
         bool isPlayerUp = position.y < segment.first.y;
         if (isSegmentVertical)
         {
-            portal->position.x = (int)(portal->position.x + 0.5); // setting the position to the center of the tile
+            portal->position.y = (int)(portal->position.y) + 0.5; // setting the position to the center of the tile
             if (isPlayerLeft)
             {
                 portal->facing = 2;
@@ -435,7 +454,7 @@ void Game2D::castPortal(bool isFirstPortal)
         }
         else
         {
-            portal->position.y = (int)(portal->position.y + 0.5); // setting the position to the center of the tile
+            portal->position.x = (int)(portal->position.x) + 0.5; // setting the position to the center of the tile
             if (isPlayerUp)
             {
                 portal->facing = 3;
@@ -452,6 +471,8 @@ void Game2D::castPortal(bool isFirstPortal)
         portal->linkedPortal = otherPortal;
         otherPortal->linkedPortal = portal;
     }
+
+    std::cout << "portal position : (" << portal->position.x << ", " << portal->position.y << ")" << std::endl;
 }
 
 void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalSegment)
@@ -474,9 +495,25 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
         sortedVertices.push_back(gf::Vector2f(v.x, v.y));
     }
 
+    // adding vertices at begins and ends of portals
+    // if (m_firstPortal != NULL)
+    // {
+    //     gf::Vector2f startPortal1(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+    //     gf::Vector2f endPortal1(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+    //     sortedVertices.push_back(startPortal1);
+    //     sortedVertices.push_back(endPortal1);
+    // }
+    // if (m_secondPortal != NULL)
+    // {
+    //     gf::Vector2f startPortal2(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+    //     gf::Vector2f endPortal2(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+    //     sortedVertices.push_back(startPortal2);
+    //     sortedVertices.push_back(endPortal2);
+    // }
+
     // if we are in a portal, we add a vertex at every intersection between a segment and the line defined by the segment of the portal
     // then we remove every vertices that are before that line
-    if(isPortal)
+    if (isPortal)
     {
         // adding the vertices :
         std::set<std::pair<gf::Vector2i, gf::Vector2i>, PairComparator> seenSegments;
@@ -680,7 +717,7 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
             double angle = m_player->getAngle();
             if (angle == 0 || angle == gf::Pi || angle == 2 * gf::Pi || angle == -gf::Pi)
             {
-                angle += DELTA/2;
+                angle += DELTA / 2;
             }
             gf::Vector2f pos = m_player->getPosition();
             double a = -1 / std::tan(angle);
@@ -708,6 +745,39 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
     // render the player :
     m_player->render(m_renderer, m_scaleUnit);
+
+    // render the portals :
+    if (m_firstPortal != NULL)
+    {
+        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+        line[0].color = gf::Color::Cyan;
+        line[1].color = gf::Color::Cyan;
+        line[0].position = gf::Vector2f(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+        line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+
+        m_renderer.draw(line);
+        // std::cout << "first portal : (" << line[0].position.x << ", " << line[0].position.y << ") -> (" << line[1].position.x << ", " << line[1].position.y << ")" << std::endl;
+    }
+    // else
+    // {
+    //     std::cout << "first portal : NULL" << std::endl;
+    // }
+
+    if (m_secondPortal != NULL)
+    {
+        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+        line[0].color = gf::Color::Orange;
+        line[1].color = gf::Color::Orange;
+        line[0].position = gf::Vector2f(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0)) * m_scaleUnit;
+        line[1].position = gf::Vector2f(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0)) * m_scaleUnit;
+
+        m_renderer.draw(line);
+        // std::cout << "second portal : (" << line[0].position.x << ", " << line[0].position.y << ") -> (" << line[1].position.x << ", " << line[1].position.y << ")" << std::endl;
+    }
+    // else
+    // {
+    //     std::cout << "second portal : NULL" << std::endl;
+    // }
 
     // for (auto wall : m_walls->getWalls()) {
     //     gf::VertexArray line(gf::PrimitiveType::Lines, 2);

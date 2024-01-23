@@ -24,62 +24,63 @@
 #include "Game3D.hpp"
 #include <unistd.h>
 
-// #define RENDER_IN_3D
- 
-int main() {
+#define RENDER_IN_3D
+
+int main()
+{
   static constexpr gf::Vector2i ScreenSize(1024, 576);
   static constexpr gf::Vector2f ViewSize(1024.0f, 576.0f);
   static constexpr gf::Vector2f ViewCenter(512.0f, 278.0f);
- 
+
   // initialization
- 
+
   gf::Window window("Game", ScreenSize);
   window.setVerticalSyncEnabled(true);
   window.setFramerateLimit(0);
- 
+
   gf::RenderWindow renderer(window);
- 
+
   // views
- 
+
   gf::ViewContainer views;
 
   gf::FitView mainView(ViewCenter, ViewSize);
   views.addView(mainView);
- 
+
   gf::ScreenView hudView;
   views.addView(hudView);
- 
+
   views.setInitialFramebufferSize(ScreenSize);
- 
+
   // actions
- 
+
   gf::ActionContainer actions;
- 
+
   gf::Action closeWindowAction("Close window");
   closeWindowAction.addCloseControl();
   closeWindowAction.addKeycodeKeyControl(gf::Keycode::Escape);
   actions.addAction(closeWindowAction);
- 
+
   gf::Action fullscreenAction("Fullscreen");
   fullscreenAction.addKeycodeKeyControl(gf::Keycode::F);
   actions.addAction(fullscreenAction);
- 
+
   gf::Action leftAction("Left");
   leftAction.addScancodeKeyControl(gf::Scancode::A);
   leftAction.setContinuous();
   actions.addAction(leftAction);
- 
+
   gf::Action rightAction("Right");
   rightAction.addScancodeKeyControl(gf::Scancode::D);
   rightAction.setContinuous();
   actions.addAction(rightAction);
- 
+
   gf::Action upAction("Up");
   upAction.addScancodeKeyControl(gf::Scancode::W);
   upAction.addScancodeKeyControl(gf::Scancode::Up);
   upAction.setContinuous();
   actions.addAction(upAction);
- 
+
   gf::Action downAction("Down");
   downAction.addScancodeKeyControl(gf::Scancode::S);
   downAction.addScancodeKeyControl(gf::Scancode::Down);
@@ -90,21 +91,25 @@ int main() {
   lookLeftAction.addScancodeKeyControl(gf::Scancode::Left);
   lookLeftAction.setContinuous();
   actions.addAction(lookLeftAction);
- 
+
   gf::Action lookRightAction("LookRight");
   lookRightAction.addScancodeKeyControl(gf::Scancode::Right);
   lookRightAction.setContinuous();
   actions.addAction(lookRightAction);
- 
+
+  // mouse
+  gf::MouseButtonEvent mouseButtonEvent;
+  gf::Vector2f bluePortal(0.0f, 0.0f);
+  gf::Vector2f orangePortal(0.0f, 0.0f);
+
   // entitie
-  Player player(gf::Vector2f(1.5, 1.5), 0, 2.5);
- 
+  Player player(gf::Vector2f(1.5, 1.5), 0, 2);
+
   // map
   std::filesystem::path cheminRelatif("./sources/map/image.png");
   std::string cheminAbsolu = std::filesystem::absolute(cheminRelatif).string();
-  
 
-  //MapWalls map(cheminAbsolu);
+  // MapWalls map(cheminAbsolu);
   MapWalls map;
 
   /*const int nbRows = 10;
@@ -112,7 +117,7 @@ int main() {
 
   MapWalls map(nbRows, nbColumns);
 
-  
+
   map.setTile(1, 2, 1);
   map.setTile(1, 6, 1);
   map.setTile(2, 2, 1);
@@ -134,68 +139,77 @@ int main() {
   map.setTile(8, 6, 1);*/
 
   // game
-  
-  #ifdef RENDER_IN_3D
-  Game3D game(&player, &map, renderer);
-  #else
-  Game2D game(&player, &map, renderer);
-  #endif
 
- 
+#ifdef RENDER_IN_3D
+  Game3D game(&player, &map, renderer);
+#else
+  Game2D game(&player, &map, renderer);
+#endif
+
   // game loop
- 
+
   renderer.clear(gf::Color::Black);
- 
+
   gf::Clock clock;
 
-  gf::Clock fpsClock; 
+  gf::Clock fpsClock;
   int frameCount = 0;
 
-  while (window.isOpen()) {
+  while (window.isOpen())
+  {
 
     // 1. input
- 
+
     gf::Event event;
- 
-    while (window.pollEvent(event)) {
+
+    while (window.pollEvent(event))
+    {
       actions.processEvent(event);
       views.processEvent(event);
     }
- 
-    if (closeWindowAction.isActive()) {
+
+    if (closeWindowAction.isActive())
+    {
       window.close();
     }
- 
-    if (fullscreenAction.isActive()) {
+
+    if (fullscreenAction.isActive())
+    {
       window.toggleFullscreen();
     }
 
     gf::Vector2f direction(0.0f, 0.0f);
-    if (rightAction.isActive()) {
+    if (rightAction.isActive())
+    {
       direction += gf::Vector2f(1.0f, 0.0f);
     }
-    if (leftAction.isActive()) {
+    if (leftAction.isActive())
+    {
       direction += gf::Vector2f(-1.0f, 0.0f);
     }
-    if (upAction.isActive()) {
+    if (upAction.isActive())
+    {
       direction += gf::Vector2f(0.0f, -1.0f);
     }
-    if (downAction.isActive()) {
+    if (downAction.isActive())
+    {
       direction += gf::Vector2f(0.0f, 1.0f);
     }
     player.setVelocity(direction);
 
     float angularVelocity = 0.0f;
-    if (lookLeftAction.isActive()) {
+    if (lookLeftAction.isActive())
+    {
       angularVelocity -= gf::Pi / 2;
     }
-    if (lookRightAction.isActive()) {
+    if (lookRightAction.isActive())
+    {
       angularVelocity += gf::Pi / 2;
     }
     player.setAngularVelocity(angularVelocity);
- 
+
     // 2. update
- 
+
     gf::Time time = clock.restart();
 
     // // <-- We test the collisions here !
@@ -220,8 +234,8 @@ int main() {
     //   double currentAngle = player.getAngle();
     //   int currentIntXPart = (int) floorf(player.getPosition().x);
     //   int currentIntYPart = (int) floorf(player.getPosition().y);
-      
-    //   if (currentIntYPart == intYPartNextPos) //currentIntXPart != intXPartNextPos && 
+
+    //   if (currentIntYPart == intYPartNextPos) //currentIntXPart != intXPartNextPos &&
     //   {
     //     if (currentAngle < gf::Pi / 2 || currentAngle >= 3 * gf::Pi / 2) {
     //       nextCorrectDir.x += 2*sinf(currentAngle);
@@ -231,7 +245,7 @@ int main() {
     //     }
     //   }
 
-    //   if (currentIntXPart == intXPartNextPos) //currentIntYPart != intYPartNextPos && 
+    //   if (currentIntXPart == intXPartNextPos) //currentIntYPart != intYPartNextPos &&
     //   {
     //     if (currentAngle < gf::Pi) {
     //       nextCorrectDir.x += -2*cosf(currentAngle);
@@ -242,10 +256,6 @@ int main() {
     //   }
     //   player.setVelocity(nextCorrectDir);
     // }
-    
-
-     
-    
 
     // fps :
     // frameCount++;
@@ -260,26 +270,46 @@ int main() {
     //   frameCount = 0;
     // }
 
+    if (event.type == gf::EventType::MouseButtonPressed && (event.mouseButton.button == gf::MouseButton::Left || event.mouseButton.button == gf::MouseButton::Right))
+    {
+      mouseButtonEvent = event.mouseButton;
+      std::cout << "Mouse button pressed at (" << mouseButtonEvent.coords.x << ";" << mouseButtonEvent.coords.y << ")" << std::endl;
+      if (mouseButtonEvent.button == gf::MouseButton::Left)
+      {
+        // bluePortal = mouseButtonEvent.coords;
+        // std::cout << "Left button pressed" << std::endl;
+        game.castPortal(true);
+      }
+      else if (mouseButtonEvent.button == gf::MouseButton::Right)
+      {
+        // orangePortal = mouseButtonEvent.coords;
+        // std::cout << "Right button pressed" << std::endl;
+        game.castPortal(false);
+      }
+      // std::cout << "Player Position : (" << player.getPosition().x << ";" << player.getPosition().y << ")" << std::endl
+      //           << "Player Angle : " << player.getAngle() << std::endl
+      //           << "Player direction : (" << std::cos(player.getAngle()) << ";" << std::sin(player.getAngle()) << ")" << std::endl;
+    }
+
     game.update(time);
- 
+
     // 3. draw
- 
+
     renderer.clear();
 
-    #ifdef RENDER_IN_3D
+#ifdef RENDER_IN_3D
     renderer.setView(mainView);
     game.render();
-    #else
+#else
     renderer.setView(hudView);
     // game.render(true, std::make_pair(gf::Vector2i(3, 2), gf::Vector2i(3, 3)));
     game.render();
-    #endif
-
+#endif
 
     renderer.display();
- 
+
     actions.reset();
   }
- 
+
   return 0;
 }

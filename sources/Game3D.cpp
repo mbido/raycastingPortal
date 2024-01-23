@@ -21,36 +21,40 @@ float clamp3D(float min, float max, float value)
         return max;
     return value;
 }
-gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position) {
-    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y));
-    if (RANGE > distanceBetweenWallAndPlayer) {
-        if (distanceBetweenWallAndPlayer == 0) return gf::Vector2f(0.0f,0.0f);
-        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x-closestPointOfTheWall.x, p_position.y-closestPointOfTheWall.y);
+gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position)
+{
+    float distanceBetweenWallAndPlayer = std::sqrt((p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y));
+    if (RANGE > distanceBetweenWallAndPlayer)
+    {
+        if (distanceBetweenWallAndPlayer == 0)
+            return gf::Vector2f(0.0f, 0.0f);
+        gf::Vector2f coordToAddToPos = gf::Vector2f(p_position.x - closestPointOfTheWall.x, p_position.y - closestPointOfTheWall.y);
         coordToAddToPos = (coordToAddToPos / distanceBetweenWallAndPlayer) * (RANGE - distanceBetweenWallAndPlayer);
         return coordToAddToPos;
     }
     return gf::Vector2f(0.0f, 0.0f);
 }
 
-gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position) {
+gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position)
+{
     gf::Vector2f closestPointOfTheWall = gf::Vector2f(0.0f, 0.0f);
 
     std::vector<gf::Vector2i> blocs = wall.getWallCells();
 
-    for (auto bloc : blocs) {
-        float x = clamp3D((float) bloc.x, (float) bloc.x + 1, p_position.x);
-        float y = clamp3D((float) bloc.y, (float) bloc.y + 1, p_position.y);
-        float distPlayerClampedPos = (p_position.x-x)*(p_position.x-x) + (p_position.y-y)*(p_position.y-y);
-        float distPlayerCurrClosestPos = (p_position.x-closestPointOfTheWall.x)*(p_position.x-closestPointOfTheWall.x) + (p_position.y-closestPointOfTheWall.y)*(p_position.y-closestPointOfTheWall.y);
-        
-        if (distPlayerClampedPos <= distPlayerCurrClosestPos) {
+    for (auto bloc : blocs)
+    {
+        float x = clamp3D((float)bloc.x, (float)bloc.x + 1, p_position.x);
+        float y = clamp3D((float)bloc.y, (float)bloc.y + 1, p_position.y);
+        float distPlayerClampedPos = (p_position.x - x) * (p_position.x - x) + (p_position.y - y) * (p_position.y - y);
+        float distPlayerCurrClosestPos = (p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y);
+
+        if (distPlayerClampedPos <= distPlayerCurrClosestPos)
+        {
             closestPointOfTheWall = gf::Vector2f(x, y);
         }
     }
     return closestPointOfTheWall;
 }
-
-
 
 struct PairComparator
 {
@@ -127,8 +131,9 @@ void Game3D::update(gf::Time dt)
     m_windowSize = m_renderer.getSize();
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 
-    for (auto wall : m_walls->getWalls()) {
-        gf::Vector2f newPos = checkingCollisionsForEachWall3D(getClosestPointOfWall3D(wall,m_player->getPosition()),m_player->getPosition());
+    for (auto wall : m_walls->getWalls())
+    {
+        gf::Vector2f newPos = checkingCollisionsForEachWall3D(getClosestPointOfWall3D(wall, m_player->getPosition()), m_player->getPosition());
         m_player->setPosition(m_player->getPosition() + newPos);
     }
 }
@@ -297,7 +302,6 @@ gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_
     return position + 100 * direction;
 }
 
-
 /**
  * \brief Determines if a segment is visible to the player.
  *
@@ -460,7 +464,6 @@ bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vecto
 //     }
 // }
 
-
 gf::Vector2f getIntersectionForPortals3D(std::pair<gf::Vector2i, gf::Vector2i> portalSegment, std::pair<gf::Vector2i, gf::Vector2i> segmentToIntersect, gf::Vector2f playerPosition)
 {
     bool isPortalVertical = std::abs(portalSegment.first.x - portalSegment.second.x) < DELTA;
@@ -480,9 +483,6 @@ gf::Vector2f getIntersectionForPortals3D(std::pair<gf::Vector2i, gf::Vector2i> p
     }
     return gf::Vector2f(0, 0);
 }
-
-
-
 
 void removeVerticesBefore3D(std::vector<gf::Vector2f> &vertices, std::pair<gf::Vector2i, gf::Vector2i> portalSegment, gf::Vector2f playerPosition)
 {
@@ -541,6 +541,14 @@ void Game3D::castPortal(bool isFirstPortal)
     if (portal == NULL)
     {
         portal = new struct portal;
+        if (isFirstPortal)
+        {
+            m_firstPortal = portal;
+        }
+        else
+        {
+            m_secondPortal = portal;
+        }
     }
 
     // -- cast a ray to find the closest wall
@@ -562,7 +570,7 @@ void Game3D::castPortal(bool isFirstPortal)
         bool isPlayerUp = position.y < segment.first.y;
         if (isSegmentVertical)
         {
-            portal->position.x = (int)(portal->position.x + 0.5); // setting the position to the center of the tile
+            portal->position.y = (int)(portal->position.y) + 0.5; // setting the position to the center of the tile
             if (isPlayerLeft)
             {
                 portal->facing = 2;
@@ -574,7 +582,7 @@ void Game3D::castPortal(bool isFirstPortal)
         }
         else
         {
-            portal->position.y = (int)(portal->position.y + 0.5); // setting the position to the center of the tile
+            portal->position.x = (int)(portal->position.x) + 0.5; // setting the position to the center of the tile
             if (isPlayerUp)
             {
                 portal->facing = 3;
@@ -604,11 +612,11 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
     // render the rays :
     gf::Vector2f position = m_player->getPosition();
     // we offset the position if needed
-    if((int)(position.x * 1000) == position.x * 1000) 
+    if ((int)(position.x * 1000) == position.x * 1000)
     {
         position.x = position.x + DELTA;
     }
-    if((int)(position.y * 1000) == position.y * 1000) 
+    if ((int)(position.y * 1000) == position.y * 1000)
     {
         position.y = position.y - DELTA;
     }
@@ -675,7 +683,7 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
         gf::Vector2f direction = gf::normalize(gf::Vector2f(sortedVertices[i].x - position.x, sortedVertices[i].y - position.y));
 
         gf::Vector2f endPoint;
-        
+
         if (isPortal)
         {
             endPoint = castRay(position, direction, m_walls, portalSegment);
@@ -906,6 +914,110 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
             triangle[1].position = column2[0].position;
             triangle[2].position = column2[1].position;
             m_renderer.draw(triangle);
+        }
+    }
+
+    // render the portals :
+    // a rectangle for now
+    gf::Vector2i viewSize = m_renderer.getView().getSize();
+    double viewWidth = viewSize.x;
+    double viewHeight = viewSize.y;
+    if (m_firstPortal != NULL)
+    {
+
+        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+        triangle[0].color = gf::Color::Cyan;
+        triangle[1].color = gf::Color::Cyan;
+        triangle[2].color = gf::Color::Cyan;
+
+        gf::Vector2f startPortal(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+        gf::Vector2f endPortal(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+
+        // if one of the end point or start point is behind the player, we do not draw it
+        if (getVisibleSegment(startPortal, endPortal, position, m_player->getAngle(), -1 / std::tan(m_player->getAngle()), position.y - (-1 / std::tan(m_player->getAngle())) * position.x))
+        {
+
+            double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
+            double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
+
+            double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
+            double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
+
+            double realDistanceStart = falseDistanceStart * std::cos(startAngle - m_player->getAngle());
+            double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - m_player->getAngle());
+
+            double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
+            double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
+
+            double xPosStart = std::tan(startAngle - m_player->getAngle()) * viewWidth / 2;
+            double xPosEnd = std::tan(endAngle - m_player->getAngle()) * viewWidth / 2;
+
+            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
+            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+            m_renderer.draw(triangle);
+
+            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
+            m_renderer.draw(triangle);
+
+            // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+            // line[0].color = gf::Color::Cyan;
+            // line[1].color = gf::Color::Cyan;
+            // line[0].position = gf::Vector2f(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+            // line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+
+            // m_renderer.draw(line);
+        }
+    }
+
+    if (m_secondPortal != NULL)
+    {
+
+        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+        triangle[0].color = gf::Color::Orange;
+        triangle[1].color = gf::Color::Orange;
+        triangle[2].color = gf::Color::Orange;
+
+        gf::Vector2f startPortal(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+        gf::Vector2f endPortal(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+
+        if (getVisibleSegment(startPortal, endPortal, position, m_player->getAngle(), -1 / std::tan(m_player->getAngle()), position.y - (-1 / std::tan(m_player->getAngle())) * position.x))
+        {
+
+            double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
+            double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
+
+            double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
+            double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
+
+            double realDistanceStart = falseDistanceStart * std::cos(startAngle - m_player->getAngle());
+            double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - m_player->getAngle());
+
+            double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
+            double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
+
+            double xPosStart = std::tan(startAngle - m_player->getAngle()) * viewWidth / 2;
+            double xPosEnd = std::tan(endAngle - m_player->getAngle()) * viewWidth / 2;
+
+            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
+            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+            m_renderer.draw(triangle);
+
+            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
+            m_renderer.draw(triangle);
+
+            // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+            // line[0].color = gf::Color::Cyan;
+            // line[1].color = gf::Color::Cyan;
+            // line[0].position = gf::Vector2f(m_secondPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+            // line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+
+            // m_renderer.draw(line);
         }
     }
 }
