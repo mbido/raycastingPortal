@@ -13,7 +13,7 @@
 
 #define DELTA 0.00001
 #define RENDER_BEHIND_PLAYER false
-#define RANGE 0.09
+#define RANGE 0.1
 
 // clamp function used for collisions
 float clamp(float min, float max, float value)
