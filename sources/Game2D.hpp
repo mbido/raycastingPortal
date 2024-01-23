@@ -17,10 +17,12 @@ class Game2D {
             m_windowSize = m_renderer.getSize();
             m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
         }
-
+        void castPortal(bool isFirstPortal);
         void update(gf::Time dt);
         void render(bool isPortal = false, std::pair<gf::Vector2i, gf::Vector2i> portalSegment = std::make_pair(gf::Vector2i(0, 0), gf::Vector2i(0, 0)));
     private:
+        struct portal *m_firstPortal;
+        struct portal *m_secondPortal;
         Player *m_player;
         MapWalls *m_walls;
         gf::RenderWindow& m_renderer;

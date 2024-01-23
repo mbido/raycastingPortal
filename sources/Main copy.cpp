@@ -268,10 +268,12 @@ int main() {
 
     #ifdef RENDER_IN_3D
     renderer.setView(mainView);
-    game.render();
+    game.render(true, std::make_pair(gf::Vector2i(3, 2), gf::Vector2i(3, 3)));
+    // game.render();
     #else
     renderer.setView(hudView);
     // game.render(true, std::make_pair(gf::Vector2i(3, 2), gf::Vector2i(3, 3)));
+    // game.render(true, std::make_pair(gf::Vector2i(2, 2), gf::Vector2i(3, 2)));
     game.render();
     #endif
 

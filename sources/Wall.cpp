@@ -188,6 +188,10 @@
 //     // std::cout << "setSortedVertices, vertices.size() = " << vertices.size() << std::endl;
 // }
 
+std::vector<gf::Vector2i> Wall::getWallCells() {
+    return wallCells;
+}
+
 Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupiedCells, std::vector<std::size_t> perimetersSize) : wallCells(occupiedCells), vertices(vertices), perimetersSize(perimetersSize)
 {
     std::cout << "Wall creation vertices: " << std::endl;

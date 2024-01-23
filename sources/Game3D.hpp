@@ -11,20 +11,32 @@ struct castResult {
     int tileY;
     int tileSideHit; // 0 ->right, 1 -> bottom, 2 -> left, 3 -> top, -1 -> did not hit a wall
 };
+
+struct portal {
+    gf::Vector2f position;
+    int facing; // 0 ->right, 1 -> bottom, 2 -> left, 3 -> top
+    struct portal *linkedPortal = NULL;
+    double width = 0.3f;
+};
+
 class Game3D {
     public:
         Game3D(Player *player, MapWalls *walls, gf::RenderWindow& renderer)
         : m_player(player)
         , m_walls(walls)
         , m_renderer(renderer)
+        , m_firstPortal(NULL)
+        , m_secondPortal(NULL)
         {
             m_windowSize = m_renderer.getSize();
             m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
         }
-
+        void castPortal(bool isFirstPortal);
         void update(gf::Time dt);
         void render(bool isPortal = false, std::pair<gf::Vector2i, gf::Vector2i> portalSegment = std::make_pair(gf::Vector2i(0, 0), gf::Vector2i(0, 0)));
     private:
+        struct portal *m_firstPortal;
+        struct portal *m_secondPortal;
         Player *m_player;
         MapWalls *m_walls;
         gf::RenderWindow& m_renderer;

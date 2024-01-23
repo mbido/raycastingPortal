@@ -7,6 +7,7 @@
 #include "Player.hpp"
 #include "MapWalls.hpp"
 #include "Game2D.hpp"
+#include "Game3D.hpp"
 
 #include <iomanip>
 
@@ -392,6 +393,67 @@ void removeVerticesBefore(std::vector<gf::Vector2f> &vertices, std::pair<gf::Vec
     }
 }
 
+void Game2D::castPortal(bool isFirstPortal)
+{
+    struct portal *portal = isFirstPortal ? m_firstPortal : m_secondPortal;
+    struct portal *otherPortal = isFirstPortal ? m_secondPortal : m_firstPortal;
+
+    // if the portal is not set, we set it
+    if (portal == NULL)
+    {
+        portal = new struct portal;
+    }
+
+    // -- cast a ray to find the closest wall
+    gf::Vector2f position = m_player->getPosition();
+    gf::Vector2f direction = gf::normalize(gf::Vector2f(std::cos(m_player->getAngle()), std::sin(m_player->getAngle())));
+    gf::Vector2f hitPoint = castRay2D(position, direction, m_walls);
+
+    // -- set the portal position
+    portal->position = hitPoint;
+
+    // -- set the portal facing
+    // getting the segment of the wall hit by the ray
+    std::vector<std::pair<gf::Vector2i, gf::Vector2i>> segments;
+    if (m_walls->getSegments(hitPoint, segments))
+    {
+        auto segment = segments[0];
+        bool isSegmentVertical = std::abs(segment.first.x - segment.second.x) < DELTA;
+        bool isPlayerLeft = position.x < segment.first.x;
+        bool isPlayerUp = position.y < segment.first.y;
+        if (isSegmentVertical)
+        {
+            portal->position.x = (int)(portal->position.x + 0.5); // setting the position to the center of the tile
+            if (isPlayerLeft)
+            {
+                portal->facing = 2;
+            }
+            else
+            {
+                portal->facing = 0;
+            }
+        }
+        else
+        {
+            portal->position.y = (int)(portal->position.y + 0.5); // setting the position to the center of the tile
+            if (isPlayerUp)
+            {
+                portal->facing = 3;
+            }
+            else
+            {
+                portal->facing = 1;
+            }
+        }
+    }
+    // if the other portal is already set, we link the two portals
+    if (otherPortal != NULL)
+    {
+        portal->linkedPortal = otherPortal;
+        otherPortal->linkedPortal = portal;
+    }
+}
+
 void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalSegment)
 {
 
@@ -647,18 +709,18 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
     // render the player :
     m_player->render(m_renderer, m_scaleUnit);
 
-    for (auto wall : m_walls->getWalls()) {
-        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-        line[0].position = getClosestPointOfWall(wall, m_player->getPosition()) * m_scaleUnit;
-        line[1].position = m_player->getPosition() * m_scaleUnit;
-        line[0].color = gf::Color::Cyan;
-        line[1].color = gf::Color::Cyan;
-        m_renderer.draw(line);
+    // for (auto wall : m_walls->getWalls()) {
+    //     gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+    //     line[0].position = getClosestPointOfWall(wall, m_player->getPosition()) * m_scaleUnit;
+    //     line[1].position = m_player->getPosition() * m_scaleUnit;
+    //     line[0].color = gf::Color::Cyan;
+    //     line[1].color = gf::Color::Cyan;
+    //     m_renderer.draw(line);
 
-        gf::CircleShape circle(m_scaleUnit / 16);
-        circle.setPosition(line[0].position);
-        circle.setColor(gf::Color::White);
-        circle.setAnchor(gf::Anchor::Center);
-        m_renderer.draw(circle);
-    }
+    //     gf::CircleShape circle(m_scaleUnit / 16);
+    //     circle.setPosition(line[0].position);
+    //     circle.setColor(gf::Color::White);
+    //     circle.setAnchor(gf::Anchor::Center);
+    //     m_renderer.draw(circle);
+    // }
 }
