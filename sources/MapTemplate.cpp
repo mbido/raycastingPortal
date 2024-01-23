@@ -14,6 +14,7 @@ void MapTemplate::init()
     std::map<int, std::vector<gf::Vector2i>> cellsWalls;
     std::size_t nbWall = 0;
 
+
     for (int i = 0; i < m_nbRows; ++i)
     {
         for (int j = 0; j < m_nbColumns; ++j)
@@ -60,6 +61,22 @@ void MapTemplate::init()
                     ++nbWall;
                 }
             }
+
+            // If the pixel is green
+            else if (static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 255 && static_cast<int>(pixelColor.b) == 0)
+            {
+                m_map[i][j] = 2;
+                m_begin = gf::Vector2i(i,j);
+            }
+
+            // If the pixel is red
+            else if (static_cast<int>(pixelColor.r) == 255 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0)
+            {
+                m_map[i][j] = 3;
+                m_arrival = gf::Vector2i(i,j);
+            }
+
+
         }
     }
 

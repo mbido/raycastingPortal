@@ -50,7 +50,13 @@ class MapTemplate {
             return m_walls;
         }
 
-        
+        gf::Vector2i getBeginCell() const {
+            return m_begin;
+        }
+
+        gf::Vector2i getArrivalCell() const {
+            return m_arrival;
+        }
 
         void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
 
@@ -62,6 +68,9 @@ class MapTemplate {
         int m_nbColumns;
         int **m_map;
         std::vector<Wall> m_walls;
+        gf::Vector2i m_begin;
+        gf::Vector2i m_arrival;
+
     
     private :
         /**
