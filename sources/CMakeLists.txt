@@ -15,6 +15,10 @@ add_executable(mygame
   Game3D.cpp
   Wall.cpp
   CompareVerticesAngle.cpp
+  GameHub.cpp
+  MenuScene.cpp
+  SelectLevelScene.cpp
+  LevelScene.cpp
 )
 
 target_link_libraries(mygame
