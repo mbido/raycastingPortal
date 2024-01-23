@@ -13,6 +13,7 @@
 #include <gf/Math.h>
 
 #include <gf/Texture.h>
+#include <gf/Cursor.h>
 #include <filesystem>
 
 #include <cstdio>
@@ -39,6 +40,13 @@ int main()
   window.setFramerateLimit(0);
 
   gf::RenderWindow renderer(window);
+
+  #ifdef RENDER_IN_3D
+  gf::Cursor cursor(gf::Cursor::Type::Cross);
+  window.setMouseCursor(cursor);
+  window.setMouseCursorGrabbed(true);
+  // window.setMouseCursorVisible(false);
+  #endif
 
   // views
 
@@ -101,6 +109,7 @@ int main()
   gf::MouseButtonEvent mouseButtonEvent;
   gf::Vector2f bluePortal(0.0f, 0.0f);
   gf::Vector2f orangePortal(0.0f, 0.0f);
+  gf::Vector2f mouseCursorCurr = {-1.0f, -1.0f}, mouseCursorNext = {-1.0f, -1.0f};
 
   // entitie
   Player player(gf::Vector2f(1.5, 1.5), 0, 2);
@@ -198,6 +207,37 @@ int main()
     player.setVelocity(direction);
 
     float angularVelocity = 0.0f;
+    float yaw = 0.0f, pitch = 0.0f, sensivity = 0.1f;
+
+    if(mouseCursorCurr.x == -1 && mouseCursorCurr.y == -1){
+      mouseCursorCurr = event.mouseCursor.coords;
+    }else{
+      mouseCursorNext = event.mouseCursor.coords;
+      gf::Vector2f mouseDelta = mouseCursorNext - mouseCursorCurr;
+      yaw = mouseDelta.x * sensivity;
+      pitch = mouseDelta.y * sensivity;
+
+      pitch = std::clamp(pitch, -89.0f, 89.0f);
+
+      if(yaw < 0 && mouseCursorCurr.x != mouseCursorNext.x){
+        // std::cout << "Look at left" << std::endl;
+        angularVelocity -= gf::Pi / 2;
+      }
+      if(yaw > 0 && mouseCursorCurr.x != mouseCursorNext.x){
+        angularVelocity += gf::Pi / 2;
+        // std::cout << "Look at right" << std::endl;
+      }
+      // if(mouseCursorNext.x == mouseCursorCurr.x){
+      //   std::cout << "Static" << std::endl;
+      // }
+
+      // std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
+      //           << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl
+      //           << "Mouse delta : (" << mouseDelta.x << ";" << mouseDelta.y << ")" << std::endl
+      //           << "Yaw : " << yaw << std::endl
+      //           << "Pitch : " << pitch << std::endl;
+      mouseCursorCurr = mouseCursorNext;
+    }
     if (lookLeftAction.isActive())
     {
       angularVelocity -= gf::Pi / 2;
