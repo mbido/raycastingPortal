@@ -1,39 +1,50 @@
 #include <gf/Action.h>
 #include <gf/Clock.h>
 #include <gf/Color.h>
+#include <gf/Cursor.h>
 #include <gf/EntityContainer.h>
 #include <gf/Event.h>
+#include <gf/GameManager.h>
+#include <gf/Math.h>
+#include <gf/RenderTarget.h>
 #include <gf/RenderWindow.h>
+#include <gf/Shapes.h>
+#include <gf/Texture.h>
+#include <gf/Vector.h>
 #include <gf/ViewContainer.h>
 #include <gf/Views.h>
 #include <gf/Window.h>
-#include <gf/Shapes.h>
-#include <gf/Vector.h>
-#include <gf/RenderTarget.h>
-#include <gf/Math.h>
-
-#include <gf/Texture.h>
-#include <gf/Cursor.h>
-#include <filesystem>
 
 #include <cstdio>
-
-#include "Player.hpp"
-#include "MapTemplate.hpp"
-#include "MapWalls.hpp"
-#include "Game2D.hpp"
-#include "Game3D.hpp"
+#include <cstdlib>
+#include <filesystem>
 #include <unistd.h>
 
-#define RENDER_IN_3D
+#include "GameHub.hpp"
+#include "Game2D.hpp"
+#include "Game3D.hpp"
+#include "MapTemplate.hpp"
+#include "MapWalls.hpp"
+#include "Player.hpp"
 
-int main()
+//#define RENDER_IN_3D
+//#define WORKING_ON_SCENES
+
+int main() 
 {
+
+#ifdef WORKING_ON_SCENES
+
+  gh::GameHub hub;
+  hub.run();
+
+#else
+
+  // initialization
+
   static constexpr gf::Vector2i ScreenSize(1024, 576);
   static constexpr gf::Vector2f ViewSize(1024.0f, 576.0f);
   static constexpr gf::Vector2f ViewCenter(512.0f, 278.0f);
-
-  // initialization
 
   gf::Window window("Game", ScreenSize);
   window.setVerticalSyncEnabled(true);
@@ -41,12 +52,14 @@ int main()
 
   gf::RenderWindow renderer(window);
 
-  #ifdef RENDER_IN_3D
+#ifdef RENDER_IN_3D
+
   gf::Cursor cursor(gf::Cursor::Type::Cross);
   window.setMouseCursor(cursor);
   window.setMouseCursorGrabbed(true);
   // window.setMouseCursorVisible(false);
-  #endif
+
+#endif
 
   // views
 
@@ -150,9 +163,13 @@ int main()
   // game
 
 #ifdef RENDER_IN_3D
+
   Game3D game(&player, &map, renderer);
+
 #else
+
   Game2D game(&player, &map, renderer);
+
 #endif
 
   // game loop
@@ -252,51 +269,6 @@ int main()
 
     gf::Time time = clock.restart();
 
-    // // <-- We test the collisions here !
-    // float nextAngle = player.getAngle() + angularVelocity * time.asSeconds();
-
-    // gf::Rotation nextRotator(nextAngle + gf::Pi / 2);
-    // gf::Vector2f nextNewVelocity = gf::transform(nextRotator, direction);
-
-    // if (nextNewVelocity != gf::vec(0.0f, 0.0f)) {
-    //   nextNewVelocity = gf::normalize(nextNewVelocity);
-    // }
-
-    // gf::Vector2f nextPosition = player.getPosition() + (nextNewVelocity * time.asSeconds());
-
-    // int intXPartNextPos = (int) floorf(nextPosition.x);
-    // int intYPartNextPos = (int) floorf(nextPosition.y);
-    // gf::Vector2f nextCorrectDir = gf::Vector2f(0.0f,1.0f);
-
-    // if (map.getTile(intXPartNextPos,intYPartNextPos) != 0)
-    // {
-    //   // In a wall or outside of the map (same treatment)
-    //   double currentAngle = player.getAngle();
-    //   int currentIntXPart = (int) floorf(player.getPosition().x);
-    //   int currentIntYPart = (int) floorf(player.getPosition().y);
-
-    //   if (currentIntYPart == intYPartNextPos) //currentIntXPart != intXPartNextPos &&
-    //   {
-    //     if (currentAngle < gf::Pi / 2 || currentAngle >= 3 * gf::Pi / 2) {
-    //       nextCorrectDir.x += 2*sinf(currentAngle);
-    //     }
-    //     else {
-    //       nextCorrectDir.x += -2*sinf(currentAngle);
-    //     }
-    //   }
-
-    //   if (currentIntXPart == intXPartNextPos) //currentIntYPart != intYPartNextPos &&
-    //   {
-    //     if (currentAngle < gf::Pi) {
-    //       nextCorrectDir.x += -2*cosf(currentAngle);
-    //     }
-    //     else {
-    //       nextCorrectDir.x += 2*cosf(currentAngle);
-    //     }
-    //   }
-    //   player.setVelocity(nextCorrectDir);
-    // }
-
     // fps :
     // frameCount++;
     // if (fpsClock.getElapsedTime() >= gf::seconds(1.0f)) {
@@ -338,18 +310,24 @@ int main()
     renderer.clear();
 
 #ifdef RENDER_IN_3D
+
     renderer.setView(mainView);
     game.render();
+
 #else
+
     renderer.setView(hudView);
     // game.render(true, std::make_pair(gf::Vector2i(3, 2), gf::Vector2i(3, 3)));
     game.render();
+
 #endif
 
     renderer.display();
 
     actions.reset();
   }
+
+#endif
 
   return 0;
 }
