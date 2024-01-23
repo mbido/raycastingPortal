@@ -70,7 +70,7 @@ void Player::render(gf::RenderWindow& renderer, int sizeUnit){
     circle.setAnchor(gf::Anchor::Center);
     renderer.draw(circle);
 
-    gf::CircleShape range(sizeUnit / 5);
+    gf::CircleShape range(0.09);
     range.setPosition(m_position * sizeUnit);
     range.setColor(gf::Color::Transparent);
     range.setOutlineColor(gf::Color::Cyan);
