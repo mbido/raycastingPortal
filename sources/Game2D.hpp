@@ -13,6 +13,8 @@ class Game2D {
         : m_player(player)
         , m_walls(walls)
         , m_renderer(renderer)
+        , m_firstPortal(NULL)
+        , m_secondPortal(NULL)
         {
             m_windowSize = m_renderer.getSize();
             m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
