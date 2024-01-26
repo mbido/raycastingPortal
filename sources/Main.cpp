@@ -27,8 +27,8 @@
 #include "MapWalls.hpp"
 #include "Player.hpp"
 
-//#define RENDER_IN_3D
-//#define WORKING_ON_SCENES
+#define RENDER_IN_3D
+// #define WORKING_ON_SCENES
 
 int main() 
 {
@@ -54,9 +54,11 @@ int main()
 
 #ifdef RENDER_IN_3D
 
-  gf::Cursor cursor(gf::Cursor::Type::Cross);
-  window.setMouseCursor(cursor);
-  window.setMouseCursorGrabbed(true);
+  // gf::Cursor cursor(gf::Cursor::Type::Cross);
+  // window.setMouseCursor(cursor);
+  // window.setMouseCursorGrabbed(true);
+  
+  window.setMouseRelative(true);
   // window.setMouseCursorVisible(false);
 
 #endif
@@ -238,10 +240,10 @@ int main()
 
       if(yaw < 0 && mouseCursorCurr.x != mouseCursorNext.x){
         // std::cout << "Look at left" << std::endl;
-        angularVelocity -= gf::Pi / 2;
+        angularVelocity -= (gf::Pi / 2) * (1 + std::abs(yaw));
       }
       if(yaw > 0 && mouseCursorCurr.x != mouseCursorNext.x){
-        angularVelocity += gf::Pi / 2;
+        angularVelocity += (gf::Pi / 2) * (1 + std::abs(yaw));
         // std::cout << "Look at right" << std::endl;
       }
       // if(mouseCursorNext.x == mouseCursorCurr.x){
