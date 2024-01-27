@@ -38,8 +38,55 @@ Il a pour but de nous faire découvrir le monde du développement de jeux
 vidéo en nous faisant réaliser un jeu vidéo en C++ avec la bibliothèque 
 GF.
 
+\clearpage
+
 \section{Besoins et objectifs du projet}
 \subsection{Contexte}
+
+\paragraph{Pour les graphismes}
+\paragraph{}
+Dans le début des années 90, la société \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software} a commencé à faire
+des expérimentations dans le domaine des graphismes 3D, qui était jusque-là, presque uniquement utilisés dans les simulateurs de vols
+comme \href{https://fr.wikipedia.org/wiki/Wing_Commander_(jeu_vid%C3%A9o)}{Wing Commander} ou \href{https://en.wikipedia.org/wiki/Knights_of_the_Sky}{Knights of the Sky}
+qui sont tous les deux sortis en 1990. A cause de la puissance des ordinateurs de l'époque, il était difficile de faire des jeux
+d'action en 3D et rapide. C'est pourquoi \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} a eu l'idée de faire un moteur
+en créant les graphismes grâce à la technique du \href{https://fr.wikipedia.org/wiki/Raycasting}{raycasting}. Cette technique consiste
+à ne calculer que les surfaces visibles par le joueur plutôt que toutes celles qui l'entourent. Au bout de six semaines il abouti 
+à un moteur 3D qui utilise des sprites en 2D pour représenter les entités du jeu. Ce moteur a été utilisé pour le jeu 
+\href{https://fr.wikipedia.org/wiki/Hovertank_3D}{Hovertank 3D} publié en avril 1991.
+En automne 1991, alors que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} et \href{https://fr.wikipedia.org/wiki/John_Romero}{John Romero}
+terminent le moteur de \href{https://en.wikipedia.org/wiki/Commander_Keen_in_Goodbye,_Galaxy}{Commander Keen in Goodbye, Galaxy}, 
+John Carmack entend parler d'un jeu de rôle développé par \href{https://fr.wikipedia.org/wiki/Looking_Glass_Studios}{Blue Sky Productions}
+dénommé \href{https://fr.wikipedia.org/wiki/Ultima_Underworld}{Ultima Underworld}. Leurs créateurs ont réussi à créer un moteur 
+permmettant de faire des graphismes 3D et avec des textures, sans les restrictions du moteur de Hovertank 3D.
+John Carmack décide alors d'améliorer son moteur pour, comme celui d'Ultima Underworld, pourra bénéficier
+d'un mapping de textures sans pour autant en sacrifier les performances.
+Après six semaines de travail, il abouti a ce nouveau moteur 3D qui est utilisé pour créer
+un nouveau jeu pour Softdisk, \href{https://fr.wikipedia.org/wiki/Catacomb_3D}{Catacomb 3D}, publié en novembre 1991.
+Après la découverte de ce dernier jeu, \href{https://fr.wikipedia.org/wiki/Scott_Miller_(programmeur)}{Scott Miller} de la socitété
+Apogee pousse l'équipe de développement à créer un jeu d'action en 3D en shareware. C'est ainsi que le début du projet de
+\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}, qui est un remake de \href{https://fr.wikipedia.org/wiki/Castle_Wolfenstein}{Castle Wolfenstein}
+en 3D, a commencé. Publié le 5 mai 1992 sur PC, ce jeu a été un succès et a été le premier jeu de tir à la première personne qui a popularisé le genre.
+Il a initié les jeux de tir 2.5D et a été le précurseur de \href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} et
+\href{https://fr.wikipedia.org/wiki/Quake}{Quake}.
+% Dans le début des années 90, un projet de jeu vidéo nommé \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}
+% a commencé à voir le jour. Il s'agit d'un jeu de tir à la première personne
+% qui a été développé par \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software} et publié par
+% \href{https://fr.wikipedia.org/wiki/Apogee_Software}{Apogee Software} le 5 mai 1992 sur PC.
+% Ce jeu a été un succès et a été le premier jeu de tir à la première personne qui a popularisé le genre.
+% Il a initié les jeux de tir 2.5D et a été le précurseur de \href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} et
+% \href{https://fr.wikipedia.org/wiki/Quake}{Quake}.
+
+\paragraph{Pour le système de jeu}
+\paragraph{}
+En 2007, la société \href{https://fr.wikipedia.org/wiki/Valve_Corporation}{Valve Corporation} a publié un jeu vidéo nommé
+\href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal} qui est un 
+jeu de réflexion à la première personne. Le joueur possède un générateur de portail qui lui permet de créer deux portails distincts,
+l'un orange, l'autre blue sur des surfaces planes. Le joueur peut passer à travers ces portails et ainsi se déplacer dans l'espace
+tout en conservant sa vitesse de déplacement. Le but du jeu est de résoudre des énigmes en utilisant les portails et d'atteindre la sortie.
+
+\clearpage
+
 \subsection{Motivations}
 
 \paragraph{}
