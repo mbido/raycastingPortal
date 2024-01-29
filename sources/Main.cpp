@@ -230,7 +230,7 @@ int main()
 
     if(mouseCursorCurr.x == -1 && mouseCursorCurr.y == -1){
       mouseCursorCurr = event.mouseCursor.coords;
-    }else{
+    }else if(event.type == gf::EventType::MouseMoved){
       mouseCursorNext = event.mouseCursor.coords;
       gf::Vector2f mouseDelta = mouseCursorNext - mouseCursorCurr;
       yaw = mouseDelta.x * sensivity;
