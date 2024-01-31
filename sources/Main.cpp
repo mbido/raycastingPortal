@@ -58,7 +58,7 @@ int main()
   // window.setMouseCursor(cursor);
   // window.setMouseCursorGrabbed(true);
   
-  window.setMouseRelative(true);
+  // window.setMouseRelative(true);
   // window.setMouseCursorVisible(false);
 
 #endif
@@ -226,25 +226,38 @@ int main()
     player.setVelocity(direction);
 
     float angularVelocity = 0.0f;
-    float yaw = 0.0f, pitch = 0.0f, sensivity = 0.1f;
+    float yaw = 0.0f, pitch = 0.0f, sensivity = 0.05f;
 
     if(mouseCursorCurr.x == -1 && mouseCursorCurr.y == -1){
-      mouseCursorCurr = event.mouseCursor.coords;
-    }else if(event.type == gf::EventType::MouseMoved){
-      mouseCursorNext = event.mouseCursor.coords;
-      gf::Vector2f mouseDelta = mouseCursorNext - mouseCursorCurr;
-      yaw = mouseDelta.x * sensivity;
-      pitch = mouseDelta.y * sensivity;
+      mouseCursorCurr = event.mouseCursor.motion;
+    }
+    
+    // std::cout << (event.type == gf::EventType::MouseMoved) << std::endl;
+    if(event.type == gf::EventType::MouseMoved){
+      mouseCursorNext = event.mouseCursor.motion;
 
-      pitch = std::clamp(pitch, -89.0f, 89.0f);
+      gf::Vector2f mouseDelta;
+      if(mouseCursorCurr.x != mouseCursorNext.x){
+        if(mouseCursorNext.x < 0){
+          mouseDelta = mouseCursorCurr + mouseCursorNext;
+        }else if(mouseCursorNext.x > 0){
+          mouseDelta = mouseCursorNext + mouseCursorCurr;
+        }
 
-      if(yaw < 0 && mouseCursorCurr.x != mouseCursorNext.x){
-        // std::cout << "Look at left" << std::endl;
-        angularVelocity -= (gf::Pi / 2) * (1 + std::abs(yaw));
-      }
-      if(yaw > 0 && mouseCursorCurr.x != mouseCursorNext.x){
-        angularVelocity += (gf::Pi / 2) * (1 + std::abs(yaw));
-        // std::cout << "Look at right" << std::endl;
+        yaw = mouseDelta.x * sensivity;
+        pitch = mouseDelta.y * sensivity;
+
+        // pitch = std::clamp(pitch, -89.0f, 89.0f);
+        // std::cout << yaw << std::endl;
+
+        if(yaw < 0){
+          // std::cout << "Look at left" << std::endl;
+          angularVelocity -= (gf::Pi / 2) * (1 + std::abs(yaw));
+        }
+        if(yaw > 0){
+          angularVelocity += (gf::Pi / 2) * (1 + std::abs(yaw));
+          // std::cout << "Look at right" << std::endl;
+        }
       }
       // if(mouseCursorNext.x == mouseCursorCurr.x){
       //   std::cout << "Static" << std::endl;
