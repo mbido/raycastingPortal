@@ -21,6 +21,7 @@ float clamp3D(float min, float max, float value)
         return max;
     return value;
 }
+
 gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position)
 {
     float distanceBetweenWallAndPlayer = std::sqrt((p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y));
@@ -33,6 +34,40 @@ gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall,
         return coordToAddToPos;
     }
     return gf::Vector2f(0.0f, 0.0f);
+}
+
+std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal3D(struct portal* firstPortal, struct portal* secondPortal, gf::Vector2f closestPointOfThePortal, gf::Vector2f p_position, double angle)
+{
+    float distanceBetweenPortalAndPlayer = std::sqrt((p_position.x - closestPointOfThePortal.x) * (p_position.x - closestPointOfThePortal.x) + (p_position.y - closestPointOfThePortal.y) * (p_position.y - closestPointOfThePortal.y));
+    if (RANGE + DELTA > distanceBetweenPortalAndPlayer)
+    {
+
+        std::pair<double, gf::Vector2f> nextCoords = std::pair(angle, p_position);
+
+        nextCoords.first = angle + gf::Pi + (secondPortal->facing - firstPortal->facing) * gf::Pi/2;
+
+        switch ((firstPortal->facing + secondPortal->facing) % 4)
+        {
+        case 0:
+            nextCoords.second = gf::Vector2f(secondPortal->position.x + (p_position.x - firstPortal->position.x), secondPortal->position.y - (p_position.y - firstPortal->position.y));
+            break;
+        case 1:
+            nextCoords.second = gf::Vector2f(secondPortal->position.x + (p_position.y - firstPortal->position.y), secondPortal->position.y + (p_position.x - firstPortal->position.x));
+            break;
+        case 2:
+            nextCoords.second = gf::Vector2f(secondPortal->position.x - (p_position.x - firstPortal->position.x), secondPortal->position.y + (p_position.y - firstPortal->position.y));
+            break;
+        case 3:
+            nextCoords.second = gf::Vector2f(secondPortal->position.x - (p_position.y - firstPortal->position.y), secondPortal->position.y - (p_position.x - firstPortal->position.x));
+            break;
+        default:
+            nextCoords.second = p_position;
+            break;
+        }
+
+        return nextCoords;
+    }
+    return std::pair(angle, p_position);
 }
 
 gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position)
@@ -54,6 +89,76 @@ gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position)
         }
     }
     return closestPointOfTheWall;
+}
+
+std::pair<bool, gf::Vector2f> getClosestPointOfPortal3D(struct portal* firstPortal, struct portal* secondPortal, gf::Vector2f p_position)
+{
+    gf::Vector2f closestPointOfThePortal = gf::Vector2f(0.0f, 0.0f);
+    bool isFirstPortal = true;
+
+    // First Portal
+
+    float x, y;
+
+    switch (firstPortal->facing)
+    {
+    case 0:
+        x = clamp3D(firstPortal->position.x, firstPortal->position.x, p_position.x);
+        y = clamp3D(firstPortal->position.y - firstPortal->width, firstPortal->position.y + firstPortal->width, p_position.y);
+        break;
+    case 1:
+        x = clamp3D(firstPortal->position.x - firstPortal->width, firstPortal->position.x + firstPortal->width, p_position.x);
+        y = clamp3D(firstPortal->position.y, firstPortal->position.y, p_position.y);
+        break;
+    case 2:
+        x = clamp3D(firstPortal->position.x, firstPortal->position.x, p_position.x);
+        y = clamp3D(firstPortal->position.y - firstPortal->width, firstPortal->position.y + firstPortal->width, p_position.y);
+        break;
+    case 3:
+        x = clamp3D(firstPortal->position.x - firstPortal->width, firstPortal->position.x + firstPortal->width, p_position.x);
+        y = clamp3D(firstPortal->position.y, firstPortal->position.y, p_position.y);
+        break;
+    default:
+        x = p_position.x;
+        y = p_position.y;
+        break;
+    }
+
+    closestPointOfThePortal = gf::Vector2f(x, y);
+
+    // Second Portal
+    
+    switch (secondPortal->facing)
+    {
+    case 0:
+        x = clamp3D(secondPortal->position.x, secondPortal->position.x, p_position.x);
+        y = clamp3D(secondPortal->position.y - secondPortal->width, secondPortal->position.y + secondPortal->width, p_position.y);
+        break;
+    case 1:
+        x = clamp3D(secondPortal->position.x - secondPortal->width, secondPortal->position.x + secondPortal->width, p_position.x);
+        y = clamp3D(secondPortal->position.y, secondPortal->position.y, p_position.y);
+        break;
+    case 2:
+        x = clamp3D(secondPortal->position.x, secondPortal->position.x, p_position.x);
+        y = clamp3D(secondPortal->position.y - secondPortal->width, secondPortal->position.y + secondPortal->width, p_position.y);
+        break;
+    case 3:
+        x = clamp3D(secondPortal->position.x - secondPortal->width, secondPortal->position.x + secondPortal->width, p_position.x);
+        y = clamp3D(secondPortal->position.y, secondPortal->position.y, p_position.y);
+        break;
+    default:
+        x = p_position.x;
+        y = p_position.y;
+        break;
+    }
+
+    if ((p_position.x - x) * (p_position.x - x) + (p_position.y - y) * (p_position.y - y) < (p_position.x - closestPointOfThePortal.x) * (p_position.x - closestPointOfThePortal.x) + (p_position.y - closestPointOfThePortal.y) * (p_position.y - closestPointOfThePortal.y))
+    {
+        closestPointOfThePortal = gf::Vector2f(x, y);
+        isFirstPortal = false;
+    }
+
+    return std::pair(isFirstPortal, closestPointOfThePortal);
 }
 
 struct PairComparator
@@ -135,6 +240,19 @@ void Game3D::update(gf::Time dt)
     {
         gf::Vector2f newPos = checkingCollisionsForEachWall3D(getClosestPointOfWall3D(wall, m_player->getPosition()), m_player->getPosition());
         m_player->setPosition(m_player->getPosition() + newPos);
+    }
+
+    if (m_firstPortal != NULL && m_secondPortal != NULL) {
+        std::pair<bool, gf::Vector2f> tmp = getClosestPointOfPortal3D(m_firstPortal, m_secondPortal, m_player->getPosition());
+        std::pair<double, gf::Vector2f> positionPostTP = std::pair(m_player->getAngle(), m_player->getPosition());
+        if (tmp.first) {
+            positionPostTP = checkingCollisionsForEachPortal3D(m_firstPortal, m_secondPortal, tmp.second, m_player->getPosition(), m_player->getAngle());
+        }
+        else {
+            positionPostTP = checkingCollisionsForEachPortal3D(m_secondPortal, m_firstPortal, tmp.second, m_player->getPosition(), m_player->getAngle());
+        }
+        m_player->setPosition(positionPostTP.second);
+        m_player->setAngle(positionPostTP.first);
     }
 }
 
