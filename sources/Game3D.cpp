@@ -26,6 +26,7 @@ gf::Vector2f linesIntersection(gf::Vector2f A, gf::Vector2f B, gf::Vector2f C, g
 
     if (delta == 0)
     {
+        // std::cerr << "The lines are parallel" << std::endl;
         return gf::Vector2f(0, 0);
     }
     else
@@ -58,7 +59,7 @@ gf::Vector2f checkingCollisionsForEachWall3D(gf::Vector2f closestPointOfTheWall,
     return gf::Vector2f(0.0f, 0.0f);
 }
 
-std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal3D(struct portal* firstPortal, struct portal* secondPortal, gf::Vector2f closestPointOfThePortal, gf::Vector2f p_position, double angle)
+std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal3D(struct portal *firstPortal, struct portal *secondPortal, gf::Vector2f closestPointOfThePortal, gf::Vector2f p_position, double angle)
 {
     float distanceBetweenPortalAndPlayer = std::sqrt((p_position.x - closestPointOfThePortal.x) * (p_position.x - closestPointOfThePortal.x) + (p_position.y - closestPointOfThePortal.y) * (p_position.y - closestPointOfThePortal.y));
     if (RANGE + DELTA > distanceBetweenPortalAndPlayer)
@@ -66,7 +67,7 @@ std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal3D(struct portal*
 
         std::pair<double, gf::Vector2f> nextCoords = std::pair(angle, p_position);
 
-        nextCoords.first = angle + gf::Pi + (secondPortal->facing - firstPortal->facing) * gf::Pi/2;
+        nextCoords.first = angle + gf::Pi + (secondPortal->facing - firstPortal->facing) * gf::Pi / 2;
 
         switch ((firstPortal->facing + secondPortal->facing) % 4)
         {
@@ -113,7 +114,7 @@ gf::Vector2f getClosestPointOfWall3D(Wall wall, gf::Vector2f p_position)
     return closestPointOfTheWall;
 }
 
-std::pair<bool, gf::Vector2f> getClosestPointOfPortal3D(struct portal* firstPortal, struct portal* secondPortal, gf::Vector2f p_position)
+std::pair<bool, gf::Vector2f> getClosestPointOfPortal3D(struct portal *firstPortal, struct portal *secondPortal, gf::Vector2f p_position)
 {
     gf::Vector2f closestPointOfThePortal = gf::Vector2f(0.0f, 0.0f);
     bool isFirstPortal = true;
@@ -149,7 +150,7 @@ std::pair<bool, gf::Vector2f> getClosestPointOfPortal3D(struct portal* firstPort
     closestPointOfThePortal = gf::Vector2f(x, y);
 
     // Second Portal
-    
+
     switch (secondPortal->facing)
     {
     case 0:
@@ -264,13 +265,16 @@ void Game3D::update(gf::Time dt)
         m_player->setPosition(m_player->getPosition() + newPos);
     }
 
-    if (m_firstPortal != NULL && m_secondPortal != NULL) {
+    if (m_firstPortal != NULL && m_secondPortal != NULL)
+    {
         std::pair<bool, gf::Vector2f> tmp = getClosestPointOfPortal3D(m_firstPortal, m_secondPortal, m_player->getPosition());
         std::pair<double, gf::Vector2f> positionPostTP = std::pair(m_player->getAngle(), m_player->getPosition());
-        if (tmp.first) {
+        if (tmp.first)
+        {
             positionPostTP = checkingCollisionsForEachPortal3D(m_firstPortal, m_secondPortal, tmp.second, m_player->getPosition(), m_player->getAngle());
         }
-        else {
+        else
+        {
             positionPostTP = checkingCollisionsForEachPortal3D(m_secondPortal, m_firstPortal, tmp.second, m_player->getPosition(), m_player->getAngle());
         }
         m_player->setPosition(positionPostTP.second);
@@ -741,6 +745,97 @@ void Game3D::castPortal(bool isFirstPortal)
     }
 }
 
+// !!! a corriger
+
+std::vector<gf::Vector2f> getPointsBetween(gf::Vector2f start, gf::Vector2f end)
+{
+    std::vector<gf::Vector2f> points;
+
+    // Ajouter le point de départ
+    points.push_back(start);
+
+    if (start.x == end.x)
+    {
+        // Segment vertical
+        int startY = std::ceil(std::min(start.y, end.y));
+        int endY = std::floor(std::max(start.y, end.y));
+
+        for (int y = startY; y < endY; ++y)
+        {
+            points.push_back(gf::Vector2f(start.x, y));
+        }
+    }
+    else if (start.y == end.y)
+    {
+        // Segment horizontal
+        int startX = std::ceil(std::min(start.x, end.x));
+        int endX = std::floor(std::max(start.x, end.x));
+
+        for (int x = startX; x < endX; ++x)
+        {
+            points.push_back(gf::Vector2f(x, start.y));
+        }
+    }
+
+    // Ajouter le point de fin si différent du point de départ
+    if (start.x != end.x || start.y != end.y)
+    {
+        points.push_back(end);
+    }
+
+    return points;
+}
+
+
+
+// std::vector<gf::Vector2f> getPointsBetween(gf::Vector2f start, gf::Vector2f end)
+// {
+//     std::vector<gf::Vector2f> points;
+
+//     gf::Vector2f TrueStart, TrueEnd;
+
+//     if (start.x == end.x)
+//     {
+
+//         TrueStart = (start.y < end.y) ? start : end;
+//         TrueEnd = (start.y < end.y) ? end : start;
+
+//         points.push_back(TrueStart);
+
+//         // Segment vertical
+//         int startY = std::ceil(std::min(TrueStart.y, TrueEnd.y));
+//         int endY = std::floor(std::max(TrueStart.y, TrueEnd.y));
+
+//         for (int y = startY; y < endY; ++y)
+//         {
+//             points.push_back(gf::Vector2f(TrueStart.x, y));
+//         }
+
+//         points.push_back(TrueEnd);
+//     }
+//     else if (start.y == end.y)
+//     {
+
+//         TrueStart = (start.x < end.x) ? start : end;
+//         TrueEnd = (start.x < end.x) ? end : start;
+
+//         points.push_back(TrueStart);
+
+//         // Segment horizontal
+//         int startX = std::ceil(std::min(TrueStart.x, TrueEnd.x));
+//         int endX = std::floor(std::max(TrueStart.x, TrueEnd.x));
+
+//         for (int x = startX; x < endX; ++x)
+//         {
+//             points.push_back(gf::Vector2f(x, TrueStart.y));
+//         }
+//     }
+    
+
+//     return points;
+// }
+
+
 void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::Vector2f> trapezeVertices, gf::Texture &texture, gf::RenderWindow &renderer)
 {
 
@@ -754,65 +849,64 @@ void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::V
     gf::Vector2f topCenter = linesIntersection(center, gf::Vector2f(center.x, center.y + 1), trapezeVertices[0], trapezeVertices[1]);
     gf::Vector2f bottomCenter = linesIntersection(center, gf::Vector2f(center.x, center.y + 1), trapezeVertices[2], trapezeVertices[3]);
 
-    float textureCenter = (isSegmentVertical)? (start.y + end.y) / 2 : (start.x + end.x) / 2;
+    float textureCenter = (isSegmentVertical) ? (start.y + end.y) / 2 : (start.x + end.x) / 2;
 
     gf::VertexArray trapeze(gf::PrimitiveType::Triangles, 24);
     // First triangle (Top-Left, Center, Top-Center)
-    trapeze[0].position = trapezeVertices[0];  // Top-Left
-    trapeze[1].position = center;  // Center
-    trapeze[2].position = topCenter; // Top-Center
+    trapeze[0].position = trapezeVertices[0]; // Top-Left
+    trapeze[1].position = center;             // Center
+    trapeze[2].position = topCenter;          // Top-Center
 
     // Deuxième triangle (Top-Center, Center, Top-Right)
-    trapeze[3].position = topCenter; // Top-Center
-    trapeze[4].position = center; // Center
-    trapeze[5].position = trapezeVertices[1];  // Top-Right
+    trapeze[3].position = topCenter;          // Top-Center
+    trapeze[4].position = center;             // Center
+    trapeze[5].position = trapezeVertices[1]; // Top-Right
 
     // Troisième triangle (Bottom-gauche, Center, Bottom-Center)
-    trapeze[6].position = trapezeVertices[2];   // Bottom-gauche
-    trapeze[7].position = center;   // Center
-    trapeze[8].position = bottomCenter; // Bottom-Center
+    trapeze[6].position = trapezeVertices[2]; // Bottom-gauche
+    trapeze[7].position = center;             // Center
+    trapeze[8].position = bottomCenter;       // Bottom-Center
 
     // Quatrième triangle (Bottom-Center, Center, Bottom-Right)
-    trapeze[9].position = bottomCenter; // Bottom-Center
-    trapeze[10].position = center;  // Center
-    trapeze[11].position = trapezeVertices[3];  // Bottom-Right
+    trapeze[9].position = bottomCenter;        // Bottom-Center
+    trapeze[10].position = center;             // Center
+    trapeze[11].position = trapezeVertices[3]; // Bottom-Right
 
     // Cinquième triangle (Top-Left, Center, Bottom-Gauche)
     trapeze[12].position = trapezeVertices[0]; // Top-Left
-    trapeze[13].position = center; // Center
+    trapeze[13].position = center;             // Center
     trapeze[14].position = trapezeVertices[2]; // Bottom-gauche
 
     // Sixième triangle (Top-Right, Center, Bottom-Right)
-    trapeze[15].position = trapezeVertices[1];  // Top-Right
-    trapeze[16].position = center; // Center
+    trapeze[15].position = trapezeVertices[1]; // Top-Right
+    trapeze[16].position = center;             // Center
     trapeze[17].position = trapezeVertices[3]; // Bottom-Right
-
 
     // Texture coordinates
     int scale = 3;
-    trapeze[0].texCoords = {(isSegmentVertical)?start.y : start.x, 0.0f}; // Top-Left
-    trapeze[1].texCoords = {textureCenter, 0.5f}; // Center
-    trapeze[2].texCoords = {textureCenter, 0.0f}; // Top-Center
+    trapeze[0].texCoords = {(isSegmentVertical) ? start.y : start.x, 0.0f}; // Top-Left
+    trapeze[1].texCoords = {textureCenter, 0.5f};                           // Center
+    trapeze[2].texCoords = {textureCenter, 0.0f};                           // Top-Center
 
-    trapeze[3].texCoords = {textureCenter, 0.0f}; // Top-Center
-    trapeze[4].texCoords = {textureCenter, 0.5f}; // Center
-    trapeze[5].texCoords = {(isSegmentVertical)?end.y : end.x, 0.0f}; // Top-Right
+    trapeze[3].texCoords = {textureCenter, 0.0f};                       // Top-Center
+    trapeze[4].texCoords = {textureCenter, 0.5f};                       // Center
+    trapeze[5].texCoords = {(isSegmentVertical) ? end.y : end.x, 0.0f}; // Top-Right
 
-    trapeze[6].texCoords = {(isSegmentVertical)?start.y : start.x, 1.0f}; // Bottom-left
-    trapeze[7].texCoords = {textureCenter, 0.5f}; // Center
-    trapeze[8].texCoords = {textureCenter, 1.0f}; // Bottom-Center
+    trapeze[6].texCoords = {(isSegmentVertical) ? start.y : start.x, 1.0f}; // Bottom-left
+    trapeze[7].texCoords = {textureCenter, 0.5f};                           // Center
+    trapeze[8].texCoords = {textureCenter, 1.0f};                           // Bottom-Center
 
-    trapeze[9].texCoords = {textureCenter, 1.0f};  // Bottom-Center
-    trapeze[10].texCoords = {textureCenter, 0.5f}; // Center
-    trapeze[11].texCoords = {(isSegmentVertical)?end.y : end.x, 1.0f}; // Bottom-Right
+    trapeze[9].texCoords = {textureCenter, 1.0f};                        // Bottom-Center
+    trapeze[10].texCoords = {textureCenter, 0.5f};                       // Center
+    trapeze[11].texCoords = {(isSegmentVertical) ? end.y : end.x, 1.0f}; // Bottom-Right
 
-    trapeze[12].texCoords = {(isSegmentVertical)?start.y : start.x, 0.0f}; // Top-Left
-    trapeze[13].texCoords = {textureCenter, 0.5f}; // Center
-    trapeze[14].texCoords = {(isSegmentVertical)?start.y : start.x, 1.0f}; // Bottom-left
+    trapeze[12].texCoords = {(isSegmentVertical) ? start.y : start.x, 0.0f}; // Top-Left
+    trapeze[13].texCoords = {textureCenter, 0.5f};                           // Center
+    trapeze[14].texCoords = {(isSegmentVertical) ? start.y : start.x, 1.0f}; // Bottom-left
 
-    trapeze[15].texCoords = {(isSegmentVertical)?end.y : end.x, 0.0f}; // Top-Right
-    trapeze[16].texCoords = {textureCenter, 0.5f}; // Center
-    trapeze[17].texCoords = {(isSegmentVertical)?end.y : end.x, 1.0f}; // Bottom-Right
+    trapeze[15].texCoords = {(isSegmentVertical) ? end.y : end.x, 0.0f}; // Top-Right
+    trapeze[16].texCoords = {textureCenter, 0.5f};                       // Center
+    trapeze[17].texCoords = {(isSegmentVertical) ? end.y : end.x, 1.0f}; // Bottom-Right
 
     texture.setRepeated(true);
 
@@ -1020,223 +1114,245 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
-            gf::Vector2f start = segment.second[i];
-            gf::Vector2f end = segment.second[i + 1];
-            double angle = m_player->getAngle();
-            if (angle == 0 || angle == gf::Pi || angle == 2 * gf::Pi || angle == -gf::Pi)
-            {
-                angle += DELTA / 2;
-            }
-            gf::Vector2f pos = m_player->getPosition();
-            double a = -1 / std::tan(angle);
-            double b = pos.y - a * pos.x;
-            // skip the segment if it is behind the player if needed
-            if (!getVisibleSegment(start, end, pos, angle, a, b))
+            if (segment.second.size() < 2)
             {
                 continue;
             }
+            std::vector<gf::Vector2f> points = getPointsBetween(segment.second[i], segment.second[i + 1]);
+            
+            std::cout << std::endl << "points : " << std::endl;
+            for (auto p : points)
+            {
+                std::cout << "\t-(" << p.x << ", " << p.y << ")" << std::endl;
+            }
 
-            gf::Vector2i viewSize = m_renderer.getView().getSize();
-            double viewWidth = viewSize.x;
-            double viewHeight = viewSize.y;
-            // std::cout << "viewWidth : " << viewWidth << std::endl;
-            // std::cout << "viewHeight : " << viewHeight << std::endl;
 
-            // std::cout << "start : (" << start.x << ", " << start.y << ") end : (" << end.x << ", " << end.y << ")" << std::endl;
-            // --- For the first point of the segment ---
+            for (size_t i = 0; i < points.size() - 1; i++)
+            {
 
-            // the angle of the ray to the player:
-            double rayAngle1 = std::atan2(start.y - pos.y, start.x - pos.x);
+                gf::Vector2f start = points[i];
+                gf::Vector2f end = points[i + 1];
 
-            // the distance of the wall to the player :
-            double falseDistance1 = std::sqrt((start.x - pos.x) * (start.x - pos.x) + (start.y - pos.y) * (start.y - pos.y));
-            // the real distance is the projection of the ray on the direction vector :
-            double realDistance1 = falseDistance1 * std::cos(rayAngle1 - angle);
+                if(start == end) {
+                    continue;
+                }
 
-            // the height of the projected wall :
-            // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height1 = (realDistance1 != 0) ? viewHeight / realDistance1 / 2 : viewHeight * 2;
+                double angle = m_player->getAngle();
+                if (angle == 0 || angle == gf::Pi || angle == 2 * gf::Pi || angle == -gf::Pi)
+                {
+                    angle += DELTA / 2;
+                }
+                gf::Vector2f pos = m_player->getPosition();
+                double a = -1 / std::tan(angle);
+                double b = pos.y - a * pos.x;
+                // skip the segment if it is behind the player if needed
+                if (!getVisibleSegment(start, end, pos, angle, a, b))
+                {
+                    continue;
+                }
 
-            // the x position of the column from the center of the screen :
-            double xPos1 = std::tan(rayAngle1 - angle) * viewWidth / 2;
+                gf::Vector2i viewSize = m_renderer.getView().getSize();
+                double viewWidth = viewSize.x;
+                double viewHeight = viewSize.y;
+                // std::cout << "viewWidth : " << viewWidth << std::endl;
+                // std::cout << "viewHeight : " << viewHeight << std::endl;
 
-            // drawing the column :
-            gf::VertexArray column1(gf::PrimitiveType::Lines, 2);
-            column1[0].color = gf::Color::fromRgba32(0x7777FFFF);
-            column1[1].color = gf::Color::fromRgba32(0x7777FFFF);
+                // std::cout << "start : (" << start.x << ", " << start.y << ") end : (" << end.x << ", " << end.y << ")" << std::endl;
+                // --- For the first point of the segment ---
 
-            column1[0].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 - height1 / 2);
-            column1[1].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 + height1 / 2);
+                // the angle of the ray to the player:
+                double rayAngle1 = std::atan2(start.y - pos.y, start.x - pos.x);
 
-            // m_renderer.draw(column1);
+                // the distance of the wall to the player :
+                double falseDistance1 = std::sqrt((start.x - pos.x) * (start.x - pos.x) + (start.y - pos.y) * (start.y - pos.y));
+                // the real distance is the projection of the ray on the direction vector :
+                double realDistance1 = falseDistance1 * std::cos(rayAngle1 - angle);
 
-            // --- For the second point of the segment ---
+                // the height of the projected wall :
+                // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
+                double height1 = (realDistance1 != 0) ? viewHeight / realDistance1 / 2 : viewHeight * 2;
 
-            // the angle of the ray to the player:
-            double rayAngle2 = std::atan2(end.y - pos.y, end.x - pos.x);
+                // the x position of the column from the center of the screen :
+                double xPos1 = std::tan(rayAngle1 - angle) * viewWidth / 2;
 
-            // the distance of the wall to the player :
-            double falseDistance2 = std::sqrt((end.x - pos.x) * (end.x - pos.x) + (end.y - pos.y) * (end.y - pos.y));
-            // the real distance is the projection of the ray on the direction vector :
-            double realDistance2 = falseDistance2 * std::cos(rayAngle2 - angle);
+                // drawing the column :
+                gf::VertexArray column1(gf::PrimitiveType::Lines, 2);
+                column1[0].color = gf::Color::fromRgba32(0x7777FFFF);
+                column1[1].color = gf::Color::fromRgba32(0x7777FFFF);
 
-            // the height of the projected wall :
-            // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
-            double height2 = (realDistance2 != 0) ? viewHeight / realDistance2 / 2 : viewHeight;
+                column1[0].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 - height1 / 2);
+                column1[1].position = gf::Vector2f(viewWidth / 2 + xPos1, viewHeight / 2 + height1 / 2);
 
-            // the x position of the column from the center of the screen :
-            double xPos2 = std::tan(rayAngle2 - angle) * viewWidth / 2;
+                // m_renderer.draw(column1);
 
-            // drawing the column :
-            gf::VertexArray column2(gf::PrimitiveType::Lines, 2);
-            column2[0].color = gf::Color::fromRgba32(0x77FF77FF);
-            column2[1].color = gf::Color::fromRgba32(0x77FF77FF);
+                // --- For the second point of the segment ---
 
-            column2[0].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 - height2 / 2);
-            column2[1].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 + height2 / 2);
+                // the angle of the ray to the player:
+                double rayAngle2 = std::atan2(end.y - pos.y, end.x - pos.x);
 
-            renderAWallTextured(start, end, {column1[0].position, column2[0].position, column1[1].position, column2[1].position}, m_texture, m_renderer);
+                // the distance of the wall to the player :
+                double falseDistance2 = std::sqrt((end.x - pos.x) * (end.x - pos.x) + (end.y - pos.y) * (end.y - pos.y));
+                // the real distance is the projection of the ray on the direction vector :
+                double realDistance2 = falseDistance2 * std::cos(rayAngle2 - angle);
 
-            // m_renderer.draw(column2);
+                // the height of the projected wall :
+                // Projected Slice Height = realSlideHeight / Distance to the Slice * Distance to the Projection Plane * scaling
+                double height2 = (realDistance2 != 0) ? viewHeight / realDistance2 / 2 : viewHeight;
 
-            // linking the two columns :
-            // gf::VertexArray link(gf::PrimitiveType::Lines, 2);
-            // link[0].color = gf::Color::fromRgba32(0xFF7777FF);
-            // link[1].color = gf::Color::fromRgba32(0xFF7777FF);
+                // the x position of the column from the center of the screen :
+                double xPos2 = std::tan(rayAngle2 - angle) * viewWidth / 2;
 
-            // link[0].position = column1[1].position;
-            // link[1].position = column2[1].position;
-            // m_renderer.draw(link);
+                // drawing the column :
+                gf::VertexArray column2(gf::PrimitiveType::Lines, 2);
+                column2[0].color = gf::Color::fromRgba32(0x77FF77FF);
+                column2[1].color = gf::Color::fromRgba32(0x77FF77FF);
 
-            // link[0].position = column1[0].position;
-            // link[1].position = column2[0].position;
-            // m_renderer.draw(link);
-            // std::cout << "posX1 : " << column1[0].position.x << " posX2 : " << column2[0].position.x << std::endl;
+                column2[0].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 - height2 / 2);
+                column2[1].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 + height2 / 2);
 
-            // bool isVertical = std::abs(start.x - end.x) < DELTA;
+                renderAWallTextured(start, end, {column1[0].position, column2[0].position, column1[1].position, column2[1].position}, m_texture, m_renderer);
 
-            // --- For the triangles ---
-            // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-            // triangle[0].color = color;
-            // triangle[1].color = color;
-            // triangle[2].color = color;
+                // m_renderer.draw(column2);
 
-            // // we draw the trapezoid with two triangles :
+                // linking the two columns :
+                // gf::VertexArray link(gf::PrimitiveType::Lines, 2);
+                // link[0].color = gf::Color::fromRgba32(0xFF7777FF);
+                // link[1].color = gf::Color::fromRgba32(0xFF7777FF);
 
-            // triangle[0].position = column1[0].position;
-            // triangle[1].position = column1[1].position;
-            // triangle[2].position = column2[0].position;
-            // m_renderer.draw(triangle);
+                // link[0].position = column1[1].position;
+                // link[1].position = column2[1].position;
+                // m_renderer.draw(link);
 
-            // triangle[0].position = column1[1].position;
-            // triangle[1].position = column2[0].position;
-            // triangle[2].position = column2[1].position;
-            // m_renderer.draw(triangle);
+                // link[0].position = column1[0].position;
+                // link[1].position = column2[0].position;
+                // m_renderer.draw(link);
+                // std::cout << "posX1 : " << column1[0].position.x << " posX2 : " << column2[0].position.x << std::endl;
 
-            // We want to draw a texture on the wall but we have to manually repeat the texture
-            // For that we have to segment the wall in segments of size 1 and not begin necessarily at the start of the wall
+                // bool isVertical = std::abs(start.x - end.x) < DELTA;
 
-            // int coordToCheck = (isSegmentVertical) ? 1 : 0; // if the wall is vertical, we check the y coordinate, else we check the x coordinate
-            // float startCoordOnTexture = (isSegmentVertical && isSegmentRightToPlayer || !isSegmentVertical && isSegmentUpToPlayer) ? start[coordToCheck] - (int)(start[coordToCheck]) : 1 - start[coordToCheck] - (int)(start[coordToCheck]);
-            // float endCoordOnTexture = (isSegmentVertical && isSegmentRightToPlayer || !isSegmentVertical && isSegmentUpToPlayer) ? end[coordToCheck] - (int)(end[coordToCheck]) : 1 - end[coordToCheck] - (int)(end[coordToCheck]);
+                // --- For the triangles ---
+                // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+                // triangle[0].color = color;
+                // triangle[1].color = color;
+                // triangle[2].color = color;
 
-            // // we manage the case where the segment to draw is shorter than 1
-            // double diff = std::abs(start[coordToCheck] - end[coordToCheck]);
+                // // we draw the trapezoid with two triangles :
 
-            // // !!! TODO : il faut prendre en compte que même si le segment est plus petit que 1 il faut
-            // // si le start et end ne sont pas sur la même cellule, il faut dessiner deux fractions de la texture
-            // // aussi il faut avoir redetermine les coordonnées des "colonnes" avant d'afficher la fraction de texture (factoriser les coordonnées projetés)
-            // // peut être il faut fractionner avant et balancer dans une fonction deux colonnes et elle se charge de tout avec une lambda fonction!!!
-            // if (diff <= 1)
-            // {
-            //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
-            //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
-            //     vertices2[0].position = column1[1].position; // Haut-gauche
-            //     vertices2[1].position = column1[0].position; // Bas-gauche
-            //     vertices2[2].position = column2[1].position; // Haut-droite
+                // triangle[0].position = column1[0].position;
+                // triangle[1].position = column1[1].position;
+                // triangle[2].position = column2[0].position;
+                // m_renderer.draw(triangle);
 
-            //     // Second triangle (bas-gauche, bas-droite, haut-droite)
-            //     vertices2[3].position = column1[0].position; // Bas-gauche
-            //     vertices2[4].position = column2[0].position; // Bas-droite
-            //     vertices2[5].position = column2[1].position; // Haut-droite
+                // triangle[0].position = column1[1].position;
+                // triangle[1].position = column2[0].position;
+                // triangle[2].position = column2[1].position;
+                // m_renderer.draw(triangle);
 
-            //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
-            //     vertices2[0].texCoords = {start.x, 0.0f}; // Haut-gauche
-            //     vertices2[1].texCoords = {start.x, 1.0f}; // Bas-gauche
-            //     vertices2[2].texCoords = {end.x, 0.0f};   // Haut-droite
+                // We want to draw a texture on the wall but we have to manually repeat the texture
+                // For that we have to segment the wall in segments of size 1 and not begin necessarily at the start of the wall
 
-            //     vertices2[3].texCoords = {start.x, 1.0f}; // Bas-gauche
-            //     vertices2[4].texCoords = {end.x, 1.0f};   // Bas-droite
-            //     vertices2[5].texCoords = {end.x, 0.0f};   // Haut-droite
+                // int coordToCheck = (isSegmentVertical) ? 1 : 0; // if the wall is vertical, we check the y coordinate, else we check the x coordinate
+                // float startCoordOnTexture = (isSegmentVertical && isSegmentRightToPlayer || !isSegmentVertical && isSegmentUpToPlayer) ? start[coordToCheck] - (int)(start[coordToCheck]) : 1 - start[coordToCheck] - (int)(start[coordToCheck]);
+                // float endCoordOnTexture = (isSegmentVertical && isSegmentRightToPlayer || !isSegmentVertical && isSegmentUpToPlayer) ? end[coordToCheck] - (int)(end[coordToCheck]) : 1 - end[coordToCheck] - (int)(end[coordToCheck]);
 
-            //     m_texture.setRepeated(true);
-            //     gf::RenderStates states;
-            //     states.texture[0] = &m_texture;
-            //     m_renderer.draw(vertices2, states);
-            // }
-            // // else // !!! TODO : il faut prendre en compte que même si le segment est plus petit que 1 il faut
-            // // {
-            // //     // in that case we draw the first none complete segment, then the complete segments, then the last none complete segment
+                // // we manage the case where the segment to draw is shorter than 1
+                // double diff = std::abs(start[coordToCheck] - end[coordToCheck]);
 
-            // //     // first segment :
-            // //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
-            // //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
-            // //     vertices2[0].position = column1[1].position; // Haut-gauche
-            // //     vertices2[1].position = column1[0].position; // Bas-gauche
-            // //     vertices2[2].position = column2[1].position; // Haut-droite
+                // // !!! TODO : il faut prendre en compte que même si le segment est plus petit que 1 il faut
+                // // si le start et end ne sont pas sur la même cellule, il faut dessiner deux fractions de la texture
+                // // aussi il faut avoir redetermine les coordonnées des "colonnes" avant d'afficher la fraction de texture (factoriser les coordonnées projetés)
+                // // peut être il faut fractionner avant et balancer dans une fonction deux colonnes et elle se charge de tout avec une lambda fonction!!!
+                // if (diff <= 1)
+                // {
+                //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
+                //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
+                //     vertices2[0].position = column1[1].position; // Haut-gauche
+                //     vertices2[1].position = column1[0].position; // Bas-gauche
+                //     vertices2[2].position = column2[1].position; // Haut-droite
 
-            // //     // Second triangle (bas-gauche, bas-droite, haut-droite)
-            // //     vertices2[3].position = column1[0].position; // Bas-gauche
-            // //     vertices2[4].position = column2[0].position; // Bas-droite
-            // //     vertices2[5].position = column2[1].position; // Haut-droite
+                //     // Second triangle (bas-gauche, bas-droite, haut-droite)
+                //     vertices2[3].position = column1[0].position; // Bas-gauche
+                //     vertices2[4].position = column2[0].position; // Bas-droite
+                //     vertices2[5].position = column2[1].position; // Haut-droite
 
-            // //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
-            // //     vertices2[0].texCoords = {startCoordOnTexture, 0.0f}; // Haut-gauche
-            // //     vertices2[1].texCoords = {startCoordOnTexture, 1.0f}; // Bas-gauche
-            // //     vertices2[2].texCoords = {1.0f, 0.0f}; // Haut-droite
+                //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
+                //     vertices2[0].texCoords = {start.x, 0.0f}; // Haut-gauche
+                //     vertices2[1].texCoords = {start.x, 1.0f}; // Bas-gauche
+                //     vertices2[2].texCoords = {end.x, 0.0f};   // Haut-droite
 
-            // //     vertices2[3].texCoords = {1.0f, 1.0f}; // Bas-gauche
-            // //     vertices2[4].texCoords = {1.0f, 1.0f}; // Bas-droite
-            // //     vertices2[5].texCoords = {1.0f, 0.0f}; // Haut-droite
+                //     vertices2[3].texCoords = {start.x, 1.0f}; // Bas-gauche
+                //     vertices2[4].texCoords = {end.x, 1.0f};   // Bas-droite
+                //     vertices2[5].texCoords = {end.x, 0.0f};   // Haut-droite
 
-            // //     while(--diff > 1)
-            // //     {
-            // //         gf::RenderStates states;
-            // //         states.texture[0] = &m_texture;
-            // //         m_renderer.draw(vertices2, states);
-            // //     }
+                //     m_texture.setRepeated(true);
+                //     gf::RenderStates states;
+                //     states.texture[0] = &m_texture;
+                //     m_renderer.draw(vertices2, states);
+                // }
+                // // else // !!! TODO : il faut prendre en compte que même si le segment est plus petit que 1 il faut
+                // // {
+                // //     // in that case we draw the first none complete segment, then the complete segments, then the last none complete segment
 
-            // //     gf::RenderStates states;
-            // //     states.texture[0] = &m_texture;
-            // //     m_renderer.draw(vertices2, states);
-            // // }
-            // else
-            // {
-            //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
-            //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
-            //     vertices2[0].position = column1[1].position; // Haut-gauche
-            //     vertices2[1].position = column1[0].position; // Bas-gauche
-            //     vertices2[2].position = column2[1].position; // Haut-droite
+                // //     // first segment :
+                // //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
+                // //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
+                // //     vertices2[0].position = column1[1].position; // Haut-gauche
+                // //     vertices2[1].position = column1[0].position; // Bas-gauche
+                // //     vertices2[2].position = column2[1].position; // Haut-droite
 
-            //     // Second triangle (bas-gauche, bas-droite, haut-droite)
-            //     vertices2[3].position = column1[0].position; // Bas-gauche
-            //     vertices2[4].position = column2[0].position; // Bas-droite
-            //     vertices2[5].position = column2[1].position; // Haut-droite
+                // //     // Second triangle (bas-gauche, bas-droite, haut-droite)
+                // //     vertices2[3].position = column1[0].position; // Bas-gauche
+                // //     vertices2[4].position = column2[0].position; // Bas-droite
+                // //     vertices2[5].position = column2[1].position; // Haut-droite
 
-            //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
-            //     vertices2[0].texCoords = {start.x, 0.0f}; // Haut-gauche
-            //     vertices2[1].texCoords = {start.x, 1.0f}; // Bas-gauche
-            //     vertices2[2].texCoords = {end.x, 0.0f};   // Haut-droite
+                // //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
+                // //     vertices2[0].texCoords = {startCoordOnTexture, 0.0f}; // Haut-gauche
+                // //     vertices2[1].texCoords = {startCoordOnTexture, 1.0f}; // Bas-gauche
+                // //     vertices2[2].texCoords = {1.0f, 0.0f}; // Haut-droite
 
-            //     vertices2[3].texCoords = {start.x, 1.0f}; // Bas-gauche
-            //     vertices2[4].texCoords = {end.x, 1.0f};   // Bas-droite
-            //     vertices2[5].texCoords = {end.x, 0.0f};   // Haut-droite
+                // //     vertices2[3].texCoords = {1.0f, 1.0f}; // Bas-gauche
+                // //     vertices2[4].texCoords = {1.0f, 1.0f}; // Bas-droite
+                // //     vertices2[5].texCoords = {1.0f, 0.0f}; // Haut-droite
 
-            //     m_texture.setRepeated(true);
-            //     gf::RenderStates states;
-            //     states.texture[0] = &m_texture;
-            //     m_renderer.draw(vertices2, states);
-            // }
+                // //     while(--diff > 1)
+                // //     {
+                // //         gf::RenderStates states;
+                // //         states.texture[0] = &m_texture;
+                // //         m_renderer.draw(vertices2, states);
+                // //     }
+
+                // //     gf::RenderStates states;
+                // //     states.texture[0] = &m_texture;
+                // //     m_renderer.draw(vertices2, states);
+                // // }
+                // else
+                // {
+                //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
+                //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
+                //     vertices2[0].position = column1[1].position; // Haut-gauche
+                //     vertices2[1].position = column1[0].position; // Bas-gauche
+                //     vertices2[2].position = column2[1].position; // Haut-droite
+
+                //     // Second triangle (bas-gauche, bas-droite, haut-droite)
+                //     vertices2[3].position = column1[0].position; // Bas-gauche
+                //     vertices2[4].position = column2[0].position; // Bas-droite
+                //     vertices2[5].position = column2[1].position; // Haut-droite
+
+                //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
+                //     vertices2[0].texCoords = {start.x, 0.0f}; // Haut-gauche
+                //     vertices2[1].texCoords = {start.x, 1.0f}; // Bas-gauche
+                //     vertices2[2].texCoords = {end.x, 0.0f};   // Haut-droite
+
+                //     vertices2[3].texCoords = {start.x, 1.0f}; // Bas-gauche
+                //     vertices2[4].texCoords = {end.x, 1.0f};   // Bas-droite
+                //     vertices2[5].texCoords = {end.x, 0.0f};   // Haut-droite
+
+                //     m_texture.setRepeated(true);
+                //     gf::RenderStates states;
+                //     states.texture[0] = &m_texture;
+                //     m_renderer.draw(vertices2, states);
+                // }
+            }
         }
     }
 
