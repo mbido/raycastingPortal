@@ -15,6 +15,10 @@ void Player::setAngularVelocity(double delta) {
     m_angularVelocity = delta;
 }
 
+void Player::setAngle(double angle) {
+    m_angle = angle;
+}
+
 void Player::setPosition(const gf::Vector2f &position) {
     m_position = position;
 }

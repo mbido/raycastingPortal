@@ -390,7 +390,7 @@ int main()
     player.setVelocity(direction);
 
     float angularVelocity = 0.0f;
-    float yaw = 0.0f, pitch = 0.0f, sensivity = 0.1f;
+    float yaw = 0.0f, pitch = 0.0f, sensivity = 0.05f;
 
     if (mouseCursorCurr.x == -1 && mouseCursorCurr.y == -1)
     {
