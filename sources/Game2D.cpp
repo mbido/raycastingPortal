@@ -133,7 +133,7 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
         distY = ((double)(tileY + 1) - position[1]) * unitY;
     }
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 1000; i++)
     {
         if (distX <= distY)
         {
@@ -195,7 +195,7 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
             distY += unitY;
         }
     }
-    return position + 100 * direction;
+    return position + 1000 * direction;
 }
 
 bool Game2D::isPartIncluded(std::vector<gf::Vector2f> subSegments)
@@ -556,6 +556,8 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
     // std::vector<gf::Vector2i> sortedVertices = wall.getSortedVertices(m_player->getPosition());
 
+    std::vector<gf::Vector2f> hitPoints;
+
     for (int i = 0; i < sortedVertices.size(); i++)
     {
         gf::Vector2f direction = gf::normalize(gf::Vector2f(sortedVertices[i].x - position.x, sortedVertices[i].y - position.y));
@@ -566,6 +568,8 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
         if (sortedVertices[i].x == endPoint.x && sortedVertices[i].y == endPoint.y)
         {
             // we hit the vertex aimed
+            hitPoints.push_back(endPoint);
+
             gf::VertexArray line(gf::PrimitiveType::Lines, 2);
             line[0].color = gf::Color::Blue;
             line[1].color = gf::Color::Blue;
@@ -635,6 +639,8 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
                 gf::Vector2i checkCell((int)checkPosition.x, (int)checkPosition.y);
                 if (m_walls->getTile(checkCell.x, checkCell.y) == 0)
                 {
+
+
                     gf::Vector2f newStartPoint(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
                     gf::Vector2f newEndPoint = castRay2D(newStartPoint, direction, m_walls);
 
@@ -643,6 +649,8 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
                     line[0].position = sortedVertices[i] * m_scaleUnit;
                     line[1].position = newEndPoint * m_scaleUnit;
                     m_renderer.draw(line);
+
+                    hitPoints.push_back(newEndPoint);
 
                     if (m_walls->getSegments(newEndPoint, segmentsHit))
                     {
@@ -671,6 +679,24 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
     // std::cout << std::endl;
 
     // render the segments :
+
+    // for (size_t i = 0; i < hitPoints.size() - 1; i++)
+    // {
+    //     // render the triangles :
+    //     gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+    //     triangle[0].color = gf::Color::fromRgba32(0x77777777);
+    //     triangle[1].color = gf::Color::fromRgba32(0x77777777);
+    //     triangle[2].color = gf::Color::fromRgba32(0x77777777);
+
+    //     gf::Vector2f start = *(std::next(hitPoints.begin(), i));
+    //     gf::Vector2f end = *(std::next(hitPoints.begin(), i + 1));
+
+    //     triangle[0].position = start * m_scaleUnit;
+    //     triangle[1].position = end * m_scaleUnit;
+    //     triangle[2].position = m_player->getPosition() * m_scaleUnit;
+    //     m_renderer.draw(triangle);
+    // }
+
     for (auto segment : segments)
     {
 

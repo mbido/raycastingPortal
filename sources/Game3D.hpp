@@ -21,13 +21,16 @@ struct portal {
 
 class Game3D {
     public:
+        gf::Texture m_texture;
         Game3D(Player *player, MapWalls *walls, gf::RenderWindow& renderer)
         : m_player(player)
         , m_walls(walls)
         , m_renderer(renderer)
         , m_firstPortal(NULL)
         , m_secondPortal(NULL)
+        , m_texture(gf::Texture(std::filesystem::path("../sources/resources/bricks-01.png")))
         {
+            m_texture.setRepeated(true);
             m_windowSize = m_renderer.getSize();
             m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
         }

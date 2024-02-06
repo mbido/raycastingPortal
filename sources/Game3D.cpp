@@ -12,6 +12,28 @@
 #define DELTA 0.00001
 #define RANGE 0.1
 
+gf::Vector2f linesIntersection(gf::Vector2f A, gf::Vector2f B, gf::Vector2f C, gf::Vector2f D)
+{
+    float a1 = B.y - A.y;
+    float b1 = A.x - B.x;
+    float c1 = a1 * A.x + b1 * A.y;
+
+    float a2 = D.y - C.y;
+    float b2 = C.x - D.x;
+    float c2 = a2 * C.x + b2 * C.y;
+
+    float delta = a1 * b2 - a2 * b1;
+
+    if (delta == 0)
+    {
+        return gf::Vector2f(0, 0);
+    }
+    else
+    {
+        return gf::Vector2f((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta);
+    }
+}
+
 // clamp function used for collisions
 float clamp3D(float min, float max, float value)
 {
@@ -601,6 +623,87 @@ void Game3D::castPortal(bool isFirstPortal)
     }
 }
 
+void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::Vector2f> trapezeVertices, gf::Texture &texture, gf::RenderWindow &renderer)
+{
+
+    bool isSegmentVertical = std::abs(start.x - end.x) < DELTA;
+    // trapezeVertices is a vector of the trapeze's vertices from left to right, top to bottom
+
+    // lets determine the center of the texture on the trapeze
+    // => the center is the intersection of the diagonals of the trapeze
+
+    gf::Vector2f center = linesIntersection(trapezeVertices[0], trapezeVertices[3], trapezeVertices[1], trapezeVertices[2]);
+    gf::Vector2f topCenter = linesIntersection(center, gf::Vector2f(center.x, center.y + 1), trapezeVertices[0], trapezeVertices[1]);
+    gf::Vector2f bottomCenter = linesIntersection(center, gf::Vector2f(center.x, center.y + 1), trapezeVertices[2], trapezeVertices[3]);
+
+    float textureCenter = (isSegmentVertical)? (start.y + end.y) / 2 : (start.x + end.x) / 2;
+
+    gf::VertexArray trapeze(gf::PrimitiveType::Triangles, 24);
+    // First triangle (Top-Left, Center, Top-Center)
+    trapeze[0].position = trapezeVertices[0];  // Top-Left
+    trapeze[1].position = center;  // Center
+    trapeze[2].position = topCenter; // Top-Center
+
+    // Deuxième triangle (Top-Center, Center, Top-Right)
+    trapeze[3].position = topCenter; // Top-Center
+    trapeze[4].position = center; // Center
+    trapeze[5].position = trapezeVertices[1];  // Top-Right
+
+    // Troisième triangle (Bottom-gauche, Center, Bottom-Center)
+    trapeze[6].position = trapezeVertices[2];   // Bottom-gauche
+    trapeze[7].position = center;   // Center
+    trapeze[8].position = bottomCenter; // Bottom-Center
+
+    // Quatrième triangle (Bottom-Center, Center, Bottom-Right)
+    trapeze[9].position = bottomCenter; // Bottom-Center
+    trapeze[10].position = center;  // Center
+    trapeze[11].position = trapezeVertices[3];  // Bottom-Right
+
+    // Cinquième triangle (Top-Left, Center, Bottom-Gauche)
+    trapeze[12].position = trapezeVertices[0]; // Top-Left
+    trapeze[13].position = center; // Center
+    trapeze[14].position = trapezeVertices[2]; // Bottom-gauche
+
+    // Sixième triangle (Top-Right, Center, Bottom-Right)
+    trapeze[15].position = trapezeVertices[1];  // Top-Right
+    trapeze[16].position = center; // Center
+    trapeze[17].position = trapezeVertices[3]; // Bottom-Right
+
+
+    // Texture coordinates
+    int scale = 3;
+    trapeze[0].texCoords = {(isSegmentVertical)?start.y : start.x, 0.0f}; // Top-Left
+    trapeze[1].texCoords = {textureCenter, 0.5f}; // Center
+    trapeze[2].texCoords = {textureCenter, 0.0f}; // Top-Center
+
+    trapeze[3].texCoords = {textureCenter, 0.0f}; // Top-Center
+    trapeze[4].texCoords = {textureCenter, 0.5f}; // Center
+    trapeze[5].texCoords = {(isSegmentVertical)?end.y : end.x, 0.0f}; // Top-Right
+
+    trapeze[6].texCoords = {(isSegmentVertical)?start.y : start.x, 1.0f}; // Bottom-left
+    trapeze[7].texCoords = {textureCenter, 0.5f}; // Center
+    trapeze[8].texCoords = {textureCenter, 1.0f}; // Bottom-Center
+
+    trapeze[9].texCoords = {textureCenter, 1.0f};  // Bottom-Center
+    trapeze[10].texCoords = {textureCenter, 0.5f}; // Center
+    trapeze[11].texCoords = {(isSegmentVertical)?end.y : end.x, 1.0f}; // Bottom-Right
+
+    trapeze[12].texCoords = {(isSegmentVertical)?start.y : start.x, 0.0f}; // Top-Left
+    trapeze[13].texCoords = {textureCenter, 0.5f}; // Center
+    trapeze[14].texCoords = {(isSegmentVertical)?start.y : start.x, 1.0f}; // Bottom-left
+
+    trapeze[15].texCoords = {(isSegmentVertical)?end.y : end.x, 0.0f}; // Top-Right
+    trapeze[16].texCoords = {textureCenter, 0.5f}; // Center
+    trapeze[17].texCoords = {(isSegmentVertical)?end.y : end.x, 1.0f}; // Bottom-Right
+
+    texture.setRepeated(true);
+
+    gf::RenderStates states;
+    states.texture[0] = &texture;
+
+    renderer.draw(trapeze, states);
+}
+
 void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalSegment)
 {
     // std::cout << std::endl;
@@ -791,15 +894,11 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
             segment.second.push_back(firstPoint);
         }
 
-        // draw the triangles :
-        // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-        // triangle[0].color = gf::Color::fromRgba32(0x77777777);
-        // triangle[1].color = gf::Color::fromRgba32(0x77777777);
-        // triangle[2].color = gf::Color::fromRgba32(0x77777777);
+        bool isSegmentVertical = std::abs(segment.first.first.x - segment.first.second.x) < DELTA;
+        bool isSegmentRightToPlayer = segment.first.first.x > m_player->getPosition().x;
+        bool isSegmentUpToPlayer = segment.first.first.y < m_player->getPosition().y;
 
-        // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-        // line[0].color = gf::Color::fromRgba32(0xFFFFAAFF);
-        // line[1].color = gf::Color::fromRgba32(0xFFFFAAFF);
+        auto color = (isSegmentVertical) ? gf::Color::fromRgba32(0x77FF77FF) : gf::Color::fromRgba32(0x7777FFFF);
 
         for (std::size_t i = 0; i < segment.second.size() - 1; i += 2)
         {
@@ -877,6 +976,9 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
             column2[0].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 - height2 / 2);
             column2[1].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 + height2 / 2);
+
+            renderAWallTextured(start, end, {column1[0].position, column2[0].position, column1[1].position, column2[1].position}, m_texture, m_renderer);
+
             // m_renderer.draw(column2);
 
             // linking the two columns :
@@ -893,27 +995,130 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
             // m_renderer.draw(link);
             // std::cout << "posX1 : " << column1[0].position.x << " posX2 : " << column2[0].position.x << std::endl;
 
-            bool isVertical = std::abs(start.x - end.x) < DELTA;
-
-            auto color = (isVertical) ? gf::Color::fromRgba32(0x77FF77FF) : gf::Color::fromRgba32(0x7777FFFF);
+            // bool isVertical = std::abs(start.x - end.x) < DELTA;
 
             // --- For the triangles ---
-            gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-            triangle[0].color = color;
-            triangle[1].color = color;
-            triangle[2].color = color;
+            // gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+            // triangle[0].color = color;
+            // triangle[1].color = color;
+            // triangle[2].color = color;
 
-            // we draw the trapezoid with two triangles :
+            // // we draw the trapezoid with two triangles :
 
-            triangle[0].position = column1[0].position;
-            triangle[1].position = column1[1].position;
-            triangle[2].position = column2[0].position;
-            m_renderer.draw(triangle);
+            // triangle[0].position = column1[0].position;
+            // triangle[1].position = column1[1].position;
+            // triangle[2].position = column2[0].position;
+            // m_renderer.draw(triangle);
 
-            triangle[0].position = column1[1].position;
-            triangle[1].position = column2[0].position;
-            triangle[2].position = column2[1].position;
-            m_renderer.draw(triangle);
+            // triangle[0].position = column1[1].position;
+            // triangle[1].position = column2[0].position;
+            // triangle[2].position = column2[1].position;
+            // m_renderer.draw(triangle);
+
+            // We want to draw a texture on the wall but we have to manually repeat the texture
+            // For that we have to segment the wall in segments of size 1 and not begin necessarily at the start of the wall
+
+            // int coordToCheck = (isSegmentVertical) ? 1 : 0; // if the wall is vertical, we check the y coordinate, else we check the x coordinate
+            // float startCoordOnTexture = (isSegmentVertical && isSegmentRightToPlayer || !isSegmentVertical && isSegmentUpToPlayer) ? start[coordToCheck] - (int)(start[coordToCheck]) : 1 - start[coordToCheck] - (int)(start[coordToCheck]);
+            // float endCoordOnTexture = (isSegmentVertical && isSegmentRightToPlayer || !isSegmentVertical && isSegmentUpToPlayer) ? end[coordToCheck] - (int)(end[coordToCheck]) : 1 - end[coordToCheck] - (int)(end[coordToCheck]);
+
+            // // we manage the case where the segment to draw is shorter than 1
+            // double diff = std::abs(start[coordToCheck] - end[coordToCheck]);
+
+            // // !!! TODO : il faut prendre en compte que même si le segment est plus petit que 1 il faut
+            // // si le start et end ne sont pas sur la même cellule, il faut dessiner deux fractions de la texture
+            // // aussi il faut avoir redetermine les coordonnées des "colonnes" avant d'afficher la fraction de texture (factoriser les coordonnées projetés)
+            // // peut être il faut fractionner avant et balancer dans une fonction deux colonnes et elle se charge de tout avec une lambda fonction!!!
+            // if (diff <= 1)
+            // {
+            //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
+            //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
+            //     vertices2[0].position = column1[1].position; // Haut-gauche
+            //     vertices2[1].position = column1[0].position; // Bas-gauche
+            //     vertices2[2].position = column2[1].position; // Haut-droite
+
+            //     // Second triangle (bas-gauche, bas-droite, haut-droite)
+            //     vertices2[3].position = column1[0].position; // Bas-gauche
+            //     vertices2[4].position = column2[0].position; // Bas-droite
+            //     vertices2[5].position = column2[1].position; // Haut-droite
+
+            //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
+            //     vertices2[0].texCoords = {start.x, 0.0f}; // Haut-gauche
+            //     vertices2[1].texCoords = {start.x, 1.0f}; // Bas-gauche
+            //     vertices2[2].texCoords = {end.x, 0.0f};   // Haut-droite
+
+            //     vertices2[3].texCoords = {start.x, 1.0f}; // Bas-gauche
+            //     vertices2[4].texCoords = {end.x, 1.0f};   // Bas-droite
+            //     vertices2[5].texCoords = {end.x, 0.0f};   // Haut-droite
+
+            //     m_texture.setRepeated(true);
+            //     gf::RenderStates states;
+            //     states.texture[0] = &m_texture;
+            //     m_renderer.draw(vertices2, states);
+            // }
+            // // else // !!! TODO : il faut prendre en compte que même si le segment est plus petit que 1 il faut
+            // // {
+            // //     // in that case we draw the first none complete segment, then the complete segments, then the last none complete segment
+
+            // //     // first segment :
+            // //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
+            // //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
+            // //     vertices2[0].position = column1[1].position; // Haut-gauche
+            // //     vertices2[1].position = column1[0].position; // Bas-gauche
+            // //     vertices2[2].position = column2[1].position; // Haut-droite
+
+            // //     // Second triangle (bas-gauche, bas-droite, haut-droite)
+            // //     vertices2[3].position = column1[0].position; // Bas-gauche
+            // //     vertices2[4].position = column2[0].position; // Bas-droite
+            // //     vertices2[5].position = column2[1].position; // Haut-droite
+
+            // //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
+            // //     vertices2[0].texCoords = {startCoordOnTexture, 0.0f}; // Haut-gauche
+            // //     vertices2[1].texCoords = {startCoordOnTexture, 1.0f}; // Bas-gauche
+            // //     vertices2[2].texCoords = {1.0f, 0.0f}; // Haut-droite
+
+            // //     vertices2[3].texCoords = {1.0f, 1.0f}; // Bas-gauche
+            // //     vertices2[4].texCoords = {1.0f, 1.0f}; // Bas-droite
+            // //     vertices2[5].texCoords = {1.0f, 0.0f}; // Haut-droite
+
+            // //     while(--diff > 1)
+            // //     {
+            // //         gf::RenderStates states;
+            // //         states.texture[0] = &m_texture;
+            // //         m_renderer.draw(vertices2, states);
+            // //     }
+
+            // //     gf::RenderStates states;
+            // //     states.texture[0] = &m_texture;
+            // //     m_renderer.draw(vertices2, states);
+            // // }
+            // else
+            // {
+            //     gf::VertexArray vertices2(gf::PrimitiveType::Triangles, 6);
+            //     // Premier triangle (haut-gauche, bas-gauche, haut-droite)
+            //     vertices2[0].position = column1[1].position; // Haut-gauche
+            //     vertices2[1].position = column1[0].position; // Bas-gauche
+            //     vertices2[2].position = column2[1].position; // Haut-droite
+
+            //     // Second triangle (bas-gauche, bas-droite, haut-droite)
+            //     vertices2[3].position = column1[0].position; // Bas-gauche
+            //     vertices2[4].position = column2[0].position; // Bas-droite
+            //     vertices2[5].position = column2[1].position; // Haut-droite
+
+            //     // Coordonnées de texture ajustées pour assurer une déformation uniforme entre les deux triangles
+            //     vertices2[0].texCoords = {start.x, 0.0f}; // Haut-gauche
+            //     vertices2[1].texCoords = {start.x, 1.0f}; // Bas-gauche
+            //     vertices2[2].texCoords = {end.x, 0.0f};   // Haut-droite
+
+            //     vertices2[3].texCoords = {start.x, 1.0f}; // Bas-gauche
+            //     vertices2[4].texCoords = {end.x, 1.0f};   // Bas-droite
+            //     vertices2[5].texCoords = {end.x, 0.0f};   // Haut-droite
+
+            //     m_texture.setRepeated(true);
+            //     gf::RenderStates states;
+            //     states.texture[0] = &m_texture;
+            //     m_renderer.draw(vertices2, states);
+            // }
         }
     }
 

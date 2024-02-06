@@ -3,19 +3,11 @@
 
 #include "GameHub.hpp"
 
+namespace gh
+{
 
-namespace gh {
-
-    MenuScene::MenuScene(GameHub& game)
-    : gf::Scene(game.getRenderer().getSize())
-    , m_game(game)
-    , m_backgroundTexture(game.resources.getTexture("bgTexture.png"))
-    , m_upAction("UpAction")
-    , m_downAction("DownAction")
-    , m_triggerAction("TriggerAction")
-    , m_quitAction("Quit")
-    , m_newGame("New Game", game.resources.getFont("Underdog.otf"))
-    , m_quit("Quit", game.resources.getFont("Underdog.otf"))
+    MenuScene::MenuScene(GameHub &game)
+        : gf::Scene(game.getRenderer().getSize()), m_game(game), m_backgroundTexture(game.resources.getTexture("bgTexture.png")), m_upAction("UpAction"), m_downAction("DownAction"), m_triggerAction("TriggerAction"), m_quitAction("Quit"), m_newGame("New Game", game.resources.getFont("Underdog.otf")), m_quit("Quit", game.resources.getFont("Underdog.otf"))
     {
         setClearColor(gf::Color::Black);
 
@@ -31,7 +23,8 @@ namespace gh {
         m_triggerAction.addMouseButtonControl(gf::MouseButton::Left);
         addAction(m_triggerAction);
 
-        auto setupButtonBlue = [&] (gf::TextButtonWidget& button, auto callback) {
+        auto setupButtonBlue = [&](gf::TextButtonWidget &button, auto callback)
+        {
             button.setDefaultTextColor(gf::Color::Black);
             button.setDefaultBackgroundColor(gf::Color::Gray(0.7f));
             button.setSelectedTextColor(gf::Color::Black);
@@ -44,7 +37,8 @@ namespace gh {
             m_widgets.addWidget(button);
         };
 
-        auto setupButtonOrange = [&] (gf::TextButtonWidget& button, auto callback) {
+        auto setupButtonOrange = [&](gf::TextButtonWidget &button, auto callback)
+        {
             button.setDefaultTextColor(gf::Color::Black);
             button.setDefaultBackgroundColor(gf::Color::Gray(0.7f));
             button.setSelectedTextColor(gf::Color::Black);
@@ -57,47 +51,55 @@ namespace gh {
             m_widgets.addWidget(button);
         };
 
-        setupButtonBlue(m_newGame, [&] () {
-            m_game.replaceAllScenes(m_game.selectLevel);
-        });
+        setupButtonBlue(m_newGame, [&]()
+                        { m_game.replaceAllScenes(m_game.selectLevel); });
 
-        setupButtonOrange(m_quit, [&] () {
-            m_game.popAllScenes();
-        });
+        setupButtonOrange(m_quit, [&]()
+                          { m_game.popAllScenes(); });
     }
 
-    void MenuScene::doHandleActions([[maybe_unused]] gf::Window& window) {
-        if (!isActive()) {
+    void MenuScene::doHandleActions([[maybe_unused]] gf::Window &window)
+    {
+        if (!isActive())
+        {
             return;
         }
 
-        if (m_upAction.isActive()) {
+        if (m_upAction.isActive())
+        {
             m_widgets.selectPreviousWidget();
         }
 
-        if (m_downAction.isActive()) {
+        if (m_downAction.isActive())
+        {
             m_widgets.selectNextWidget();
         }
 
-        if (m_triggerAction.isActive()) {
+        if (m_triggerAction.isActive())
+        {
             m_widgets.triggerAction();
         }
 
-        if (m_quitAction.isActive()) {
+        if (m_quitAction.isActive())
+        {
             m_game.popAllScenes();
         }
-    } 
+    }
 
-    void MenuScene::doProcessEvent(gf::Event& event) {
+    void MenuScene::doProcessEvent(gf::Event &event)
+    {
         switch (event.type)
         {
-            case gf::EventType::MouseMoved:
+        case gf::EventType::MouseMoved:
             m_widgets.pointTo(m_game.computeWindowToGameCoordinates(event.mouseCursor.coords, getHudView()));
+            break;
+        default:
             break;
         }
     }
 
-    void MenuScene::doRender(gf::RenderTarget& target, const gf::RenderStates &states) {
+    void MenuScene::doRender(gf::RenderTarget &target, const gf::RenderStates &states)
+    {
         gf::Coordinates coords(target);
 
         float backgroundHeight = coords.getRelativeSize(gf::vec(0.0f, 1.0f)).height;
@@ -116,7 +118,7 @@ namespace gh {
 
         gf::Text title("Portal 0.0", m_game.resources.getFont("Underdog.otf"), titleCharacterSize);
         title.setColor(gf::Color::White);
-        title.setPosition(coords.getRelativePoint({ 0.5f, 0.1f }));
+        title.setPosition(coords.getRelativePoint({0.5f, 0.1f}));
         title.setAnchor(gf::Anchor::TopCenter);
         target.draw(title, states);
 
@@ -141,7 +143,8 @@ namespace gh {
         m_widgets.render(target, states);
     }
 
-    void MenuScene::doShow() {
+    void MenuScene::doShow()
+    {
         m_widgets.clear();
 
         m_newGame.setDefault();
@@ -151,7 +154,6 @@ namespace gh {
         m_widgets.addWidget(m_quit);
 
         m_widgets.selectNextWidget();
-    } 
+    }
 
-
-}   
+}
