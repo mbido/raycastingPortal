@@ -420,19 +420,19 @@ int main()
 
         if (yaw < 0)
         {
-          std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
-                    << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl;
-          std::cout << yaw << std::endl;
-          std::cout << "Look at left" << std::endl;
+          // std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
+          //           << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl;
+          // std::cout << yaw << std::endl;
+          // std::cout << "Look at left" << std::endl;
           angularVelocity -= (gf::Pi / 2) * (1 + std::abs(yaw));
         }
         if (yaw > 0)
         {
-          std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
-                    << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl;
-          std::cout << yaw << std::endl;
+          // std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
+          //           << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl;
+          // std::cout << yaw << std::endl;
           angularVelocity += (gf::Pi / 2) * (1 + std::abs(yaw));
-          std::cout << "Look at right" << std::endl;
+          // std::cout << "Look at right" << std::endl;
         }
       }
       mouseCursorCurr = mouseCursorNext;
@@ -467,7 +467,7 @@ int main()
     if (event.type == gf::EventType::MouseButtonPressed && (event.mouseButton.button == gf::MouseButton::Left || event.mouseButton.button == gf::MouseButton::Right))
     {
       mouseButtonEvent = event.mouseButton;
-      std::cout << "Mouse button pressed at (" << mouseButtonEvent.coords.x << ";" << mouseButtonEvent.coords.y << ")" << std::endl;
+      // std::cout << "Mouse button pressed at (" << mouseButtonEvent.coords.x << ";" << mouseButtonEvent.coords.y << ")" << std::endl;
       if (mouseButtonEvent.button == gf::MouseButton::Left)
       {
         // bluePortal = mouseButtonEvent.coords;
