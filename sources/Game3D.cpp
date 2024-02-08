@@ -462,7 +462,7 @@ gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_
  *
  * \return True if the segment is visible to the player, false otherwise.
  */
-bool Game3D::getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b)
+bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b)
 {
     // is the player looking upward or downward ?
     bool isLookingDown = playerAngle < gf::Pi;
@@ -786,56 +786,6 @@ std::vector<gf::Vector2f> getPointsBetween(gf::Vector2f start, gf::Vector2f end)
     return points;
 }
 
-
-
-// std::vector<gf::Vector2f> getPointsBetween(gf::Vector2f start, gf::Vector2f end)
-// {
-//     std::vector<gf::Vector2f> points;
-
-//     gf::Vector2f TrueStart, TrueEnd;
-
-//     if (start.x == end.x)
-//     {
-
-//         TrueStart = (start.y < end.y) ? start : end;
-//         TrueEnd = (start.y < end.y) ? end : start;
-
-//         points.push_back(TrueStart);
-
-//         // Segment vertical
-//         int startY = std::ceil(std::min(TrueStart.y, TrueEnd.y));
-//         int endY = std::floor(std::max(TrueStart.y, TrueEnd.y));
-
-//         for (int y = startY; y < endY; ++y)
-//         {
-//             points.push_back(gf::Vector2f(TrueStart.x, y));
-//         }
-
-//         points.push_back(TrueEnd);
-//     }
-//     else if (start.y == end.y)
-//     {
-
-//         TrueStart = (start.x < end.x) ? start : end;
-//         TrueEnd = (start.x < end.x) ? end : start;
-
-//         points.push_back(TrueStart);
-
-//         // Segment horizontal
-//         int startX = std::ceil(std::min(TrueStart.x, TrueEnd.x));
-//         int endX = std::floor(std::max(TrueStart.x, TrueEnd.x));
-
-//         for (int x = startX; x < endX; ++x)
-//         {
-//             points.push_back(gf::Vector2f(x, TrueStart.y));
-//         }
-//     }
-    
-
-//     return points;
-// }
-
-
 void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::Vector2f> trapezeVertices, gf::Texture &texture, gf::RenderWindow &renderer)
 {
 
@@ -914,6 +864,52 @@ void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::V
     states.texture[0] = &texture;
 
     renderer.draw(trapeze, states);
+}
+
+void renderAPortal(bool isFirstPortal, gf::Vector2f startPortal, gf::Vector2f endPortal, gf::Vector2f position, double angle, gf::RenderWindow &m_renderer)
+{
+    gf::Vector2i viewSize = m_renderer.getView().getSize();
+    double viewWidth = viewSize.x;
+    double viewHeight = viewSize.y;
+
+    bool isSegmentVertical = std::abs(startPortal.x - endPortal.x) < DELTA;
+    auto color = (isFirstPortal)? gf::Color::Cyan : gf::Color::Orange;
+
+    gf::VertexArray trapezoid(gf::PrimitiveType::Triangles, 6);
+    trapezoid[0].color = gf::Color::Cyan;
+    trapezoid[1].color = gf::Color::Cyan;
+    trapezoid[2].color = gf::Color::Cyan;
+    trapezoid[3].color = gf::Color::Cyan;
+    trapezoid[4].color = gf::Color::Cyan;
+    trapezoid[5].color = gf::Color::Cyan;
+
+    // if one of the end point or start point is behind the player, we do not draw it
+    if (getVisibleSegment(startPortal, endPortal, position, angle, -1 / std::tan(angle), position.y - (-1 / std::tan(angle)) * position.x))
+    {
+
+        double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
+        double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
+
+        double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
+        double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
+
+        double realDistanceStart = falseDistanceStart * std::cos(startAngle - angle);
+        double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - angle);
+
+        double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
+        double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
+
+        double xPosStart = std::tan(startAngle - angle) * viewWidth / 2;
+        double xPosEnd = std::tan(endAngle - angle) * viewWidth / 2;
+
+        trapezoid[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
+        trapezoid[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+        trapezoid[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+        trapezoid[3].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+        trapezoid[4].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+        trapezoid[5].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
+        m_renderer.draw(trapezoid);
+    }
 }
 
 void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalSegment)
@@ -1119,13 +1115,13 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
                 continue;
             }
             std::vector<gf::Vector2f> points = getPointsBetween(segment.second[i], segment.second[i + 1]);
-            
-            std::cout << std::endl << "points : " << std::endl;
+
+            std::cout << std::endl
+                      << "points : " << std::endl;
             for (auto p : points)
             {
                 std::cout << "\t-(" << p.x << ", " << p.y << ")" << std::endl;
             }
-
 
             for (size_t i = 0; i < points.size() - 1; i++)
             {
@@ -1133,7 +1129,8 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
                 gf::Vector2f start = points[i];
                 gf::Vector2f end = points[i + 1];
 
-                if(start == end) {
+                if (start == end)
+                {
                     continue;
                 }
 
@@ -1358,105 +1355,105 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
 
     // render the portals :
     // a rectangle for now
-    gf::Vector2i viewSize = m_renderer.getView().getSize();
-    double viewWidth = viewSize.x;
-    double viewHeight = viewSize.y;
-    if (m_firstPortal != NULL)
-    {
+    // gf::Vector2i viewSize = m_renderer.getView().getSize();
+    // double viewWidth = viewSize.x;
+    // double viewHeight = viewSize.y;
+    // if (m_firstPortal != NULL)
+    // {
 
-        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-        triangle[0].color = gf::Color::Cyan;
-        triangle[1].color = gf::Color::Cyan;
-        triangle[2].color = gf::Color::Cyan;
+    //     gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+    //     triangle[0].color = gf::Color::Cyan;
+    //     triangle[1].color = gf::Color::Cyan;
+    //     triangle[2].color = gf::Color::Cyan;
 
-        gf::Vector2f startPortal(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
-        gf::Vector2f endPortal(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+    //     gf::Vector2f startPortal(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+    //     gf::Vector2f endPortal(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
 
-        // if one of the end point or start point is behind the player, we do not draw it
-        if (getVisibleSegment(startPortal, endPortal, position, m_player->getAngle(), -1 / std::tan(m_player->getAngle()), position.y - (-1 / std::tan(m_player->getAngle())) * position.x))
-        {
+    //     // if one of the end point or start point is behind the player, we do not draw it
+    //     if (getVisibleSegment(startPortal, endPortal, position, m_player->getAngle(), -1 / std::tan(m_player->getAngle()), position.y - (-1 / std::tan(m_player->getAngle())) * position.x))
+    //     {
 
-            double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
-            double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
+    //         double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
+    //         double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
 
-            double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
-            double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
+    //         double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
+    //         double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
 
-            double realDistanceStart = falseDistanceStart * std::cos(startAngle - m_player->getAngle());
-            double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - m_player->getAngle());
+    //         double realDistanceStart = falseDistanceStart * std::cos(startAngle - m_player->getAngle());
+    //         double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - m_player->getAngle());
 
-            double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
-            double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
+    //         double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
+    //         double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
 
-            double xPosStart = std::tan(startAngle - m_player->getAngle()) * viewWidth / 2;
-            double xPosEnd = std::tan(endAngle - m_player->getAngle()) * viewWidth / 2;
+    //         double xPosStart = std::tan(startAngle - m_player->getAngle()) * viewWidth / 2;
+    //         double xPosEnd = std::tan(endAngle - m_player->getAngle()) * viewWidth / 2;
 
-            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
-            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
-            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
-            m_renderer.draw(triangle);
+    //         triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
+    //         triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+    //         triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+    //         m_renderer.draw(triangle);
 
-            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
-            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
-            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
-            m_renderer.draw(triangle);
+    //         triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+    //         triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+    //         triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
+    //         m_renderer.draw(triangle);
 
-            // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-            // line[0].color = gf::Color::Cyan;
-            // line[1].color = gf::Color::Cyan;
-            // line[0].position = gf::Vector2f(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
-            // line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+    //         // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+    //         // line[0].color = gf::Color::Cyan;
+    //         // line[1].color = gf::Color::Cyan;
+    //         // line[0].position = gf::Vector2f(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+    //         // line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
 
-            // m_renderer.draw(line);
-        }
-    }
+    //         // m_renderer.draw(line);
+    //     }
+    // }
 
-    if (m_secondPortal != NULL)
-    {
+    // if (m_secondPortal != NULL)
+    // {
 
-        gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-        triangle[0].color = gf::Color::Orange;
-        triangle[1].color = gf::Color::Orange;
-        triangle[2].color = gf::Color::Orange;
+    //     gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
+    //     triangle[0].color = gf::Color::Orange;
+    //     triangle[1].color = gf::Color::Orange;
+    //     triangle[2].color = gf::Color::Orange;
 
-        gf::Vector2f startPortal(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
-        gf::Vector2f endPortal(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+    //     gf::Vector2f startPortal(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+    //     gf::Vector2f endPortal(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
 
-        if (getVisibleSegment(startPortal, endPortal, position, m_player->getAngle(), -1 / std::tan(m_player->getAngle()), position.y - (-1 / std::tan(m_player->getAngle())) * position.x))
-        {
+    //     if (getVisibleSegment(startPortal, endPortal, position, m_player->getAngle(), -1 / std::tan(m_player->getAngle()), position.y - (-1 / std::tan(m_player->getAngle())) * position.x))
+    //     {
 
-            double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
-            double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
+    //         double startAngle = std::atan2(startPortal.y - position.y, startPortal.x - position.x);
+    //         double endAngle = std::atan2(endPortal.y - position.y, endPortal.x - position.x);
 
-            double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
-            double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
+    //         double falseDistanceStart = std::sqrt((startPortal.x - position.x) * (startPortal.x - position.x) + (startPortal.y - position.y) * (startPortal.y - position.y));
+    //         double falseDistanceEnd = std::sqrt((endPortal.x - position.x) * (endPortal.x - position.x) + (endPortal.y - position.y) * (endPortal.y - position.y));
 
-            double realDistanceStart = falseDistanceStart * std::cos(startAngle - m_player->getAngle());
-            double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - m_player->getAngle());
+    //         double realDistanceStart = falseDistanceStart * std::cos(startAngle - m_player->getAngle());
+    //         double realDistanceEnd = falseDistanceEnd * std::cos(endAngle - m_player->getAngle());
 
-            double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
-            double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
+    //         double heightStart = (realDistanceStart != 0) ? viewHeight / realDistanceStart / 2 : viewHeight * 2;
+    //         double heightEnd = (realDistanceEnd != 0) ? viewHeight / realDistanceEnd / 2 : viewHeight * 2;
 
-            double xPosStart = std::tan(startAngle - m_player->getAngle()) * viewWidth / 2;
-            double xPosEnd = std::tan(endAngle - m_player->getAngle()) * viewWidth / 2;
+    //         double xPosStart = std::tan(startAngle - m_player->getAngle()) * viewWidth / 2;
+    //         double xPosEnd = std::tan(endAngle - m_player->getAngle()) * viewWidth / 2;
 
-            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
-            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
-            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
-            m_renderer.draw(triangle);
+    //         triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
+    //         triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+    //         triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+    //         m_renderer.draw(triangle);
 
-            triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
-            triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
-            triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
-            m_renderer.draw(triangle);
+    //         triangle[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
+    //         triangle[1].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
+    //         triangle[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
+    //         m_renderer.draw(triangle);
 
-            // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-            // line[0].color = gf::Color::Cyan;
-            // line[1].color = gf::Color::Cyan;
-            // line[0].position = gf::Vector2f(m_secondPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
-            // line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+    //         // gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+    //         // line[0].color = gf::Color::Cyan;
+    //         // line[1].color = gf::Color::Cyan;
+    //         // line[0].position = gf::Vector2f(m_secondPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
+    //         // line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
 
-            // m_renderer.draw(line);
-        }
-    }
+    //         // m_renderer.draw(line);
+    //     }
+    // }
 }
