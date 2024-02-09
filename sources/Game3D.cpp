@@ -676,70 +676,122 @@ void removeVerticesBefore3D(std::vector<gf::Vector2f> &vertices, std::pair<gf::V
     }
 }
 
-void Game3D::castPortal(bool isFirstPortal)
-{
-    struct portal *portal = isFirstPortal ? m_firstPortal : m_secondPortal;
-    struct portal *otherPortal = isFirstPortal ? m_secondPortal : m_firstPortal;
+// void Game3D::castPortal(bool isFirstPortal)
+// {
+//     struct portal *portal = isFirstPortal ? m_firstPortal : m_secondPortal;
+//     struct portal *otherPortal = isFirstPortal ? m_secondPortal : m_firstPortal;
 
-    // if the portal is not set, we set it
-    if (portal == NULL)
-    {
+//     // if the portal is not set, we set it
+//     if (portal == NULL)
+//     {
+//         portal = new struct portal;
+//         if (isFirstPortal)
+//         {
+//             m_firstPortal = portal;
+//         }
+//         else
+//         {
+//             m_secondPortal = portal;
+//         }
+//     }
+
+//     // -- cast a ray to find the closest wall
+//     gf::Vector2f position = m_player->getPosition();
+//     gf::Vector2f direction = gf::normalize(gf::Vector2f(std::cos(m_player->getAngle()), std::sin(m_player->getAngle())));
+//     gf::Vector2f hitPoint = castRay(position, direction, m_walls);
+
+//     // -- set the portal position
+//     portal->position = hitPoint;
+
+//     // -- set the portal facing
+//     // getting the segment of the wall hit by the ray
+//     std::vector<std::pair<gf::Vector2i, gf::Vector2i>> segments;
+//     if (m_walls->getSegments(hitPoint, segments))
+//     {
+//         auto segment = segments[0];
+//         bool isSegmentVertical = std::abs(segment.first.x - segment.second.x) < DELTA;
+//         bool isPlayerLeft = position.x < segment.first.x;
+//         bool isPlayerUp = position.y < segment.first.y;
+//         if (isSegmentVertical)
+//         {
+//             portal->position.y = (int)(portal->position.y) + 0.5; // setting the position to the center of the tile
+//             if (isPlayerLeft)
+//             {
+//                 portal->facing = 2;
+//             }
+//             else
+//             {
+//                 portal->facing = 0;
+//             }
+//         }
+//         else
+//         {
+//             portal->position.x = (int)(portal->position.x) + 0.5; // setting the position to the center of the tile
+//             if (isPlayerUp)
+//             {
+//                 portal->facing = 3;
+//             }
+//             else
+//             {
+//                 portal->facing = 1;
+//             }
+//         }
+//     }
+//     // if the other portal is already set, we link the two portals
+//     if (otherPortal != NULL)
+//     {
+//         portal->linkedPortal = otherPortal;
+//         otherPortal->linkedPortal = portal;
+//     }
+// }
+
+void Game3D::castPortal(bool isFirstPortal) {
+    struct portal* portal = isFirstPortal ? m_firstPortal : m_secondPortal;
+    struct portal* otherPortal = isFirstPortal ? m_secondPortal : m_firstPortal;
+
+    if (portal == NULL) {
         portal = new struct portal;
-        if (isFirstPortal)
-        {
+        if (isFirstPortal) {
             m_firstPortal = portal;
-        }
-        else
-        {
+        } else {
             m_secondPortal = portal;
         }
     }
 
-    // -- cast a ray to find the closest wall
     gf::Vector2f position = m_player->getPosition();
     gf::Vector2f direction = gf::normalize(gf::Vector2f(std::cos(m_player->getAngle()), std::sin(m_player->getAngle())));
     gf::Vector2f hitPoint = castRay(position, direction, m_walls);
 
-    // -- set the portal position
-    portal->position = hitPoint;
-
-    // -- set the portal facing
-    // getting the segment of the wall hit by the ray
     std::vector<std::pair<gf::Vector2i, gf::Vector2i>> segments;
-    if (m_walls->getSegments(hitPoint, segments))
-    {
+    if (m_walls->getSegments(hitPoint, segments) && !segments.empty()) {
         auto segment = segments[0];
-        bool isSegmentVertical = std::abs(segment.first.x - segment.second.x) < DELTA;
-        bool isPlayerLeft = position.x < segment.first.x;
-        bool isPlayerUp = position.y < segment.first.y;
-        if (isSegmentVertical)
-        {
-            portal->position.y = (int)(portal->position.y) + 0.5; // setting the position to the center of the tile
-            if (isPlayerLeft)
-            {
-                portal->facing = 2;
-            }
-            else
-            {
-                portal->facing = 0;
-            }
-        }
-        else
-        {
-            portal->position.x = (int)(portal->position.x) + 0.5; // setting the position to the center of the tile
-            if (isPlayerUp)
-            {
-                portal->facing = 3;
-            }
-            else
-            {
-                portal->facing = 1;
-            }
+        bool isVertical = std::abs(segment.first.x - segment.second.x) < DELTA;
+        float halfPortalWidth = portal->width / 2;
+
+        portal->position = hitPoint;
+
+        if (isVertical) {
+            float minY = std::min(segment.first.y, segment.second.y);
+            float maxY = std::max(segment.first.y, segment.second.y);
+
+            // Clamping the portal position within the segment boundaries
+            portal->position.y = std::max(portal->position.y, minY + halfPortalWidth);
+            portal->position.y = std::min(portal->position.y, maxY - halfPortalWidth);
+
+            portal->facing = (position.x < segment.first.x) ? 2 : 0;
+        } else {
+            float minX = std::min(segment.first.x, segment.second.x);
+            float maxX = std::max(segment.first.x, segment.second.x);
+
+            // Clamping the portal position within the segment boundaries
+            portal->position.x = std::max(portal->position.x, minX + halfPortalWidth);
+            portal->position.x = std::min(portal->position.x, maxX - halfPortalWidth);
+
+            portal->facing = (position.y < segment.first.y) ? 3 : 1;
         }
     }
-    // if the other portal is already set, we link the two portals
-    if (otherPortal != NULL)
-    {
+
+    if (otherPortal != NULL) {
         portal->linkedPortal = otherPortal;
         otherPortal->linkedPortal = portal;
     }
@@ -932,6 +984,21 @@ bool isBetween(gf::Vector2f point, gf::Vector2f start, gf::Vector2f end)
     int index2 = (index + 1) % 2;
     bool isOnSegment = std::abs(point[index] - start[index]) < DELTA;
     return point[index2] > std::min(start[index2], end[index2]) && point[index2] < std::max(start[index2], end[index2]);
+}
+
+void renderCrossHair(gf::RenderWindow &renderer)
+{
+    gf::Vector2i viewSize = renderer.getView().getSize();
+    gf::VertexArray crossHair(gf::PrimitiveType::Lines, 4);
+    crossHair[0].position = gf::Vector2f(viewSize.x / 2 - 10, viewSize.y / 2);
+    crossHair[1].position = gf::Vector2f(viewSize.x / 2 + 10, viewSize.y / 2);
+    crossHair[2].position = gf::Vector2f(viewSize.x / 2, viewSize.y / 2 - 10);
+    crossHair[3].position = gf::Vector2f(viewSize.x / 2, viewSize.y / 2 + 10);
+    crossHair[0].color = gf::Color::White;
+    crossHair[1].color = gf::Color::White;
+    crossHair[2].color = gf::Color::White;
+    crossHair[3].color = gf::Color::White;
+    renderer.draw(crossHair);
 }
 
 void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalSegment)
@@ -1543,4 +1610,5 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2i, gf::Vector2i> portalS
     //         // m_renderer.draw(line);
     //     }
     // }
+    renderCrossHair(m_renderer);
 }
