@@ -26,7 +26,11 @@ gf::Vector2f linesIntersection(gf::Vector2f A, gf::Vector2f B, gf::Vector2f C, g
 
     if (std::abs(delta) < DELTA)
     {
-        // std::cerr << "The lines are parallel" << std::endl;
+        std::cerr << "The lines are parallel" << std::endl;
+        // std::cerr << "vector A : (" << A.x << ", " << A.y << ")\n";
+        // std::cerr << "vector B : (" << B.x << ", " << B.y << ")\n";
+        // std::cerr << "vector C : (" << C.x << ", " << C.y << ")\n";
+        // std::cerr << "vector D : (" << D.x << ", " << D.y << ")\n";
         return gf::Vector2f(0, 0);
     }
     else
@@ -446,22 +450,6 @@ gf::Vector2f castRay(gf::Vector2f position, gf::Vector2f direction, MapWalls *m_
     return position + 100 * direction;
 }
 
-/**
- * \brief Determines if a segment is visible to the player.
- *
- * This function checks if a segment defined by two points, start and end, is visible to the player.
- * The visibility is determined based on the player's position, player's angle, and the equation of a line (a * x + b).
- * The segment is considered to have a visible part and an invisible part.
- *
- * \param start The starting point of the segment. -> modifiable
- * \param end The ending point of the segment. -> modifiable
- * \param playerPosition The position of the player.
- * \param playerAngle The angle at which the player is looking.
- * \param a The coefficient 'a' in the equation of the line (a * x + b).
- * \param b The coefficient 'b' in the equation of the line (a * x + b).
- *
- * \return True if the segment is visible to the player, false otherwise.
- */
 bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b)
 {
     // is the player looking upward or downward ?
@@ -951,8 +939,6 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
     }
     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(position));
 
-    // std::vector<gf::Vector2f> sortedVertices = wall.getSortedVertices(m_player->getPosition());
-
     for (int i = 0; i < sortedVertices.size(); i++)
     {
         gf::Vector2f direction = gf::normalize(gf::Vector2f(sortedVertices[i].x - position.x, sortedVertices[i].y - position.y));
@@ -978,8 +964,6 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
             {
                 for (auto segment : segmentsHit)
                 {
-                    // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
-                    // std::cout << " with point : (" << sortedVertices[i].x << ", " << sortedVertices[i].y << ")" << std::endl;
                     segments[segment].push_back(sortedVertices[i]);
                 }
             }
@@ -1005,31 +989,8 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                 }
             }
 
-            if (nbWalls < 2)
+            if (nbWalls == 1)
             {
-                // looking what kind of vertex we hit :
-                // NW -> 0 (the vertex has the same coordinates as the cell)
-                // NE -> 1 (the vertex has the same x coordinate as the cell but not the same y coordinate)
-                // SE -> 2 (the vertex has neither the same x coordinate nor the same y coordinate as the cell)
-                // SW -> 3 (the vertex has the same y coordinate as the cell but not the same x coordinate)
-                int vertexType;
-                if (sortedVertices[i].x != endPoint.x)
-                {
-                    vertexType = 3;
-                    if (sortedVertices[i].y != endPoint.y)
-                    {
-                        vertexType = 2;
-                    }
-                }
-                else
-                {
-                    vertexType = 0;
-                    if (sortedVertices[i].y != endPoint.y)
-                    {
-                        vertexType = 1;
-                    }
-                }
-
                 // we check if we are opposing the vertex :
                 gf::Vector2f checkPosition(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
                 gf::Vector2f checkCell((int)checkPosition.x, (int)checkPosition.y);
@@ -1042,13 +1003,9 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                     {
                         for (auto segment : segmentsHit)
                         {
-                            // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
-                            // std::cout << " with point : (" << newEndPoint.x << ", " << newEndPoint.y << ")" << std::endl;
                             segments[segment].push_back(newEndPoint);
                         }
                     }
-
-                    // nbSupplementaryRays++;
                 }
             }
         }
@@ -1092,7 +1049,10 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                 gf::Vector2f start = points[i];
                 gf::Vector2f end = points[i + 1];
 
-                if (start == end)
+                // std::cerr << "start : (" << start.x << ", " << start.y << ")\n";
+                // std::cerr << "end : (" << end.x << ", " << end.y << ")\n";
+
+                if (std::abs((start - end).x) < DELTA && std::abs((start - end).y) < DELTA)
                 {
                     continue;
                 }
