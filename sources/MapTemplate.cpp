@@ -11,7 +11,7 @@ void MapTemplate::init()
 {
     // Initialize the map by setting all the values to 0 and the boundaries to 1
 
-    std::map<int, std::vector<gf::Vector2i>> cellsWalls;
+    std::map<int, std::vector<gf::Vector2f>> cellsWalls;
     std::size_t nbWall = 0;
 
 
@@ -33,7 +33,7 @@ void MapTemplate::init()
             // If the pixel is black
             if (static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0)
             {
-                gf::Vector2i current = gf::Vector2i(i, j);
+                gf::Vector2f current = gf::Vector2f(i, j);
                 bool hasFound = false;
                 for (int k = 0; k < nbWall; ++k)
                 {
@@ -46,16 +46,16 @@ void MapTemplate::init()
 
                 if (!hasFound)
                 {
-                    std::vector<gf::Vector2i> visited;
-                    std::queue<gf::Vector2i> queue;
+                    std::vector<gf::Vector2f> visited;
+                    std::queue<gf::Vector2f> queue;
                     depthFirstSearch(current, visited, queue);
-                    std::cout << "For wall n°" << nbWall << " :" << std::endl;
+                    // std::cout << "For wall n°" << nbWall << " :" << std::endl;
                     for (const auto &vertex : visited)
                     {
                         if(std::find(cellsWalls[nbWall].begin(), cellsWalls[nbWall].end(), vertex) == cellsWalls[nbWall].end()){
-                            std::cout << "(" << vertex.x << ", " << vertex.y << ")" << std::endl;
+                            // std::cout << "(" << vertex.x << ", " << vertex.y << ")" << std::endl;
                             cellsWalls[nbWall].push_back(vertex);
-                            m_map[vertex.x][vertex.y] = 1;
+                            m_map[(int)vertex.x][(int)vertex.y] = 1;
                         }
                     }
                     ++nbWall;
@@ -66,47 +66,47 @@ void MapTemplate::init()
             else if (static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 255 && static_cast<int>(pixelColor.b) == 0)
             {
                 m_map[i][j] = 2;
-                m_begin = gf::Vector2i(i,j);
+                m_begin = gf::Vector2f(i,j);
             }
 
             // If the pixel is red
             else if (static_cast<int>(pixelColor.r) == 255 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0)
             {
                 m_map[i][j] = 3;
-                m_arrival = gf::Vector2i(i,j);
+                m_arrival = gf::Vector2f(i,j);
             }
 
 
         }
     }
 
-    std::cout << "nbWall = " << nbWall << std::endl;
+    // std::cout << "nbWall = " << nbWall << std::endl;
 
     for (auto cellWallsEntry : cellsWalls)
     {
-        std::cout << "Before wall push_back" << std::endl;
+        // std::cout << "Before wall push_back" << std::endl;
 
-        std::cout << "Vertices  in cellWalls" << std::endl;
-        for(auto v : cellWallsEntry.second){
-            std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
-        }
-        std::cout << std::endl;
+        // std::cout << "Vertices  in cellWalls" << std::endl;
+        // for(auto v : cellWallsEntry.second){
+        //     std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
+        // }
+        // std::cout << std::endl;
         createWall(cellWallsEntry.second);
         // m_walls.push_back(Wall(cellWallsEntry.second));
-        std::cout << "After wall push_back" << std::endl;
+        // std::cout << "After wall push_back" << std::endl;
     }
 
-    for(std::size_t i = 0; i < m_walls.size(); ++i){
-        std::cout << "In Wall n°" << i << std::endl;
-        std::cout << "Vertices  in wall" << std::endl;
-        for(auto v : m_walls[i].getVertices()){
-            std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
-        }
-        std::cout << std::endl;
-    }    
+    // for(std::size_t i = 0; i < m_walls.size(); ++i){
+    //     std::cout << "In Wall n°" << i << std::endl;
+    //     std::cout << "Vertices  in wall" << std::endl;
+    //     for(auto v : m_walls[i].getVertices()){
+    //         std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
+    //     }
+    //     std::cout << std::endl;
+    // }    
 }
 
-bool fctCanGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &usefulVertices, gf::Vector2i &where)
+bool fctCanGo(gf::Vector2f from, char direction, const std::vector<gf::Vector2f> &usefulVertices, gf::Vector2f &where)
 {
     int deltaX = 0;
     int deltaY = 0;
@@ -165,43 +165,43 @@ bool fctCanGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i>
             //break;
         }
     }
-    std::cout << "from (" << from.x << ", " << from.y << ")" << std::endl
-              << "direction: " << direction << std::endl
-              << "where (" << where.x << ", " << where.y << ")" << std::endl;
-    std::cout << "canGo?: " << (where.x != -1 || where.y != -1) << std::endl;
+    // std::cout << "from (" << from.x << ", " << from.y << ")" << std::endl
+    //           << "direction: " << direction << std::endl
+    //           << "where (" << where.x << ", " << where.y << ")" << std::endl;
+    // std::cout << "canGo?: " << (where.x != -1 || where.y != -1) << std::endl;
     return where.x != -1 || where.y != -1;
 }
 
-void ICanGo(std::vector<gf::Vector2i>& vertices, gf::Vector2i& currentVertex, gf::Vector2i& nextVertex, int& nbTries, int& currentDirection, int& lastDirection){
+void ICanGo(std::vector<gf::Vector2f>& vertices, gf::Vector2f& currentVertex, gf::Vector2f& nextVertex, int& nbTries, int& currentDirection, int& lastDirection){
     currentVertex = nextVertex;
     vertices.push_back(currentVertex);
     lastDirection = currentDirection;
     nbTries = 0;
 }
 
-bool changeDir(gf::Vector2i from, int **m_map, char currentDir, char currentDir2){
-    std::cout << "currentDir: " << currentDir << std::endl
-                << "currentDir2: " << currentDir2 << std::endl;
-    if(m_map[from.x][from.y] == 1){
+bool changeDir(gf::Vector2f from, int **m_map, char currentDir, char currentDir2){
+    // std::cout << "currentDir: " << currentDir << std::endl
+    //             << "currentDir2: " << currentDir2 << std::endl;
+    if(m_map[(int)from.x][(int)from.y] == 1){
         return (currentDir2 == 'd' && currentDir == 'u') || (currentDir2 == 'r' && currentDir == 'l');
     }
-    if(m_map[from.x][from.y] == 0){
+    if(m_map[(int)from.x][(int)from.y] == 0){
         return (currentDir2 == 'l' && currentDir == 'r') || (currentDir2 == 'u' && currentDir == 'd');
     }
     return false;
 }
 
-void MapTemplate::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices, std::vector<gf::Vector2i>& vertices)
+void MapTemplate::setSortedVertices(gf::Vector2f from, std::vector<gf::Vector2f> usefulVertices, std::vector<gf::Vector2f>& vertices)
 {
-    gf::Vector2i currentVertex = from;
-    gf::Vector2i nextVertex = {0, 0};
-    gf::Vector2i nextVertex2 = {0, 0};
-    // gf::Vector2i lastVertex = {0, 0};
+    gf::Vector2f currentVertex = from;
+    gf::Vector2f nextVertex = {0.0f, 0.0f};
+    gf::Vector2f nextVertex2 = {0.0f, 0.0f};
+    // gf::Vector2f lastVertex = {0, 0};
     std::vector<char> directions = {'r', 'd', 'l', 'u'};
     int lastDirection = -1;
     int currentDirection = 0;
     int nbTries = 0;
-    std::cout << "FROM: (" << from.x << ", " << from.y << ") usefulVertices.size() = " << usefulVertices.size() << std::endl;
+    // std::cout << "FROM: (" << from.x << ", " << from.y << ") usefulVertices.size() = " << usefulVertices.size() << std::endl;
     do
     {
         bool canGo = fctCanGo(currentVertex, directions[currentDirection], usefulVertices, nextVertex);
@@ -214,15 +214,15 @@ void MapTemplate::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i>
             // std::cout << "break" << std::endl;
             // break;
             if((vertices.size() == 4 && from.x == 0 && from.y == 0) || (vertices.size() == usefulVertices.size() && from.x == 1 && from.y == 1)){
-                std::cout << "break" << std::endl;
-                std::cout << "vertices.size() = " << vertices.size() << std::endl;
-                std::cout << "EXTERIEUR" << std::endl;
+                // std::cout << "break" << std::endl;
+                // std::cout << "vertices.size() = " << vertices.size() << std::endl;
+                // std::cout << "EXTERIEUR" << std::endl;
                 break;
             }
 
             if((vertices.size() == usefulVertices.size() && from.x != 0 && from.y != 0)){
-                std::cout << "break" << std::endl;
-                std::cout << "NON EXTERIEUR" << std::endl;
+                // std::cout << "break" << std::endl;
+                // std::cout << "NON EXTERIEUR" << std::endl;
                 // vertices.push_back(vertices.at(0));
                 break;
             }
@@ -235,9 +235,9 @@ void MapTemplate::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i>
                 currentDirection = currentDirection2;
                 //patterDirectionModify = true;
             }else if(canGo2 && canGo){
-                std::cout << "Two direction possible" << std::endl;
-                std::cout << "nextVertex: (" << nextVertex.x << ", " << nextVertex.y << ")" << std::endl
-                          << "nextVertex2: (" << nextVertex2.x << ", " << nextVertex2.y << ")" << std::endl;
+                // std::cout << "Two direction possible" << std::endl;
+                // std::cout << "nextVertex: (" << nextVertex.x << ", " << nextVertex.y << ")" << std::endl
+                //           << "nextVertex2: (" << nextVertex2.x << ", " << nextVertex2.y << ")" << std::endl;
                 if((/*nextVertex2.x != 1 && nextVertex2.y != 1 && */
                 std::find(vertices.begin(), vertices.end(), nextVertex2) == vertices.end()) && changeDir(currentVertex, m_map, directions[currentDirection], directions[currentDirection2])
                 || (!changeDir(currentVertex, m_map, directions[currentDirection], directions[currentDirection2]) && std::find(vertices.begin(), vertices.end(), nextVertex) != vertices.end())){
@@ -268,7 +268,7 @@ void MapTemplate::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i>
  * creation of a wall from a set of occupied cells
  * with sorted useful vertices
 */
-void MapTemplate::createWall(std::vector<gf::Vector2i> occupiedCells){
+void MapTemplate::createWall(std::vector<gf::Vector2f> occupiedCells){
 // step 1: creating a list of the useful vertices (cf : notes)
     // step 2: creating the wall's sides by flowing the next algorithm :
     //          a)-we start at the top left vertex of the first cell
@@ -277,7 +277,7 @@ void MapTemplate::createWall(std::vector<gf::Vector2i> occupiedCells){
 
     // step 1
     std::vector<std::size_t> perimetersSize = {};
-    std::vector<gf::Vector2i> vertices, usefulVertices;
+    std::vector<gf::Vector2f> vertices, usefulVertices;
 
     for (auto cell : occupiedCells)
     {
@@ -287,12 +287,12 @@ void MapTemplate::createWall(std::vector<gf::Vector2i> occupiedCells){
         {
             for (int y = 0; y < 2; ++y)
             {
-                gf::Vector2i vertex = gf::Vector2i(cell.x + x, cell.y + y);
+                gf::Vector2f vertex = gf::Vector2f(cell.x + x, cell.y + y);
 
-                gf::Vector2i cellUpLeft = gf::Vector2i(vertex.x - 1, vertex.y - 1);
-                gf::Vector2i cellUpRight = gf::Vector2i(vertex.x, vertex.y - 1);
-                gf::Vector2i cellDownLeft = gf::Vector2i(vertex.x - 1, vertex.y);
-                gf::Vector2i cellDownRight = gf::Vector2i(vertex.x, vertex.y);
+                gf::Vector2f cellUpLeft = gf::Vector2f(vertex.x - 1, vertex.y - 1);
+                gf::Vector2f cellUpRight = gf::Vector2f(vertex.x, vertex.y - 1);
+                gf::Vector2f cellDownLeft = gf::Vector2f(vertex.x - 1, vertex.y);
+                gf::Vector2f cellDownRight = gf::Vector2f(vertex.x, vertex.y);
 
                 int count = 0;
                 if (std::find(occupiedCells.begin(), occupiedCells.end(), cellUpLeft) != occupiedCells.end())
@@ -322,20 +322,20 @@ void MapTemplate::createWall(std::vector<gf::Vector2i> occupiedCells){
         }
     }
 
-    std::cout << "usefulVertices :" << std::endl;
+    // std::cout << "usefulVertices :" << std::endl;
 
-    for(auto v : usefulVertices){
-        std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
-    }
+    // for(auto v : usefulVertices){
+    //     std::cout << "(" << v.x << ", " << v.y << ")" << std::endl;
+    // }
 
-    std::cout << "Wall before step 2" << std::endl;
+    // std::cout << "Wall before step 2" << std::endl;
 
     int counter = 0;
     // step 2
     while (usefulVertices.size() > vertices.size())
     {
-        std::cout << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
-        gf::Vector2i vertex;
+        // std::cout << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
+        gf::Vector2f vertex;
         bool found = false;
         for (auto &vx : usefulVertices)
         {
@@ -359,32 +359,32 @@ void MapTemplate::createWall(std::vector<gf::Vector2i> occupiedCells){
         }
     }
 
-    std::cout << "Wall after step 2 " << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
+    // std::cout << "Wall after step 2 " << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
 
-    std::cout << "Nombre de sommets: " << vertices.size() << std::endl;
-    // std::cout << "Nombre de title: " << wallCells.size() << std::endl;
-    std::cout << "Nombre de perimetre: " << perimetersSize.size() << std::endl;
+    // std::cout << "Nombre de sommets: " << vertices.size() << std::endl;
+    // // std::cout << "Nombre de title: " << wallCells.size() << std::endl;
+    // std::cout << "Nombre de perimetre: " << perimetersSize.size() << std::endl;
 
-    std::cout << "les sommets pour un bloc de murs : " << std::endl;
+    // std::cout << "les sommets pour un bloc de murs : " << std::endl;
 
-    for (const auto &vertice : vertices)
-    {
+    // for (const auto &vertice : vertices)
+    // {
 
-        std::cout << "(" << vertice.x << ", " << vertice.y << ")\n";
-    }
+    //     std::cout << "(" << vertice.x << ", " << vertice.y << ")\n";
+    // }
 
-    std::cout << "\n\n\n";
+    // std::cout << "\n\n\n";
     m_walls.push_back(Wall(vertices, occupiedCells, perimetersSize));
 }
 
-void MapTemplate::depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i> &visited, std::queue<gf::Vector2i> queue)
+void MapTemplate::depthFirstSearch(gf::Vector2f vertex, std::vector<gf::Vector2f> &visited, std::queue<gf::Vector2f> queue)
 {
     // std::cout << "depthFirstSearch" << std::endl;
     queue.push(vertex);
     visited.push_back(vertex);
     while (!queue.empty())
     {
-        gf::Vector2i current = queue.front();
+        gf::Vector2f current = queue.front();
         // std::cout << "current = (" << current.x << ", " << current.y << ")" << std::endl;
         // visited.push_back(current);
         queue.pop();
@@ -397,9 +397,9 @@ void MapTemplate::depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i
                 {
                     continue;
                 }
-                gf::Vector2i neighbor = gf::Vector2i(current.x + x, current.y + y);
+                gf::Vector2f neighbor = gf::Vector2f(current.x + x, current.y + y);
                 
-                gf::Color4u pixelColor = m_image.getPixel({(neighbor.x), (neighbor.y)});
+                gf::Color4u pixelColor = m_image.getPixel({((int)neighbor.x), ((int)neighbor.y)});
 
                 if (neighbor.x >= 0 && neighbor.y >= 0 && neighbor.x < m_nbColumns && neighbor.y < m_nbRows && static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0)
                 {
@@ -453,7 +453,7 @@ int MapTemplate::setTile(int i, int j, int value)
     }
 }
 
-bool MapTemplate::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments)
+bool MapTemplate::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2f, gf::Vector2f>> &segments)
 {
     for (auto wall : m_walls)
     {
@@ -467,6 +467,6 @@ bool MapTemplate::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vect
             return true;
         }
     }
-    std::cout << std::endl << "point : (" << point.x << ", " << point.y << ")" << std::endl;
+    // std::cout << std::endl << "point : (" << point.x << ", " << point.y << ")" << std::endl;
     return false;
 }

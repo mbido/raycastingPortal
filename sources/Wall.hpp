@@ -22,24 +22,23 @@ class Wall
 {
 public:
     // Constructor
-    // Wall(std::vector<gf::Vector2i> occupiedCells);
-    Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupiedCells, std::vector<std::size_t> perimetersSize);
+    Wall(std::vector<gf::Vector2f> vertices, std::vector<gf::Vector2f> occupiedCells, std::vector<std::size_t> perimetersSize);
 
-    // std::vector<gf::Vector2i> getSortedVertices(gf::Vector2f playerPositions);
+    // std::vector<gf::Vector2f> getSortedVertices(gf::Vector2f playerPositions);
 
-    std::vector<gf::Vector2i> getVertices();
-    std::vector<gf::Vector2i> getOccupiedCells();
+    std::vector<gf::Vector2f> getVertices();
+    std::vector<gf::Vector2f> getOccupiedCells();
 
     void render(gf::RenderWindow &window, int scale);
 
-    bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments);
+    bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2f, gf::Vector2f>> &segments);
 
-    std::vector<gf::Vector2i> getWallCells();
+    std::vector<gf::Vector2f> getWallCells();
 private:
-    // void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices);
+    // void setSortedVertices(const gf::Vector2f from, std::vector<gf::Vector2f> usefulVertices);
 
-    std::vector<gf::Vector2i> vertices;
-    std::vector<gf::Vector2i> wallCells;
+    std::vector<gf::Vector2f> vertices;
+    std::vector<gf::Vector2f> wallCells;
     std::vector<std::size_t> perimetersSize;
 };
 

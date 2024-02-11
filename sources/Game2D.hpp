@@ -21,7 +21,7 @@ class Game2D {
         }
         void castPortal(bool isFirstPortal);
         void update(gf::Time dt);
-        void render(bool isPortal = false, std::pair<gf::Vector2i, gf::Vector2i> portalSegment = std::make_pair(gf::Vector2i(0, 0), gf::Vector2i(0, 0)));
+        void render(bool isPortal = false, std::pair<gf::Vector2f, gf::Vector2f> portalSegment = std::make_pair(gf::Vector2f(0, 0), gf::Vector2f(0, 0)));
     private:
         struct portal *m_firstPortal;
         struct portal *m_secondPortal;

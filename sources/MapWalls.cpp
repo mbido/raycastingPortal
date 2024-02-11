@@ -33,12 +33,12 @@ void MapWalls::render(gf::RenderWindow& renderer, int sizeUnit) {
     renderer.draw(arrival);
 }
 
-std::vector<gf::Vector2i> MapWalls::getVertices()
+std::vector<gf::Vector2f> MapWalls::getVertices()
 {
-    std::vector<gf::Vector2i> vertices;
+    std::vector<gf::Vector2f> vertices;
     for (auto wall : m_walls)
     {
-        std::vector<gf::Vector2i> wallVertices = wall.getVertices();
+        std::vector<gf::Vector2f> wallVertices = wall.getVertices();
         vertices.insert(vertices.end(), wallVertices.begin(), wallVertices.end());
     }
     return vertices;

@@ -8,7 +8,7 @@
 #define EPSILON 0.001
 
 
-// bool fctCanGo(gf::Vector2i from, char direction, const std::vector<gf::Vector2i> &usefulVertices, gf::Vector2i &where)
+// bool fctCanGo(gf::Vector2f from, char direction, const std::vector<gf::Vector2f> &usefulVertices, gf::Vector2f &where)
 // {
 //     int deltaX = 0;
 //     int deltaY = 0;
@@ -74,14 +74,14 @@
 //     return where.x != -1 || where.y != -1;
 // }
 
-// void ICanGo(std::vector<gf::Vector2i>& vertices, gf::Vector2i& currentVertex, gf::Vector2i& nextVertex, int& nbTries, int& currentDirection, int& lastDirection){
+// void ICanGo(std::vector<gf::Vector2f>& vertices, gf::Vector2f& currentVertex, gf::Vector2f& nextVertex, int& nbTries, int& currentDirection, int& lastDirection){
 //     currentVertex = nextVertex;
 //     vertices.push_back(currentVertex);
 //     lastDirection = currentDirection;
 //     nbTries = 0;
 // }
 
-// bool changeDir(gf::Vector2i nextVertex, gf::Vector2i nextVertex2, char dir){
+// bool changeDir(gf::Vector2f nextVertex, gf::Vector2f nextVertex2, char dir){
 //     std::cout << dir << std::endl;
 //     switch (dir)
 //     {
@@ -98,12 +98,12 @@
 //     }
 // }
 
-// void Wall::setSortedVertices(gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices)
+// void Wall::setSortedVertices(gf::Vector2f from, std::vector<gf::Vector2f> usefulVertices)
 // {
-//     gf::Vector2i currentVertex = from;
-//     gf::Vector2i nextVertex = {0, 0};
-//     gf::Vector2i nextVertex2 = {0, 0};
-//     // gf::Vector2i lastVertex = {0, 0};
+//     gf::Vector2f currentVertex = from;
+//     gf::Vector2f nextVertex = {0, 0};
+//     gf::Vector2f nextVertex2 = {0, 0};
+//     // gf::Vector2f lastVertex = {0, 0};
 //     std::vector<char> directions = {'r', 'd', 'l', 'u'};
 //     int lastDirection = -1;
 //     int currentDirection = 0;
@@ -188,23 +188,23 @@
 //     // std::cout << "setSortedVertices, vertices.size() = " << vertices.size() << std::endl;
 // }
 
-std::vector<gf::Vector2i> Wall::getWallCells() {
+std::vector<gf::Vector2f> Wall::getWallCells() {
     return wallCells;
 }
 
-Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupiedCells, std::vector<std::size_t> perimetersSize) : wallCells(occupiedCells), vertices(vertices), perimetersSize(perimetersSize)
+Wall::Wall(std::vector<gf::Vector2f> vertices, std::vector<gf::Vector2f> occupiedCells, std::vector<std::size_t> perimetersSize) : wallCells(occupiedCells), vertices(vertices), perimetersSize(perimetersSize)
 {
-    std::cout << "Wall creation vertices: " << std::endl;
-    for(const auto& vertice : vertices){
-        std::cout << "(" << vertice.x << ", " << vertice.y << ")" << std::endl;
-    }
-    std::cout << "perimetez :" << std::endl;
-    for(const auto& v : perimetersSize){
-        std::cout << v << std::endl;
-    }
+    // std::cout << "Wall creation vertices: " << std::endl;
+    // for(const auto& vertice : vertices){
+    //     std::cout << "(" << vertice.x << ", " << vertice.y << ")" << std::endl;
+    // }
+    // std::cout << "perimetez :" << std::endl;
+    // for(const auto& v : perimetersSize){
+    //     std::cout << v << std::endl;
+    // }
 }
 
-// Wall::Wall(std::vector<gf::Vector2i> occupiedCells) : wallCells(occupiedCells)
+// Wall::Wall(std::vector<gf::Vector2f> occupiedCells) : wallCells(occupiedCells)
 // {
 
 //     // step 1: creating a list of the useful vertices (cf : notes)
@@ -215,7 +215,7 @@ Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupie
 
 //     // step 1
 //     perimetersSize = {};
-//     std::vector<gf::Vector2i> usefulVertices;
+//     std::vector<gf::Vector2f> usefulVertices;
 
 //     for (auto cell : occupiedCells)
 //     {
@@ -225,12 +225,12 @@ Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupie
 //         {
 //             for (int y = 0; y < 2; ++y)
 //             {
-//                 gf::Vector2i vertex = gf::Vector2i(cell.x + x, cell.y + y);
+//                 gf::Vector2f vertex = gf::Vector2f(cell.x + x, cell.y + y);
 
-//                 gf::Vector2i cellUpLeft = gf::Vector2i(vertex.x - 1, vertex.y - 1);
-//                 gf::Vector2i cellUpRight = gf::Vector2i(vertex.x, vertex.y - 1);
-//                 gf::Vector2i cellDownLeft = gf::Vector2i(vertex.x - 1, vertex.y);
-//                 gf::Vector2i cellDownRight = gf::Vector2i(vertex.x, vertex.y);
+//                 gf::Vector2f cellUpLeft = gf::Vector2f(vertex.x - 1, vertex.y - 1);
+//                 gf::Vector2f cellUpRight = gf::Vector2f(vertex.x, vertex.y - 1);
+//                 gf::Vector2f cellDownLeft = gf::Vector2f(vertex.x - 1, vertex.y);
+//                 gf::Vector2f cellDownRight = gf::Vector2f(vertex.x, vertex.y);
 
 //                 int count = 0;
 //                 if (std::find(occupiedCells.begin(), occupiedCells.end(), cellUpLeft) != occupiedCells.end())
@@ -273,7 +273,7 @@ Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupie
 //     while (usefulVertices.size() > vertices.size())
 //     {
 //         std::cout << "usefulVertices.size() = " << usefulVertices.size() << std::endl << "vertices.size() = " << vertices.size() << std::endl;
-//         gf::Vector2i vertex;
+//         gf::Vector2f vertex;
 //         bool found = false;
 //         for (auto &vx : usefulVertices)
 //         {
@@ -316,26 +316,26 @@ Wall::Wall(std::vector<gf::Vector2i> vertices, std::vector<gf::Vector2i> occupie
 
 void Wall::render(gf::RenderWindow &window, int scale)
 {
-    gf::Vector2i origin = {0, 0};
+    gf::Vector2f origin = {0, 0};
     if(std::find(vertices.begin(), vertices.end(), origin) != vertices.end()){
         for(std::size_t i = 0; i < 4; ++i){
-            gf::Vector2i currentVertex = vertices[i];
-            gf::Vector2i prevVertex = vertices[(i+1)%4];
+            gf::Vector2f currentVertex = vertices[i];
+            gf::Vector2f prevVertex = vertices[(i+1)%4];
             gf::Line line(currentVertex * scale, prevVertex * scale);
             line.setColor(gf::Color::White);
             window.draw(line);
         }
         for(std::size_t i = 4; i < vertices.size(); ++i){
-            gf::Vector2i currentVertex = vertices[i];
-            gf::Vector2i prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
+            gf::Vector2f currentVertex = vertices[i];
+            gf::Vector2f prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
             gf::Line line(currentVertex * scale, prevVertex * scale);
             line.setColor(gf::Color::White);
             window.draw(line);
         }
     }else{
         for(std::size_t i = 0; i < vertices.size(); ++i){
-            gf::Vector2i currentVertex = vertices[i];
-            gf::Vector2i prevVertex = vertices[(i+1)%vertices.size()];
+            gf::Vector2f currentVertex = vertices[i];
+            gf::Vector2f prevVertex = vertices[(i+1)%vertices.size()];
             gf::Line line(currentVertex * scale, prevVertex * scale);
             line.setColor(gf::Color::White);
             window.draw(line);
@@ -349,8 +349,8 @@ void Wall::render(gf::RenderWindow &window, int scale)
     //     size_t s = perimetersSize[i];
     //     for (size_t j = 0; j < s; ++j)
     //     {
-    //         gf::Vector2i currentVertex = vertices[endAt - j];
-    //         gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
+    //         gf::Vector2f currentVertex = vertices[endAt - j];
+    //         gf::Vector2f prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
     //         gf::Line line(currentVertex * scale, prevVertex * scale);
     //         line.setColor(gf::Color::White);
     //         window.draw(line);
@@ -361,30 +361,30 @@ void Wall::render(gf::RenderWindow &window, int scale)
     // }
 }
 
-std::vector<gf::Vector2i> Wall::getVertices()
+std::vector<gf::Vector2f> Wall::getVertices()
 {
     return vertices;
 }
 
-std::vector<gf::Vector2i> Wall::getOccupiedCells(){
+std::vector<gf::Vector2f> Wall::getOccupiedCells(){
     return wallCells;
 }
 
-// std::vector<gf::Vector2i> Wall::getSortedVertices(gf::Vector2f playerPositions)
+// std::vector<gf::Vector2f> Wall::getSortedVertices(gf::Vector2f playerPositions)
 // {
-//     std::vector<gf::Vector2i> sortedVertices = vertices;
+//     std::vector<gf::Vector2f> sortedVertices = vertices;
 //     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(playerPositions));
 //     return sortedVertices;
 // }
 
-bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments)
+bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2f, gf::Vector2f>> &segments)
 {
-    gf::Vector2i origin = {0, 0};
+    gf::Vector2f origin = {0, 0};
     segments.clear();
     if(std::find(vertices.begin(), vertices.end(), origin) != vertices.end()){
         for(std::size_t i = 0; i < 4; ++i){
-            gf::Vector2i currentVertex = vertices[i];
-            gf::Vector2i prevVertex = vertices[(i+1) % 4];
+            gf::Vector2f currentVertex = vertices[i];
+            gf::Vector2f prevVertex = vertices[(i+1) % 4];
             bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
             bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
             if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
@@ -397,8 +397,8 @@ bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, g
             }
         }
         for(std::size_t i = 4; i < vertices.size(); ++i){
-            gf::Vector2i currentVertex = vertices[i];
-            gf::Vector2i prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
+            gf::Vector2f currentVertex = vertices[i];
+            gf::Vector2f prevVertex = ((i+1)%vertices.size() == 0) ? vertices[4] : vertices[(i+1)];
             bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
             bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
             if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
@@ -412,8 +412,8 @@ bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, g
         }
     }else{
         for(std::size_t i = 0; i < vertices.size(); ++i){
-            gf::Vector2i currentVertex = vertices[i];
-            gf::Vector2i prevVertex = vertices[(i+1) % vertices.size()];
+            gf::Vector2f currentVertex = vertices[i];
+            gf::Vector2f prevVertex = vertices[(i+1) % vertices.size()];
             bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
             bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
             if (isVertical && ((point.y <= currentVertex.y && point.y >= prevVertex.y) || (point.y >= currentVertex.y && point.y <= prevVertex.y)))
@@ -435,8 +435,8 @@ bool Wall::getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, g
     //     size_t s = perimetersSize[i];
     //     for (size_t j = 0; j < s; ++j)
     //     {
-    //         gf::Vector2i currentVertex = vertices[endAt - j];
-    //         gf::Vector2i prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
+    //         gf::Vector2f currentVertex = vertices[endAt - j];
+    //         gf::Vector2f prevVertex = vertices[(endAt - j - 1) % s + endAt - s + 1];
     //         bool isVertical = std::abs(point.x - currentVertex.x) < EPSILON && std::abs(point.x - prevVertex.x) < EPSILON;
     //         bool isHorizontal = std::abs(point.y - currentVertex.y) < EPSILON && std::abs(point.y - prevVertex.y) < EPSILON;
     //         // std::cout << "currentVertex: (" << currentVertex.x << ", " << currentVertex.y << ")" << std::endl

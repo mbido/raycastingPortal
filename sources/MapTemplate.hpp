@@ -50,17 +50,17 @@ class MapTemplate {
             return m_walls;
         }
 
-        gf::Vector2i getBeginCell() const {
+        gf::Vector2f getBeginCell() const {
             return m_begin;
         }
 
-        gf::Vector2i getArrivalCell() const {
+        gf::Vector2f getArrivalCell() const {
             return m_arrival;
         }
 
-        void depthFirstSearch(gf::Vector2i vertex, std::vector<gf::Vector2i>& visited, std::queue<gf::Vector2i> queue);
+        void depthFirstSearch(gf::Vector2f vertex, std::vector<gf::Vector2f>& visited, std::queue<gf::Vector2f> queue);
 
-        bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2i, gf::Vector2i>> &segments);
+        bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2f, gf::Vector2f>> &segments);
 
     protected :
         gf::Image m_image;
@@ -68,8 +68,8 @@ class MapTemplate {
         int m_nbColumns;
         int **m_map;
         std::vector<Wall> m_walls;
-        gf::Vector2i m_begin;
-        gf::Vector2i m_arrival;
+        gf::Vector2f m_begin;
+        gf::Vector2f m_arrival;
 
     
     private :
@@ -78,8 +78,8 @@ class MapTemplate {
         */
         void init();
 
-        void createWall(std::vector<gf::Vector2i> occupiedCells);
-        void setSortedVertices(const gf::Vector2i from, std::vector<gf::Vector2i> usefulVertices, std::vector<gf::Vector2i>& sortedVertices);
+        void createWall(std::vector<gf::Vector2f> occupiedCells);
+        void setSortedVertices(const gf::Vector2f from, std::vector<gf::Vector2f> usefulVertices, std::vector<gf::Vector2f>& sortedVertices);
 };
 
 #endif
