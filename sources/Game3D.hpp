@@ -21,7 +21,15 @@ struct portal {
 
 class Game3D {
     public:
+        struct portal *m_firstPortal;
+        struct portal *m_secondPortal;
+        Player *m_player;
+        MapWalls *m_walls;
+        gf::RenderWindow& m_renderer;
+        int m_scaleUnit;
+        gf::Vector2u m_windowSize;
         gf::Texture m_texture;
+
         Game3D(Player *player, MapWalls *walls, gf::RenderWindow& renderer)
         : m_player(player)
         , m_walls(walls)
@@ -36,14 +44,7 @@ class Game3D {
         }
         void castPortal(bool isFirstPortal);
         void update(gf::Time dt);
-        void render(bool isPortal = false, std::pair<gf::Vector2f, gf::Vector2f> portalSegment = std::make_pair(gf::Vector2f(0, 0), gf::Vector2f(0, 0)));
+        void render();
+        
     private:
-        struct portal *m_firstPortal;
-        struct portal *m_secondPortal;
-        Player *m_player;
-        MapWalls *m_walls;
-        gf::RenderWindow& m_renderer;
-        int m_scaleUnit;
-        gf::Vector2u m_windowSize;
-        bool isPartIncluded(std::vector<gf::Vector2f> subSegments);
 };

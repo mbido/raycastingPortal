@@ -208,7 +208,7 @@ struct PairComparator
     }
 };
 
-bool Game3D::isPartIncluded(std::vector<gf::Vector2f> subSegments)
+bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
 {
     // std::cout << "Subsegments vector: [";
     // for (const auto &segment : subSegments)
@@ -716,7 +716,7 @@ std::vector<gf::Vector2f> getPointsBetween(gf::Vector2f start, gf::Vector2f end)
     return points;
 }
 
-void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::Vector2f> trapezeVertices, gf::Texture &texture, gf::RenderWindow &renderer)
+void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::Vector2f> trapezeVertices, const gf::Texture &texture, gf::RenderWindow &renderer)
 {
 
     bool isSegmentVertical = std::abs(start.x - end.x) < DELTA;
@@ -791,8 +791,6 @@ void renderAWallTextured(gf::Vector2f start, gf::Vector2f end, std::vector<gf::V
     trapeze[15].texCoords = {(isSegmentVertical) ? end.y : end.x, 0.0f}; // Top-Right
     trapeze[16].texCoords = {textureCenter, 0.5f};                       // Center
     trapeze[17].texCoords = {(isSegmentVertical) ? end.y : end.x, 1.0f}; // Bottom-Right
-
-    texture.setRepeated(true);
 
     gf::RenderStates states;
     states.texture[0] = &texture;
@@ -883,62 +881,8 @@ void renderCrossHair(gf::RenderWindow &renderer)
     renderer.draw(crossHair);
 }
 
-void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalSegment)
+void castSegments(std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> &segments, gf::Vector2f position, std::vector<gf::Vector2f> sortedVertices, bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalSegment, const Game3D &game)
 {
-
-    // getting the segments where the portal are on :
-    auto firstPortalSegment = std::pair<gf::Vector2f, gf::Vector2f>(gf::Vector2f(0, 0), gf::Vector2f(0, 0));
-    std::vector<std::pair<gf::Vector2f, gf::Vector2f>> segmentsP;
-    if (m_firstPortal != NULL && m_walls->getSegments(m_firstPortal->position, segmentsP))
-    {
-
-        firstPortalSegment = segmentsP[0];
-    }
-    auto secondPortalSegment = std::pair<gf::Vector2f, gf::Vector2f>(gf::Vector2f(0, 0), gf::Vector2f(0, 0));
-    if (m_secondPortal != NULL && m_walls->getSegments(m_secondPortal->position, segmentsP))
-    {
-        secondPortalSegment = segmentsP[0];
-    }
-
-    std::vector<Wall> walls = m_walls->getWalls();
-    std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> segments;
-
-    // cast the rays :
-    gf::Vector2f position = m_player->getPosition();
-    std::vector<gf::Vector2f> sortedVertices = m_walls->getVertices();
-    // if we are in a portal, we add a vertex at every intersection between a segment and the line defined by the segment of the portal
-    // then we remove every vertices that are before that line
-    if (isPortal)
-    {
-        // adding the vertices :
-        std::set<std::pair<gf::Vector2f, gf::Vector2f>, PairComparator> seenSegments;
-        // a copy of sortedVertices is needed because we are adding vertices to the vector while iterating over it
-        std::vector<gf::Vector2f> sortedVerticesCopy = sortedVertices;
-        // removing the vertices not needed :
-        removeVerticesBefore3D(sortedVertices, portalSegment, m_player->getPosition());
-        for (auto v : sortedVerticesCopy)
-        {
-            // std::cout << "vertex : (" << v.x << ", " << v.y << ")" << std::endl;
-            std::vector<std::pair<gf::Vector2f, gf::Vector2f>> vertexSegments;
-            if (m_walls->getSegments(v, vertexSegments))
-            {
-                for (auto segment : vertexSegments)
-                {
-                    // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")" << std::endl;
-                    if (seenSegments.insert(segment).second)
-                    {
-                        gf::Vector2f intersection = getIntersectionForPortals3D(portalSegment, segment, m_player->getPosition());
-                        if (intersection != gf::Vector2f(0, 0))
-                        {
-                            sortedVertices.push_back(gf::Vector2f(intersection.x, intersection.y));
-                        }
-                    }
-                }
-            }
-        }
-    }
-    std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(position));
-
     for (int i = 0; i < sortedVertices.size(); i++)
     {
         gf::Vector2f direction = gf::normalize(gf::Vector2f(sortedVertices[i].x - position.x, sortedVertices[i].y - position.y));
@@ -947,11 +891,11 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
 
         if (isPortal)
         {
-            endPoint = castRay(position, direction, m_walls, portalSegment);
+            endPoint = castRay(position, direction, game.m_walls, portalSegment);
         }
         else
         {
-            endPoint = castRay(position, direction, m_walls);
+            endPoint = castRay(position, direction, game.m_walls);
         }
         double dist = std::sqrt((sortedVertices[i].x - position.x) * (sortedVertices[i].x - position.x) + (sortedVertices[i].y - position.y) * (sortedVertices[i].y - position.y));
 
@@ -960,7 +904,7 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
             // we hit the vertex aimed
 
             std::vector<std::pair<gf::Vector2f, gf::Vector2f>> segmentsHit;
-            if (m_walls->getSegments(sortedVertices[i], segmentsHit))
+            if (game.m_walls->getSegments(sortedVertices[i], segmentsHit))
             {
                 for (auto segment : segmentsHit)
                 {
@@ -983,7 +927,7 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
 
             for (const auto &cell : cells)
             {
-                if (m_walls->getTile(cell.x, cell.y) != 0)
+                if (game.m_walls->getTile(cell.x, cell.y) != 0)
                 {
                     nbWalls++;
                 }
@@ -994,12 +938,12 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                 // we check if we are opposing the vertex :
                 gf::Vector2f checkPosition(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
                 gf::Vector2f checkCell((int)checkPosition.x, (int)checkPosition.y);
-                if (m_walls->getTile(checkCell.x, checkCell.y) == 0)
+                if (game.m_walls->getTile(checkCell.x, checkCell.y) == 0)
                 {
                     gf::Vector2f newStartPoint(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
-                    gf::Vector2f newEndPoint = castRay(newStartPoint, direction, m_walls);
+                    gf::Vector2f newEndPoint = castRay(newStartPoint, direction, game.m_walls);
 
-                    if (m_walls->getSegments(newEndPoint, segmentsHit))
+                    if (game.m_walls->getSegments(newEndPoint, segmentsHit))
                     {
                         for (auto segment : segmentsHit)
                         {
@@ -1010,8 +954,40 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
             }
         }
     }
+}
 
-    // render the segments :
+void setVerticesWhenPortal(std::vector<gf::Vector2f> &sortedVertices, const std::pair<gf::Vector2f, gf::Vector2f> &portalSegment, const Game3D &game)
+{
+    // adding the vertices :
+    std::set<std::pair<gf::Vector2f, gf::Vector2f>, PairComparator> seenSegments;
+    // a copy of sortedVertices is needed because we are adding vertices to the vector while iterating over it
+    std::vector<gf::Vector2f> sortedVerticesCopy = sortedVertices;
+    // removing the vertices not needed :
+    removeVerticesBefore3D(sortedVertices, portalSegment, game.m_player->getPosition());
+    for (auto v : sortedVerticesCopy)
+    {
+        // std::cout << "vertex : (" << v.x << ", " << v.y << ")" << std::endl;
+        std::vector<std::pair<gf::Vector2f, gf::Vector2f>> vertexSegments;
+        if (game.m_walls->getSegments(v, vertexSegments))
+        {
+            for (auto segment : vertexSegments)
+            {
+                // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")" << std::endl;
+                if (seenSegments.insert(segment).second)
+                {
+                    gf::Vector2f intersection = getIntersectionForPortals3D(portalSegment, segment, game.m_player->getPosition());
+                    if (intersection != gf::Vector2f(0, 0))
+                    {
+                        sortedVertices.push_back(gf::Vector2f(intersection.x, intersection.y));
+                    }
+                }
+            }
+        }
+    }
+}
+
+void renderSegments(const std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> &segments, std::pair<gf::Vector2f, gf::Vector2f> firstPortalSegment, std::pair<gf::Vector2f, gf::Vector2f> secondPortalSegment, const Game3D &game)
+{
     for (auto segment : segments)
     {
         //  does one part of the segment is included in another segment ?
@@ -1024,8 +1000,8 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
         }
 
         bool isSegmentVertical = std::abs(segment.first.first.x - segment.first.second.x) < DELTA;
-        bool isSegmentRightToPlayer = segment.first.first.x > m_player->getPosition().x;
-        bool isSegmentUpToPlayer = segment.first.first.y < m_player->getPosition().y;
+        bool isSegmentRightToPlayer = segment.first.first.x > game.m_player->getPosition().x;
+        bool isSegmentUpToPlayer = segment.first.first.y < game.m_player->getPosition().y;
 
         auto color = (isSegmentVertical) ? gf::Color::fromRgba32(0x77FF77FF) : gf::Color::fromRgba32(0x7777FFFF);
 
@@ -1057,12 +1033,12 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                     continue;
                 }
 
-                double angle = m_player->getAngle();
+                double angle = game.m_player->getAngle();
                 if (angle == 0 || angle == gf::Pi || angle == 2 * gf::Pi || angle == -gf::Pi)
                 {
                     angle += DELTA / 2;
                 }
-                gf::Vector2f pos = m_player->getPosition();
+                gf::Vector2f pos = game.m_player->getPosition();
                 double a = -1 / std::tan(angle);
                 double b = pos.y - a * pos.x;
                 // skip the segment if it is behind the player if needed
@@ -1071,13 +1047,9 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                     continue;
                 }
 
-                gf::Vector2f viewSize = m_renderer.getView().getSize();
+                gf::Vector2f viewSize = game.m_renderer.getView().getSize();
                 double viewWidth = viewSize.x;
                 double viewHeight = viewSize.y;
-                // std::cout << "viewWidth : " << viewWidth << std::endl;
-                // std::cout << "viewHeight : " << viewHeight << std::endl;
-
-                // std::cout << "start : (" << start.x << ", " << start.y << ") end : (" << end.x << ", " << end.y << ")" << std::endl;
                 // --- For the first point of the segment ---
 
                 // the angle of the ray to the player:
@@ -1130,58 +1102,77 @@ void Game3D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                 column2[0].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 - height2 / 2);
                 column2[1].position = gf::Vector2f(viewWidth / 2 + xPos2, viewHeight / 2 + height2 / 2);
 
-                renderAWallTextured(start, end, {column1[0].position, column2[0].position, column1[1].position, column2[1].position}, m_texture, m_renderer);
+                renderAWallTextured(start, end, {column1[0].position, column2[0].position, column1[1].position, column2[1].position}, game.m_texture, game.m_renderer);
             }
             // render the portals if it is on that segment :
             int index = (isSegmentVertical) ? 1 : 0;
-            // if (segment.second.size() > i + 1 && m_firstPortal != NULL && firstPortalSegment == segment.first)
-            // {
-            //     std::cout << "m_firstPortal->position[index] : " << m_firstPortal->position[index] << std::endl;
-
-            //     std::cout << "segment.second[i][index] : " << segment.second[i][index] << std::endl;
-            //     std::cout << "segment.second[i + 1][index] : " << segment.second[i + 1][index] << std::endl;
-            // }
-            if (m_firstPortal != NULL && firstPortalSegment == segment.first)
+            if (game.m_firstPortal != NULL && firstPortalSegment == segment.first)
             {
-                gf::Vector2f startPortal(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
-                gf::Vector2f endPortal(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
+                gf::Vector2f startPortal(game.m_firstPortal->position.x - ((game.m_firstPortal->facing % 2 == 1) ? game.m_firstPortal->width / 2 : 0), game.m_firstPortal->position.y - ((game.m_firstPortal->facing % 2 == 0) ? game.m_firstPortal->width / 2 : 0));
+                gf::Vector2f endPortal(game.m_firstPortal->position.x + ((game.m_firstPortal->facing % 2 == 1) ? game.m_firstPortal->width / 2 : 0), game.m_firstPortal->position.y + ((game.m_firstPortal->facing % 2 == 0) ? game.m_firstPortal->width / 2 : 0));
 
-                // std::cout << "segment.second[i] : (" << segment.second[i].x << ", " << segment.second[i].y << ")" << std::endl;
-                // std::cout << "segment.second[i + 1] : (" << segment.second[i + 1].x << ", " << segment.second[i + 1].y << ")" << std::endl;
-                // std::cout << "portal : (" << startPortal.x << ", " << startPortal.y << ") -> (" << endPortal.x << ", " << endPortal.y << ")" << std::endl;
                 bool isBetweenStart = isBetween(startPortal, segment.second[i], segment.second[i + 1]);
                 bool isBetweenEnd = isBetween(endPortal, segment.second[i], segment.second[i + 1]);
-                // std::cout << "isBetweenStart : " << isBetweenStart << std::endl;
-                // std::cout << "isBetweenEnd : " << isBetweenEnd << std::endl;
                 if (segment.second.size() > 1 && (isBetweenStart || isBetweenEnd))
                 {
-                    // std::cout << "Rendering the first portal" << std::endl;
                     resizePortal(startPortal, endPortal, segment.second[i], segment.second[i + 1]);
-                    renderAPortal(true, startPortal, endPortal, position, m_player->getAngle(), m_renderer);
+                    renderAPortal(true, startPortal, endPortal, game.m_player->getPosition(), game.m_player->getAngle(), game.m_renderer);
                 }
-                // else
-                // {
-                //     std::cout << "Not rendering the first portal" << std::endl;
-                // }
             }
 
-            if (m_secondPortal != NULL && secondPortalSegment == segment.first)
+            if (game.m_secondPortal != NULL && secondPortalSegment == segment.first)
             {
-                gf::Vector2f startPortal(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
-                gf::Vector2f endPortal(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
+                gf::Vector2f startPortal(game.m_secondPortal->position.x - ((game.m_secondPortal->facing % 2 == 1) ? game.m_secondPortal->width / 2 : 0), game.m_secondPortal->position.y - ((game.m_secondPortal->facing % 2 == 0) ? game.m_secondPortal->width / 2 : 0));
+                gf::Vector2f endPortal(game.m_secondPortal->position.x + ((game.m_secondPortal->facing % 2 == 1) ? game.m_secondPortal->width / 2 : 0), game.m_secondPortal->position.y + ((game.m_secondPortal->facing % 2 == 0) ? game.m_secondPortal->width / 2 : 0));
 
-                if (segment.second.size() > 1 && m_secondPortal != NULL && secondPortalSegment == segment.first && (isBetween(startPortal, segment.second[i], segment.second[i + 1]) || isBetween(endPortal, segment.second[i], segment.second[i + 1])))
+                if (segment.second.size() > 1 && game.m_secondPortal != NULL && secondPortalSegment == segment.first && (isBetween(startPortal, segment.second[i], segment.second[i + 1]) || isBetween(endPortal, segment.second[i], segment.second[i + 1])))
                 {
                     // std::cout << "Rendering the second portal" << std::endl;
                     resizePortal(startPortal, endPortal, segment.second[i], segment.second[i + 1]);
-                    renderAPortal(false, startPortal, endPortal, position, m_player->getAngle(), m_renderer);
+                    renderAPortal(false, startPortal, endPortal, game.m_player->getPosition(), game.m_player->getAngle(), game.m_renderer);
                 }
-                // else
-                // {
-                //     std::cout << "Not rendering the second portal" << std::endl;
-                // }
             }
         }
     }
-    renderCrossHair(m_renderer);
+}
+
+void renderHelper(const Game3D &game, bool isPortal = false, std::pair<gf::Vector2f, gf::Vector2f> portalSegment = {{0.0f, 0.0f}, {0.0f, 0.0f}})
+{
+    // getting the segments where the portal are on :
+    std::pair<gf::Vector2f, gf::Vector2f> firstPortalSegment(gf::Vector2f(0, 0), gf::Vector2f(0, 0));
+    std::vector<std::pair<gf::Vector2f, gf::Vector2f>> segmentsP;
+    if (game.m_firstPortal != NULL && game.m_walls->getSegments(game.m_firstPortal->position, segmentsP))
+    {
+
+        firstPortalSegment = segmentsP[0];
+    }
+    std::pair<gf::Vector2f, gf::Vector2f> secondPortalSegment(gf::Vector2f(0, 0), gf::Vector2f(0, 0));
+    if (game.m_secondPortal != NULL && game.m_walls->getSegments(game.m_secondPortal->position, segmentsP))
+    {
+        secondPortalSegment = segmentsP[0];
+    }
+
+    std::vector<Wall> walls = game.m_walls->getWalls();
+    std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> segments;
+    gf::Vector2f position = game.m_player->getPosition();
+    std::vector<gf::Vector2f> sortedVertices = game.m_walls->getVertices();
+
+    if (isPortal)
+    {
+        setVerticesWhenPortal(sortedVertices, portalSegment, game);
+    }
+
+    std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(position));
+
+    castSegments(segments, position, sortedVertices, isPortal, portalSegment, game);
+
+    // render the segments :
+    renderSegments(segments, firstPortalSegment, secondPortalSegment, game);
+
+    renderCrossHair(game.m_renderer);
+}
+
+void Game3D::render()
+{
+    renderHelper(*this);
 }
