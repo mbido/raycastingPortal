@@ -26,11 +26,6 @@ gf::Vector2f linesIntersection(gf::Vector2f A, gf::Vector2f B, gf::Vector2f C, g
 
     if (std::abs(delta) < DELTA)
     {
-        std::cerr << "The lines are parallel" << std::endl;
-        // std::cerr << "vector A : (" << A.x << ", " << A.y << ")\n";
-        // std::cerr << "vector B : (" << B.x << ", " << B.y << ")\n";
-        // std::cerr << "vector C : (" << C.x << ", " << C.y << ")\n";
-        // std::cerr << "vector D : (" << D.x << ", " << D.y << ")\n";
         return gf::Vector2f(0, 0);
     }
     else
