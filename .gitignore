@@ -4,3 +4,5 @@ compte-rendu/*.*
 !compte-rendu/*.tex
 !compte-rendu/*.sty
 !compte-rendu/*.pdf
+.DS_Store
+*\[*\]*

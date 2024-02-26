@@ -25,7 +25,6 @@ public:
     double getAngle();
     void update(gf::Time dt);
     void render(gf::RenderWindow &renderer, int sizeUnit);
-    
 
 private:
     gf::Vector2f m_position;

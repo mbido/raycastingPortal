@@ -26,6 +26,27 @@ float clamp(float min, float max, float value)
     return value;
 }
 
+gf::Vector2f getRendererPosition2(struct portal *fromPortal, struct portal *toPortal, gf::Vector2f position)
+{
+    // determine the rotation of the portals
+    float delta = -std::fmod(gf::Pi / 2 * (toPortal->facing - fromPortal->facing), 2 * gf::Pi);
+    float cosDelta = (float)std::cos(delta);
+    float sinDelta = (float)std::sin(delta);
+
+    // the matrix of rotation
+    gf::Matrix2f rotation(cosDelta, -sinDelta, sinDelta, cosDelta);
+    gf::Vector2f rendererPosition = rotation * (position - fromPortal->position) + toPortal->position;
+
+    return rendererPosition;
+}
+
+double getRendererAngle2(struct portal *fromPortal, struct portal *toPortal, double angle)
+{
+    // determine the rotation of the portals
+    float delta = -std::fmod(gf::Pi / 2 * (toPortal->facing - fromPortal->facing), 2 * gf::Pi);
+    return angle + delta;
+}
+
 gf::Vector2f checkingCollisionsForEachWall(gf::Vector2f closestPointOfTheWall, gf::Vector2f p_position)
 {
     float distanceBetweenWallAndPlayer = std::sqrt((p_position.x - closestPointOfTheWall.x) * (p_position.x - closestPointOfTheWall.x) + (p_position.y - closestPointOfTheWall.y) * (p_position.y - closestPointOfTheWall.y));
@@ -38,7 +59,7 @@ gf::Vector2f checkingCollisionsForEachWall(gf::Vector2f closestPointOfTheWall, g
     return gf::Vector2f(0.0f, 0.0f);
 }
 
-std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal(struct portal* firstPortal, struct portal* secondPortal, gf::Vector2f closestPointOfThePortal, gf::Vector2f p_position, double angle)
+std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal(struct portal *firstPortal, struct portal *secondPortal, gf::Vector2f closestPointOfThePortal, gf::Vector2f p_position, double angle)
 {
     float distanceBetweenPortalAndPlayer = std::sqrt((p_position.x - closestPointOfThePortal.x) * (p_position.x - closestPointOfThePortal.x) + (p_position.y - closestPointOfThePortal.y) * (p_position.y - closestPointOfThePortal.y));
     if (RANGE > distanceBetweenPortalAndPlayer)
@@ -46,34 +67,34 @@ std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal(struct portal* f
 
         std::pair<double, gf::Vector2f> nextCoords = std::pair(angle, p_position);
 
-        nextCoords.first = angle + gf::Pi + (secondPortal->facing - firstPortal->facing) * gf::Pi/2;
+        nextCoords.first = angle + gf::Pi + (secondPortal->facing - firstPortal->facing) * gf::Pi / 2;
 
         switch ((firstPortal->facing + secondPortal->facing) % 4)
         {
         case 0:
-            std::cout << "cas 0" << std::endl;
+            // std::cout << "cas 0" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x + (p_position.x - firstPortal->position.x), secondPortal->position.y - (p_position.y - firstPortal->position.y));
-            std::cout << "nextCoords.second : " << secondPortal->position.x + (p_position.x - firstPortal->position.x) << ";" << secondPortal->position.y - (p_position.y - firstPortal->position.y) << std::endl;
+            // std::cout << "nextCoords.second : " << secondPortal->position.x + (p_position.x - firstPortal->position.x) << ";" << secondPortal->position.y - (p_position.y - firstPortal->position.y) << std::endl;
             break;
         case 1:
-            std::cout << "cas 1" << std::endl;
+            // std::cout << "cas 1" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x + (p_position.y - firstPortal->position.y), secondPortal->position.y + (p_position.x - firstPortal->position.x));
-            std::cout << "nextCoords.second : " << secondPortal->position.x + (p_position.y - firstPortal->position.y) << ";" << secondPortal->position.y + (p_position.x - firstPortal->position.x) << std::endl;
+            // std::cout << "nextCoords.second : " << secondPortal->position.x + (p_position.y - firstPortal->position.y) << ";" << secondPortal->position.y + (p_position.x - firstPortal->position.x) << std::endl;
             break;
         case 2:
-            std::cout << "cas 2" << std::endl;
+            // std::cout << "cas 2" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x - (p_position.x - firstPortal->position.x), secondPortal->position.y + (p_position.y - firstPortal->position.y));
-            std::cout << "nextCoords.second : " << secondPortal->position.x - (p_position.x - firstPortal->position.x) << ";" << secondPortal->position.y + (p_position.y - firstPortal->position.y) << std::endl;
+            // std::cout << "nextCoords.second : " << secondPortal->position.x - (p_position.x - firstPortal->position.x) << ";" << secondPortal->position.y + (p_position.y - firstPortal->position.y) << std::endl;
             break;
         case 3:
-            std::cout << "cas 3" << std::endl;
+            // std::cout << "cas 3" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x - (p_position.y - firstPortal->position.y), secondPortal->position.y - (p_position.x - firstPortal->position.x));
-            std::cout << "nextCoords.second : " << secondPortal->position.x - (p_position.y - firstPortal->position.y) << ";" << secondPortal->position.y - (p_position.x - firstPortal->position.x) << std::endl;
+            // std::cout << "nextCoords.second : " << secondPortal->position.x - (p_position.y - firstPortal->position.y) << ";" << secondPortal->position.y - (p_position.x - firstPortal->position.x) << std::endl;
             break;
         default:
-            std::cout << "tous les autres cas : (secondPortal->facing - firstPortal->facing) % 4 = " << ((secondPortal->facing - firstPortal->facing) % 4) << std::endl;
+            // std::cout << "tous les autres cas : (secondPortal->facing - firstPortal->facing) % 4 = " << ((secondPortal->facing - firstPortal->facing) % 4) << std::endl;
             nextCoords.second = p_position;
-            std::cout << "nextCoords.second : " << p_position.x << ";" << p_position.y << std::endl;
+            // std::cout << "nextCoords.second : " << p_position.x << ";" << p_position.y << std::endl;
             break;
         }
 
@@ -100,7 +121,7 @@ gf::Vector2f getClosestPointOfWall(Wall wall, gf::Vector2f p_position)
     return closestPointOfTheWall;
 }
 
-std::pair<bool, gf::Vector2f> getClosestPointOfPortal(struct portal* firstPortal, struct portal* secondPortal, gf::Vector2f p_position)
+std::pair<bool, gf::Vector2f> getClosestPointOfPortal(struct portal *firstPortal, struct portal *secondPortal, gf::Vector2f p_position)
 {
     gf::Vector2f closestPointOfThePortal = gf::Vector2f(0.0f, 0.0f);
     bool isFirstPortal = true;
@@ -136,7 +157,7 @@ std::pair<bool, gf::Vector2f> getClosestPointOfPortal(struct portal* firstPortal
     closestPointOfThePortal = gf::Vector2f(x, y);
 
     // Second Portal
-    
+
     switch (secondPortal->facing)
     {
     case 0:
@@ -203,21 +224,25 @@ void Game2D::update(gf::Time dt)
     m_windowSize = m_renderer.getSize();
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 
-    //if ((m_firstPortal != NULL && m_secondPortal != NULL) && (timeBeforeNextTP == TIME_DELTA_FOR_TP)) {
-    if (m_firstPortal != NULL && m_secondPortal != NULL) {
+    // if ((m_firstPortal != NULL && m_secondPortal != NULL) && (timeBeforeNextTP == TIME_DELTA_FOR_TP)) {
+    if (m_firstPortal != NULL && m_secondPortal != NULL)
+    {
         std::pair<bool, gf::Vector2f> tmp = getClosestPointOfPortal(m_firstPortal, m_secondPortal, m_player->getPosition());
         std::pair<double, gf::Vector2f> positionPostTP = std::pair(m_player->getAngle(), m_player->getPosition());
-        if (tmp.first) {
+        if (tmp.first)
+        {
             positionPostTP = checkingCollisionsForEachPortal(m_firstPortal, m_secondPortal, tmp.second, m_player->getPosition(), m_player->getAngle());
         }
-        else {
+        else
+        {
             positionPostTP = checkingCollisionsForEachPortal(m_secondPortal, m_firstPortal, tmp.second, m_player->getPosition(), m_player->getAngle());
         }
         m_player->setPosition(positionPostTP.second);
         m_player->setAngle(positionPostTP.first);
-        if (m_player->getPosition() != positionPostTP.second) {
+        if (m_player->getPosition() != positionPostTP.second)
+        {
             didTP = true;
-            //std::cout << "Did tp !" << std::endl;
+            // std::cout << "Did tp !" << std::endl;
         }
     }
 
@@ -227,9 +252,11 @@ void Game2D::update(gf::Time dt)
         m_player->setPosition(m_player->getPosition() + newPos);
     }
 
-    //std::cout << timeBeforeNextTP << " and " << (didTP ? "tp" : "not tp") << std::endl;
-    if (didTP) timeBeforeNextTP -= dt.asSeconds();
-    if (timeBeforeNextTP <= 0) {
+    // std::cout << timeBeforeNextTP << " and " << (didTP ? "tp" : "not tp") << std::endl;
+    if (didTP)
+        timeBeforeNextTP -= dt.asSeconds();
+    if (timeBeforeNextTP <= 0)
+    {
         timeBeforeNextTP = TIME_DELTA_FOR_TP;
         didTP = false;
     }
@@ -614,7 +641,7 @@ void Game2D::castPortal(bool isFirstPortal)
         otherPortal->linkedPortal = portal;
     }
 
-    std::cout << "portal position : (" << portal->position.x << ", " << portal->position.y << ")" << std::endl;
+    // std::cout << "portal position : (" << portal->position.x << ", " << portal->position.y << ")" << std::endl;
 }
 
 void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalSegment)
@@ -781,7 +808,6 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                 gf::Vector2f checkCell((int)checkPosition.x, (int)checkPosition.y);
                 if (m_walls->getTile(checkCell.x, checkCell.y) == 0)
                 {
-
 
                     gf::Vector2f newStartPoint(endPoint.x + 0.0001 * direction.x, endPoint.y + 0.0001 * direction.y);
                     gf::Vector2f newEndPoint = castRay2D(newStartPoint, direction, m_walls);
@@ -961,4 +987,69 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
     //     circle.setAnchor(gf::Anchor::Center);
     //     m_renderer.draw(circle);
     // }
+
+    if (m_firstPortal && m_secondPortal)
+    {
+        // we place the rendererPosition :
+        gf::Vector2f positionRenderer1 = getRendererPosition2(m_firstPortal, m_secondPortal, m_player->getPosition());
+        gf::Vector2f positionRenderer2 = getRendererPosition2(m_secondPortal, m_firstPortal, m_player->getPosition());
+
+        // draw the positionRenderer :
+        gf::CircleShape circle(m_scaleUnit / 16);
+        circle.setPosition(positionRenderer1 * m_scaleUnit);
+        circle.setColor(gf::Color::Cyan);
+        circle.setAnchor(gf::Anchor::Center);
+        m_renderer.draw(circle);
+
+        circle.setPosition(positionRenderer2 * m_scaleUnit);
+        circle.setColor(gf::Color::Orange);
+        m_renderer.draw(circle);
+
+        // we place the casterPosition :
+        gf::Vector2f positionCaster1 = m_firstPortal->position;
+        // with a small offset :
+        double angle = m_firstPortal->facing * gf::Pi / 2;
+        gf::Vector2f offset = gf::Vector2f(std::cos(angle), std::sin(angle)) * 0.1;
+        positionCaster1 = positionCaster1 + offset;
+
+        gf::Vector2f positionCaster2 = m_secondPortal->position;
+        // with a small offset :
+        angle = m_secondPortal->facing * gf::Pi / 2;
+        offset = gf::Vector2f(std::cos(angle), std::sin(angle)) * 0.1;
+        positionCaster2 = positionCaster2 + offset;
+
+        // draw the positionCaster :
+        circle.setPosition(positionCaster1 * m_scaleUnit);
+        circle.setColor(gf::Color::Green);
+        m_renderer.draw(circle);
+
+        circle.setPosition(positionCaster2 * m_scaleUnit);
+        circle.setColor(gf::Color::Green);
+        m_renderer.draw(circle);
+
+        // draw the angle of the caster :
+        angle = getRendererAngle2(m_firstPortal, m_secondPortal, m_player->getAngle());
+        gf::VertexArray line(gf::PrimitiveType::Lines, 2);
+        line[0].color = gf::Color::Orange;
+        line[1].color = gf::Color::Orange;
+        line[0].position = positionCaster1 * m_scaleUnit;
+        line[1].position = (positionCaster1 + gf::Vector2f(std::cos(angle), std::sin(angle))) * m_scaleUnit;
+        m_renderer.draw(line);
+
+        angle = getRendererAngle2(m_secondPortal, m_firstPortal, m_player->getAngle());
+        line[0].color = gf::Color::Cyan;
+        line[1].color = gf::Color::Cyan;
+        line[0].position = positionCaster2 * m_scaleUnit;
+        line[1].position = (positionCaster2 + gf::Vector2f(std::cos(angle), std::sin(angle))) * m_scaleUnit;
+        m_renderer.draw(line);
+
+        std::cout << "m_firstPortal->facing : " << m_firstPortal->facing << std::endl;
+        std::cout << "m_secondPortal->facing : " << m_secondPortal->facing << std::endl;
+
+        // std::cout << "positionRenderer1 : (" << positionRenderer1.x << ", " << positionRenderer1.y << ")" << std::endl;
+        // std::cout << "positionRenderer2 : (" << positionRenderer2.x << ", " << positionRenderer2.y << ")" << std::endl;
+        // std::cout << "positionCaster1 : (" << positionCaster1.x << ", " << positionCaster1.y << ")" << std::endl;
+        // std::cout << "positionCaster2 : (" << positionCaster2.x << ", " << positionCaster2.y << ")" << std::endl;
+        // std::cout << "player angle : " << m_player->getAngle() << std::endl;
+    }
 }
