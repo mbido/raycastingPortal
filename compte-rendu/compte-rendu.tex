@@ -19,7 +19,6 @@
 
 \section*{Remerciements}
 
-\paragraph{}
 Nous tenons à remercier notre enseignant de projet, M. \textsc{Bernard} 
 qui a su nous guider et nous conseiller tout au long de ce projet.
 
@@ -28,8 +27,6 @@ qui a su nous guider et nous conseiller tout au long de ce projet.
 
 \section{Introduction}
 
-\paragraph{}
-
 Dans le cadre du projet semestriel de troisième année de licence
 informatique à l'université de Franche-Comté, nous proposons de coder
 une version très simplifiée du jeu \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}
@@ -37,7 +34,8 @@ qui sera afficher grâce à un moteur de type Raycaster à la façon du jeu
 \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}.
 Il a pour but de nous faire découvrir le monde du développement de jeux 
 vidéo en nous faisant réaliser un jeu vidéo en C++ avec la bibliothèque 
-GF.
+\href{https://gamedevframework.github.io/}{Gamedev Framework} (GF)\footnote{Tous au long de ce rapport, nous utiliserons abbrévation GF.
+Cela signifie Gamedev Framework.}.
 
 % \clearpage
 
@@ -173,7 +171,6 @@ GF.
 
 \subsection{Motivations}
 
-\paragraph{}
 
 L'une des motivations principales de ce projet est de réaliser un jeu vidéo
 avec graphique comme à l'époque de \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D} 
@@ -183,7 +180,6 @@ un préquel de \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Port
 
 \subsection{Objectif et contraintes}
 
-\paragraph{}
 Les principaux objectifs de ce projet sont :
 \begin{itemize}
 	\item Réaliser un jeu vidéo en C++ avec la bibliothèque GF
@@ -193,7 +189,6 @@ Les principaux objectifs de ce projet sont :
 	\item Offir une expérience de jeu simple et agréable à jouer.
 \end{itemize}
 
-\paragraph{}
 Mais avec des contraintes :
 \begin{itemize}
 	\item L'apprentissage d'un langage de programmation nouveau pour nous
@@ -208,7 +203,6 @@ Mais avec des contraintes :
 \subsection{L'équipe}
 \subsection{Planification et outils de gestion}
 
-\paragraph{}
 Pour la gestion du projet nous avons utilisé le site 
 \href{https://github.com/}{github} qui est un outil de gestion 
 de projet en ligne.
@@ -216,21 +210,129 @@ de projet en ligne.
 \subsection{Répartition des tâches}
 
 \section{Développement}
-\subsection{Différentes stratégie}
 \subsection{Programmer en C++}
+
+Programmer en C++ a pu s'avérer assez techniques car cela était un tout nouveau
+langage de programmation à apprendre pour nous car il n'avait jamais été abordé
+auparavant lors de notre parcours universitaire.
+
 \subsection{Apprendre à utiliser la bibliothèque GF}
 
-\section{Bilan du projet}
-\subsection{Résultats obtenus}
-\subsection{Apports technique}
-\subsection{Apports personnels}
+Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque
+GF. En effet, quand bien même c'est un bibliothèque possèdant un bon nombre de 
+fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins
+parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet
+de donner des idées de méthodes à rajouter dans GF voire dans GF2.\footnote{GF2 est un projet
+qui est la suite de GF en C++ ainsi qu'en python3.}
 
-\section{Perspectives}
-\subsection{Améliorations possibles}
-\subsection{Nouvelles fonctionnalités}
-\subsection{Un plus dans nos CV}
+
+\subsection{Différentes stratégie}
+\subsubsection{Première approche}
+
+Une première approche du projet a d'abord été envisagée. Elle consistait 
+basiquement à envoyer plus de rayons possibles à partir de la vision du joueur
+afin de permettre le rendu des entités ainsi que des textures.
+
+Cette approche étant facile et simpliste à implémenter une nouvelle approche
+du projet a été prise en compte.
+
+\subsubsection{Seconde approche plus technique}
+
+Cette nouvelle approche de nôtre projet repose sur quelques même principe que
+la première mais tout en étant plus technique sur le plan mathématiques et informatique.
+
+\subsubsection{Détails du développement}
+
+Dans cette partie nous allons détailler les différentes étapes de développement
+de notre projet. En commencençant par la partie la moins technique pour finir
+par la partie la plus technique.
+
+\paragraph{Les maps:}
+Afin de pouvoir afficher des maps\footnote{En français les cartes}, 
+nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où
+nous dessinons les murs ainsi que la case de départ et d'arrivée. (insérer image ou schéma map)
+Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les
+différentes cases dans un tableau à deux dimensions. En même temps, le programme
+va regarder si les coordonnées correspondent à une cellule de mur, la case 
+de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, 
+alors on va effectuer un parcours en profondeur des coordonnées adjacentes 
+pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous 
+pouvons récuperer toutes les cellules d'un mur directement et ainsi compter 
+le nombre de mur assez facilement.
+
+\paragraph{Les murs:}
+
+Dans cette partie nous allons détaillés les différentes étapes pour la création
+des murs.
+
+\subparagraph{Récupération des sommets utiles:}
+
+Pour la création des murs, on effectue un boucle sur la liste de coordonnées
+des cellules occupées pour un mur précédemment récupérée. Sur chacune des 
+coordonnées, on va regarder quatre de ses coordonnées adjacentes qui sont celles
+en haut, en bas, à gauche et à droite. Si l'une d'entre elles fait partie de 
+la liste des coordonnées des cellules alors on va incrémenter un compteur.
+Si ce compteur est égal à 1 ou 3 alors on va l'ajouter dans une liste de coordonnées
+dites utiles, c'est-à-dire que ceux sont les coordonnées des sommets des murs.
+
+\subparagraph{Triage des sommets:}
+Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets.
+Pour cela, nous effectuons un boucle tant que la taille de la liste des 
+sommets utiles est supérieur à la taille de la liste des sommets triés.
+Dans cette boucle, nous allons effectuer une boucle sur la liste des sommets
+utiles si le sommet est dans la liste des sommets triés ou non. Si il ne l'est
+pas alors on va récupérer les coordonnées de ce sommet et faire appel à une fonction
+pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets
+triés.
+Dans cette fonction, on va effectuer une boucle sur la liste des sommets utiles
+à partir du sommets donné en paramètre. On va regarder pour chaque sommet si il
+existe un sommet dans la direction choisie ainsi que dans sa direction opposée.
+(Explication de la fonction fctCanGo?)
+\begin{itemize}
+	\item Si il existe un sommet dans la direction choisie et aucun sommet dans
+	la direction opposée alors on va ajouter ce sommet dans la liste des sommets
+	triés.
+	\item Sinon si il existe un sommet dans la direction opposée et aucun sommet
+	dans la direction choisie alors on va ajouter le sommet de la direction opposée
+	dans la liste des sommets triés et changer la direction courante par la 
+	direction opposée.
+	\item Sinon 
+	\begin{itemize}
+		\item Si il existe un sommet dans la direction choisie et un sommet 
+		dans la direction opposée alors on regarder si le sommet de la 
+		direction opposée n'est pas dans la liste des sommets triés et qu'un
+		changement de direction doit être effectué ou bien que le sommet de 
+		la direction choisie est dans la liste des sommets triés et qu'un 
+		chanegement de direction ne doit pas être effectué alors on va ajouter
+		le sommet de la direction opposée dans la liste des sommets triés
+		et changer la direction courante par la direction opposée.
+		\item Sinon on va ajouter le sommet de la direction choisie dans la liste 
+		des sommets triés.
+	\end{itemize}	
+\end{itemize}
+On va changer de direction en fonction de la direction courante, si le changement
+de direction reste le même que l'ancien alors on va changer de direction.
+Si n'existe aucune sommet dans les directions choisies et opposées alors on
+va incrémenter un compteur. Si ce compteur est supérieur ou égal à 4 alors 
+on arrête la fonction de triage.
+
+
+
+
+\section{Conclusion technique \& personnelle}
+\subsection{Bilan du projet}
+\subsubsection{Résultats obtenus}
+\subsubsection{Apports technique}
+\subsubsection{Apports personnels}
+
+\subsection{Perspectives}
+\subsubsection{Améliorations possibles}
+\subsubsection{Nouvelles fonctionnalités}
+\subsubsection{Un plus dans nos CV}
 
 \section{Bibliographie}
+
+GF\label{GF}
 
 
 \end{document}
