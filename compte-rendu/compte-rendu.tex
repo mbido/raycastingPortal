@@ -37,137 +37,89 @@ vidéo en nous faisant réaliser un jeu vidéo en C++ avec la bibliothèque
 \href{https://gamedevframework.github.io/}{Gamedev Framework} (GF)\footnote{Tous au long de ce rapport, nous utiliserons abbrévation GF.
 Cela signifie Gamedev Framework.}.
 
-% \clearpage
 
 \section{Besoins et objectifs du projet}
 \subsection{Contexte}
 
-\begin{figure}[H]
-    \begin{minipage}{0.48\textwidth}
-		% \centering
-        \paragraph{Les graphismes : }
-		Au début des années 90, la société \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software} a entrepris des 
-		recherches pionnières dans le domaine des graphismes 3D, alors principalement réservés aux simulateurs de vols tels 
-		que \href{https://fr.wikipedia.org/wiki/Wing_Commander_(jeu_vid%C3%A9o)}{Wing Commander} ou 
-		\href{https://en.wikipedia.org/wiki/Knights_of_the_Sky}{Knights of the Sky}, deux titres parus en 1990. Face aux 
-		contraintes de performance des ordinateurs de l'époque, le développement de jeux d'action en 3D rapide représentait 
-		un défi de taille. 
-    \end{minipage}\hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{image/knights-of-the-sky.png}
+\begin{figure}
+	\begin{minipage}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{image/knights-of-the-sky.png}
 		\hspace*{-0.5cm}
-        \caption{Knights of the Sky}
-        \label{fig:knights-of-the-sky}
-    \end{minipage}
-\end{figure}
-
-\begin{figure}[H]
+		\caption{Knights of the Sky}
+		\label{fig:knights-of-the-sky}
+	\end{minipage}
 	\begin{minipage}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{image/Hovertank_3D.png}
 		\hspace*{-0.5cm}
 		\caption{Hovertank 3D}
 		\label{fig:hovertank3d}
-	\end{minipage}\hfill
-	\begin{minipage}{0.48\textwidth}
-		% \centering
-		C'est dans ce contexte que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} a 
-		proposé l'utilisation de la technique du \href{https://fr.wikipedia.org/wiki/Raycasting}{raycasting}, permettant 
-		de calculer uniquement les surfaces visibles par le joueur. En six semaines, Carmack développe un moteur 3D innovant 
-		utilisant des sprites 2D pour représenter les entités du jeu. Ce moteur a été utilisé dans le jeu 
-		\href{https://fr.wikipedia.org/wiki/Hovertank_3D}{Hovertank 3D}, publié en avril 1991.
 	\end{minipage}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\begin{minipage}{0.48\textwidth}
-		À l'automne 1991, alors que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} et 
-		\href{https://fr.wikipedia.org/wiki/John_Romero}{John Romero} finalisaient le moteur de 
-		\href{https://en.wikipedia.org/wiki/Commander_Keen_in_Goodbye,_Galaxy}{Commander Keen in Goodbye, Galaxy}, Carmack 
-		découvre \href{https://fr.wikipedia.org/wiki/Ultima_Underworld}{Ultima Underworld}, un jeu développé par 
-		\href{https://fr.wikipedia.org/wiki/Looking_Glass_Studios}{Blue Sky Productions} (qui deviendra plus tard Looking Glass Studios), 
-		doté d'un moteur capable de rendre des graphismes 3D 
-		texturés sans subir les limitations de Hovertank 3D.
-	\end{minipage}\hfill
-	\begin{minipage}{0.48\textwidth}
-		\centering
 		\includegraphics[width=\linewidth]{image/Ultima_Underworld.jpg}
 		\hspace*{-0.5cm}
 		\caption{Ultima Underworld}
 		\label{fig:ultimaunderworld}
 	\end{minipage}
-\end{figure}
-
-\begin{figure}[H]
 	\begin{minipage}{0.48\textwidth}
-		\centering
 		\includegraphics[width=\linewidth]{image/wolfenstein_3d.jpg}
 		\hspace*{-0.5cm}
 		\caption{Wolfenstein 3D}
 		\label{fig:wolfenstein3d}
-	\end{minipage}\hfill
-	\begin{minipage}{0.48\textwidth}
-		Inspiré, Carmack décide d'améliorer son propre moteur pour 
-		intégrer le mapping de textures tout en conservant de hautes performances. Après un intense travail de six semaines, 
-		le nouveau moteur 3D est achevé et utilisé pour le jeu \href{https://fr.wikipedia.org/wiki/Catacomb_3D}{Catacomb 3D},
-		publié en novembre 1991. La révélation de Catacomb 3D a poussé 
-		\href{https://fr.wikipedia.org/wiki/Scott_Miller_(programmeur)}{Scott Miller} d'Apogee à convaincre l'équipe de 
-		développer un jeu d'action en 3D sous forme de shareware. Cela a conduit au lancement du projet 
-		\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}, un remake en 3D de 
-		\href{https://fr.wikipedia.org/wiki/Castle_Wolfenstein}{Castle Wolfenstein}. Sorti le 5 mai 1992 sur PC, ce jeu a 
-		non seulement été un succès commercial mais a également posé les bases du genre du jeu de tir à la première personne, 
-		préfigurant ainsi des titres légendaires tels que 
-		\href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} et 
-		\href{https://fr.wikipedia.org/wiki/Quake}{Quake}.
 	\end{minipage}
 \end{figure}
 
-% \begin{figure}[H]
-%     \begin{minipage}{0.48\textwidth}
-%         \centering
-%         \includegraphics[width=\linewidth]{image/doom_1993.jpg}
-%         \caption{Doom (1993)}
-%         \label{fig:doom1993}
-%     \end{minipage}\hfill
-%     \begin{minipage}{0.48\textwidth}
-%         \centering
-%         \includegraphics[width=\linewidth]{image/quake_1996.jpg}
-%         \caption{Quake (1996)}
-%         \label{fig:quake1996}
-%     \end{minipage}
-% \end{figure}
+\paragraph{Les graphismes :}
+Au début des années 90, la société \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software} a entrepris des 
+recherches pionnières dans le domaine des graphismes 3D, alors principalement réservés aux simulateurs de vols tels 
+que \href{https://fr.wikipedia.org/wiki/Wing_Commander_(jeu_vid%C3%A9o)}{Wing Commander} ou 
+\href{https://en.wikipedia.org/wiki/Knights_of_the_Sky}{Knights of the Sky} (\nameref{fig:knights-of-the-sky}), deux titres parus en 1990. Face aux 
+contraintes de performance des ordinateurs de l'époque, le développement de jeux d'action en 3D rapide représentait 
+un défi de taille. C'est dans ce contexte que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} a 
+proposé l'utilisation de la technique du \href{https://fr.wikipedia.org/wiki/Raycasting}{raycasting}, permettant 
+de calculer uniquement les surfaces visibles par le joueur. En six semaines, Carmack développe un moteur 3D innovant 
+utilisant des sprites 2D pour représenter les entités du jeu. Ce moteur a été utilisé dans le jeu 
+\href{https://fr.wikipedia.org/wiki/Hovertank_3D}{Hovertank 3D} (\nameref{fig:hovertank3d}), publié en avril 1991.
+À l'automne 1991, alors que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} et 
+\href{https://fr.wikipedia.org/wiki/John_Romero}{John Romero} finalisaient le moteur de 
+\href{https://en.wikipedia.org/wiki/Commander_Keen_in_Goodbye,_Galaxy}{Commander Keen in Goodbye, Galaxy}, Carmack 
+découvre \href{https://fr.wikipedia.org/wiki/Ultima_Underworld}{Ultima Underworld} (\nameref{fig:ultimaunderworld}), un jeu développé par 
+\href{https://fr.wikipedia.org/wiki/Looking_Glass_Studios}{Blue Sky Productions} (qui deviendra plus tard Looking Glass Studios), 
+doté d'un moteur capable de rendre des graphismes 3D texturés sans subir les limitations de Hovertank 3D.
+Inspiré, Carmack décide d'améliorer son propre moteur pour 
+intégrer le mapping de textures tout en conservant de hautes performances. Après un intense travail de six semaines, 
+le nouveau moteur 3D est achevé et utilisé pour le jeu \href{https://fr.wikipedia.org/wiki/Catacomb_3D}{Catacomb 3D},
+publié en novembre 1991. La révélation de Catacomb 3D a poussé 
+\href{https://fr.wikipedia.org/wiki/Scott_Miller_(programmeur)}{Scott Miller} d'Apogee à convaincre l'équipe de 
+développer un jeu d'action en 3D sous forme de shareware. Cela a conduit au lancement du projet 
+\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D} (\nameref{fig:wolfenstein3d}), un remake en 3D de 
+\href{https://fr.wikipedia.org/wiki/Castle_Wolfenstein}{Castle Wolfenstein}. Sorti le 5 mai 1992 sur PC, ce jeu a 
+non seulement été un succès commercial mais a également posé les bases du genre du jeu de tir à la première personne, 
+préfigurant ainsi des titres légendaires tels que 
+\href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} et 
+\href{https://fr.wikipedia.org/wiki/Quake}{Quake}.
 
-% \begin{figure}[h]
-% 	\centering
-% 	\includegraphics[width=0.5\textwidth]{image/wolfenstein_3d.jpg}
-% 	\caption{Wolfenstein 3D}
-% 	\label{fig:wolfenstein3d}
-% \end{figure}
-
-
-
-
-
-
-\begin{figure}[H]
-	\paragraph{Le système de jeu : }
-	En 2007, \href{https://fr.wikipedia.org/wiki/Valve_Corporation}{Valve Corporation} a révolutionné le genre des jeux 
-	de réflexion à la première personne avec la sortie de 
-	\href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}. Ce jeu introduit un mécanisme unique 
-	permettant au joueur de générer deux portails, l'un orange et l'autre bleu, sur des surfaces planes et 
-	interconnectées. Ces portails offrent la possibilité de traverser instantanément l'espace d'un point à un autre, 
-	tout en conservant l'inertie. L'objectif est de résoudre divers puzzles en se servant de cette capacité à manipuler 
-	l'espace pour atteindre la sortie des différents niveaux proposés.
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.5\textwidth]{image/schema_portal.png}
-		\hspace*{-0.5cm}
-		\caption{Schéma de fonctionnement du système de portail}
-		\label{fig:schema_portal}
-	\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\textwidth]{image/schema_portal.png}
+	\hspace*{-0.5cm}
+	\caption{Schéma de fonctionnement du système de portail}
+	\label{fig:schema_portal}
 \end{figure}
-% \clearpage
+
+\paragraph{Le système de jeu : }
+En 2007, \href{https://fr.wikipedia.org/wiki/Valve_Corporation}{Valve Corporation} a révolutionné le genre des jeux 
+de réflexion à la première personne avec la sortie de 
+\href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}. Ce jeu introduit un mécanisme unique 
+permettant au joueur de générer deux portails, l'un orange et l'autre bleu, sur des surfaces planes et 
+interconnectées. Ces portails offrent la possibilité de traverser instantanément l'espace d'un point à un autre, 
+tout en conservant l'inertie. L'objectif est de résoudre divers puzzles en se servant de cette capacité à manipuler 
+l'espace pour atteindre la sortie des différents niveaux proposés.
+
+
 
 \subsection{Motivations}
 
@@ -241,13 +193,16 @@ du projet a été prise en compte.
 Cette nouvelle approche de nôtre projet repose sur quelques même principe que
 la première mais tout en étant plus technique sur le plan mathématiques et informatique.
 
-\subsubsection{Détails du développement}
+\subsection{Détails du développement}
 
 Dans cette partie nous allons détailler les différentes étapes de développement
-de notre projet. En commencençant par la partie la moins technique pour finir
-par la partie la plus technique.
+de notre projet avec la seconde approche. En commencençant par la partie la 
+moins technique pour finir par la partie la plus technique.
+Il faut noté que détails du développement dans les parties qui vont suivre
+sont pour un rendu 3D, mais tout au long de ce projet les différentes étapes
+ont été tester sur un rendu 2D pour faciliter le développement.
 
-\paragraph{Les maps:}
+\subsubsection{Les maps:}
 Afin de pouvoir afficher des maps\footnote{En français les cartes}, 
 nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où
 nous dessinons les murs ainsi que la case de départ et d'arrivée. (insérer image ou schéma map)
@@ -260,12 +215,12 @@ pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous
 pouvons récuperer toutes les cellules d'un mur directement et ainsi compter 
 le nombre de mur assez facilement.
 
-\paragraph{Les murs:}
+\subsubsection{Les murs:}
 
 Dans cette partie nous allons détaillés les différentes étapes pour la création
 des murs.
 
-\subparagraph{Récupération des sommets utiles:}
+\paragraph{Récupération des sommets utiles:}
 
 Pour la création des murs, on effectue un boucle sur la liste de coordonnées
 des cellules occupées pour un mur précédemment récupérée. Sur chacune des 
@@ -275,7 +230,7 @@ la liste des coordonnées des cellules alors on va incrémenter un compteur.
 Si ce compteur est égal à 1 ou 3 alors on va l'ajouter dans une liste de coordonnées
 dites utiles, c'est-à-dire que ceux sont les coordonnées des sommets des murs.
 
-\subparagraph{Triage des sommets:}
+\paragraph{Triage des sommets:}
 Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets.
 Pour cela, nous effectuons un boucle tant que la taille de la liste des 
 sommets utiles est supérieur à la taille de la liste des sommets triés.
@@ -316,7 +271,48 @@ Si n'existe aucune sommet dans les directions choisies et opposées alors on
 va incrémenter un compteur. Si ce compteur est supérieur ou égal à 4 alors 
 on arrête la fonction de triage.
 
+\paragraph{Contruction des murs:}
+Une fois les sommets utiles triés nous allons pouvoir construire les murs et
+les ajouter dans une liste de murs. Chaque murs de cette liste a pour attributs
+les coordonnées de ses sommets triés, les coordonnées de ses cellules occupées et
+la taille de son périmètre.
 
+\subsubsection{La boucle de jeu:}
+Dans cette partie nous allons détailler les différentes étapes de la boucle de jeu.
+
+\paragraph{Events:}
+Nous allons tous d'abord gérer la gestion des évènements. 
+Pour cela nous allons effectuer une boucle sur les évènements et pour chaque
+bouton sur lesquels nous avons ajouté une action, nous allons effectuer cette
+action. Nous allons aussi gérer les fonctions de déplacement de la vision 
+grâce à la souris avec la position relative de la souris. Ensuite, nous allons
+gérer la fonction d'envoie des portails en fonction du clic de la souris effectuer.
+
+\paragraph{Update:}
+Nous allons effectuer une update du jeu par rapport au temps écoulé depuis le
+dernier update. Cette update va permettre de mettre à jour (les attributs du 
+joueur). De calculer la nouvelle position du joueur si il est en colision avec 
+un mur. Et enfin calculer les nouveaux attributs du joueur si il est proche d'un
+portail lorsque les deux portails sont activés.
+
+\paragraph{Render:}
+Avant de faire le nouveau rendu des entités, nous allons d'abord effacer 
+tous les rendus précédents. Enuiste nous allons effectuer le rendu de toutes
+les entités que nous allons détaillés dans la parties suivante.
+
+\subsubsection{Les renders:}
+Ici explication de chaque rendu des différentes entités
+
+\paragraph{Le rendu des murs:}
+Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommets
+triés. Pour chaque sommet, nous allons dessiner une ligne blanche entre le sommet
+suivant dans la liste des sommets triés et le sommet courant. Si nous sommes à
+la fin de la liste des sommets triés alors nous allons dessiner une ligne blanche
+entre le sommet courant et le premier sommet de la liste des sommets triés.
+
+\subsubsection{Les collisions:}
+
+Explication des collisions avec les murs et les portails avec les schémas.
 
 
 \section{Conclusion technique \& personnelle}
@@ -332,7 +328,7 @@ on arrête la fonction de triage.
 
 \section{Bibliographie}
 
-GF\label{GF}
+Gamedev Framework (GF): \href{https://gamedevframework.github.io/}{https://gamedevframework.github.io/}
 
 
 \end{document}
