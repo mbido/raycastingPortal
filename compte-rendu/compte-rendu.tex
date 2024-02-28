@@ -314,6 +314,14 @@ Dans ce point nous allons traiter des collisions. Notre objectif est d'empêcher
 que notre personnage puisse passe dans ainsi qu'à travers les murs.
 
 \paragraph{Aspect conceptuel:}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\textwidth]{image/fig1.jpg}
+	\caption{Collision cercle/rectangle}
+	\label{fig:collision_cercle_rectangle}
+\end{figure}
+
 Nous commençons avec l'aspect conceptuel.
 Le personnage est représenté par un point auquel nous accordons une 
 largeur et donc un cercle centré autour de lui. Chaque mur est composé de 
@@ -323,11 +331,29 @@ Ce système s'appuie sur une méthode dite du "clampage", qui permet de connaît
 et ainsi de savoir si notre cercle est en collision avec notre rectangle.
 Alors deux cas s'ouvre à nous.
 
+\begin{figure}
+	\begin{minipage}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{image/fig2.jpg}
+		\caption{Pas de collision}
+		\label{fig:pas_de_collision}
+	\end{minipage}
+	\begin{minipage}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{image/fig3.jpg}
+		\caption{Collision}
+		\label{fig:collision}
+	\end{minipage}
+\end{figure}
+
 \subparagraph{Premier cas:} 
+
+
 Dans ce cas là, le cercle n'est pas en collision avec le rectangle, alors 
 tout va bien et aucun traitement spécifique n'est à prévoir (fig.2). 
 
 \subparagraph{Second cas:} 
+
+
+
 Dans ce cas ci, le cercle est en collision avec le rectangle (fig.3) et nous 
 devons alors procéder à un repositionnement du personnage de manière à ce 
 qu'il ne soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel 
@@ -344,7 +370,7 @@ sa position ainsi qu'un nombre représentant sa largeur, noté L Ainsi :
 \begin{itemize}
 	\item[] $P = ((x ; y) ; l), x, y, l \epsilon R$ 
 	\item[] $L = 0,1$\footnote{Nous avons choisi cette valeur de manière 
-	empirique suite à une salve d’essais et de réflexions.}
+	empirique suite à une salve d'essais et de réflexions.}
 \end{itemize}
 
 La méthode de "clampage" consiste à prendre la valeur la plus proche d'une 
@@ -378,17 +404,26 @@ basse ordonnée du bloc que nous noterons (a ; b). Nous avons alors :
 	\item[] $B = (a ; b)$
 \end{itemize}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\textwidth]{image/fig4.jpg}
+	\caption{Clampage}
+	\label{fig:clampage}
+\end{figure}
+
 Pour avoir le point le plus proche de B, noté C, nous devons alors "clamper" 
 l'abscisse, resp. l'ordonnée, du personnage sur l'intervalle d'abscisse, 
 resp. d'ordonnée, de B (fig.4). Alors :
 
-$C = (clamp(P.x, B.a, B.a +1) ; clamp(P.y, B.b, B.b +1))$
+\begin{itemize}
+	\item[] $C = (clamp(P.x, B.a, B.a +1) ; clamp(P.y, B.b, B.b +1))$
+\end{itemize}
 
 Grâce à C, nous pouvons maintenant vérifier si P est à moins de 0,1 de B, 
 et donc en collision. Pour cela, calculons la distance entre P et C :
 
 \begin{itemize}
-	\item[] $dist = \sqrt[]{((P.x - C.x)^2 + (P.y - C.y)^2)}$
+	\item[] $dist = \sqrt[]{((P.x - C.x)^2 + (P.y - C.y)^2) xx  x}$
 \end{itemize}
 
 Maintenant, nous pouvons généraliser notre réflexion à un mur pour nous 
