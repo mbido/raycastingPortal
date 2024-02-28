@@ -144,8 +144,6 @@ L'une des motivations principales de ce projet est de réaliser un jeu vidéo
 avec graphique comme à l'époque de \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D} 
 mais avec des comcepts de jeux plus récentes et qui plus est pourrai être
 un préquel de \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}.
-
-
 \subsection{Objectif et contraintes}
 
 Les principaux objectifs de ce projet sont :
@@ -171,226 +169,93 @@ Mais avec des contraintes :
 \subsection{L'équipe}
 \subsection{Planification et outils de gestion}
 
-Pour la gestion du projet nous avons utilisé le site 
-\href{https://github.com/}{github} qui est un outil de gestion 
-de projet en ligne.
+Pour la gestion du projet nous avons utilisé le site \href{https://github.com/}{github} qui est un outil de gestion de projet en ligne.
 
 \subsection{Répartition des tâches}
 
 \section{Développement}
 \subsection{Programmer en C++}
 
-Programmer en C++ a pu s'avérer assez techniques car cela était un tout nouveau
-langage de programmation à apprendre pour nous car il n'avait jamais été abordé
-auparavant lors de notre parcours universitaire.
+Programmer en C++ a pu s'avérer assez techniques car cela était un tout nouveau langage de programmation à apprendre pour nous car il n'avait jamais été abordé auparavant lors de notre parcours universitaire.
 
 \subsection{Apprendre à utiliser la bibliothèque GF}
 
-Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque
-GF. En effet, quand bien même c'est un bibliothèque possèdant un bon nombre de 
-fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins
-parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet
-de donner des idées de méthodes à rajouter dans GF voire dans GF2.\footnote{GF2 est un projet
-qui est la suite de GF en C++ ainsi qu'en python3.}
-
+Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque GF. En effet, quand bien même c'est un bibliothèque possédant un bon nombre de fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet de donner des idées de méthodes à rajouter dans GF voire dans GF2.\footnote{GF2 est un projet qui est la suite de GF en C++ ainsi qu'en python3.}
 
 \subsection{Différentes stratégie}
-\subsubsection{Première approche}
+\subsubsection{Première approche - RayCasting}
 
-Une première approche du projet a d'abord été envisagée. Elle consistait 
-basiquement à envoyer plus de rayons possibles à partir de la vision du joueur
-afin de permettre le rendu des entités ainsi que des textures.
+Une première approche pour l'affichage des murs était d'utiliser la technique de RayCasting historique. C'est à dire que pour chaque colonne de pixel de la fenêtre
+d'affichage, on lance un rayon depuis la position du joueur dans la direction de la colonne de pixel. On va ensuite regarder si ce rayon touche un mur ou non. 
+Si il touche un mur alors on va calculer la distance entre le joueur et le mur touché. 
+Ensuite on va calculer la hauteur du mur à afficher en fonction de la distance entre le joueur et le mur touché. 
+Enfin on va afficher le mur en fonction de la hauteur calculée.
+Pour cela on utilisait l'algorithme DDA (Digital Differential Analyzer) pour le rendu des murs.
 
-Cette approche étant facile et simpliste à implémenter une nouvelle approche
-du projet a été prise en compte.
+DDA est un algorithme de tracé de ligne qui permet de ne regarder la collision du rayon avec les murs que sur les abscisses ou (au sens logique) les ordonnées entières.
+Cela permet de faire très peu de calculs avant de trouver une collision avec un mur.
 
-\subsubsection{Seconde approche plus technique}
+Cette première approche était très simple à implémenter et ce fut probablement son plus grand défaut. En effet, il fallait que ce projet soit enrichissant
+pour des étudiant de L3. C'est pourquoi une nouvelle approche, proposée par notre enseignant, \textit{M. Bernard}, a été adoptée.
+\subsubsection{Seconde approche plus technique - Line Of Sight}
 
-Cette nouvelle approche de nôtre projet repose sur quelques même principe que
-la première mais tout en étant plus technique sur le plan mathématiques et informatique.
+Cette seconde approche s'approche des algorithme \textit{Line Of Sight} et consiste à calculer la distance entre le joueur et chaque sommet de chaque mur.
+Pour ce faire on à pu récupérer l'algorithme DDA précédemment utilisé pour le rendu des murs mais cette fois-ci 
+en visant chaque sommets au lieu de viser chaque colonne de pixel.
+
+
 
 \subsection{Détails du développement}
-
-Dans cette partie nous allons détailler les différentes étapes de développement
-de notre projet avec la seconde approche. En commencençant par la partie la 
-moins technique pour finir par la partie la plus technique.
-Il faut noté que détails du développement dans les parties qui vont suivre
-sont pour un rendu 3D, mais tout au long de ce projet les différentes étapes
-ont été tester sur un rendu 2D pour faciliter le développement.
+Dans cette partie nous allons détailler les différentes étapes de développement de notre projet avec la seconde approche. En commencençant par la partie la moins technique pour finir par la partie la plus technique. Il faut noté que détails du développement dans les parties qui vont suivre sont pour un rendu 3D, mais tout au long de ce projet les différentes étapes ont été tester sur un rendu 2D pour faciliter le développement.
 
 \subsubsection{Les maps:}
-
-\begin{figure}
-	\centering
-	\begin{tikzpicture}[scale=0.5]
-
-		\fill[line width=1pt] (0, 0) -- (0, 10) -- (10, 10) -- (10, 0) -- cycle;
-		\fill[white] (1, 1) -- (6, 1) -- (6, 3) -- (3, 3) -- (3, 4) -- (8, 4) -- (8, 3) -- (7, 3) -- (7, 1) -- (9, 1) -- (9, 7) -- (8, 7) -- (8, 8) -- (9, 8) -- (9, 9) -- (7, 9) -- (7, 6) -- (6, 6) -- (6, 7) -- (4, 7) -- (4, 8) -- (6, 8) -- (6, 9) -- (3, 9) -- (3, 7) -- (2, 7) -- (2, 9) -- (1, 9) -- (1, 6) -- (5, 6) -- (5, 5) -- (1, 5) -- cycle;
-	
-	
-		\draw[color=lightgray] (2, 5) -- (2, 1);
-		\draw[color=lightgray] (2, 9) -- (2, 6);
-	
-		\draw[color=lightgray] (3, 5) -- (3, 1);
-		\draw[color=lightgray] (3, 9) -- (3, 6);
-	
-		\draw[color=lightgray] (4, 3) -- (4, 1);
-		\draw[color=lightgray] (4, 5) -- (4, 4);
-		\draw[color=lightgray] (4, 9) -- (4, 6);
-	
-		\draw[color=lightgray] (5, 3) -- (5, 1);
-		\draw[color=lightgray] (5, 7) -- (5, 4);
-		\draw[color=lightgray] (5, 9) -- (5, 8);
-	
-		\draw[color=lightgray] (6, 7) -- (6, 4);
-		\draw[color=lightgray] (6, 9) -- (6, 8);
-	
-		\draw[color=lightgray] (7, 7) -- (7, 4);
-		\draw[color=lightgray] (7, 9) -- (7, 8);
-		\draw[color=lightgray] (8, 9) -- (8, 1);
-	
-	
-		\draw[color=lightgray] (1, 9) -- (2, 9);
-		\draw[color=lightgray] (3, 9) -- (6, 9);
-		\draw[color=lightgray] (7, 9) -- (9, 9);
-	
-		\draw[color=lightgray] (1, 7) -- (6, 7);
-		\draw[color=lightgray] (7, 7) -- (9, 7);
-	
-		\draw[color=lightgray] (1, 6) -- (9, 6);
-	
-		\draw[color=lightgray] (1, 5) -- (9, 5);
-		
-		\draw[color=lightgray] (1, 4) -- (9, 4);
-	
-		\draw[color=lightgray] (1, 3) -- (6, 3); 
-		\draw[color=lightgray] (7, 3) -- (9, 3);
-		
-		\draw[color=lightgray] (1, 2) -- (6, 2); 
-		\draw[color=lightgray] (7, 2) -- (9, 2);
-		
-	\end{tikzpicture}
-	\hspace*{-0.5cm}
-	\caption{PNG d'une map}
-	\label{fig:png_map}
-\end{figure}
-
-
-Afin de pouvoir afficher des maps\footnote{En français les cartes}, 
-nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où
-nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}).
-Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les
-différentes cases dans un tableau à deux dimensions. En même temps, le programme
-va regarder si les coordonnées correspondent à une cellule de mur, la case 
-de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, 
-alors on va effectuer un parcours en profondeur des coordonnées adjacentes 
-pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous 
-pouvons récuperer toutes les cellules d'un mur directement et ainsi compter 
-le nombre de mur assez facilement.
+Afin de pouvoir afficher des maps\footnote{En français les cartes}, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée. (insérer image ou schéma map) Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
 
 \subsubsection{Les murs:}
 
-Dans cette partie nous allons détaillés les différentes étapes pour la création
-des murs.
+Dans cette partie nous allons détaillés les différentes étapes pour la création des murs.
 
 \paragraph{Récupération des sommets utiles:}
 
-Pour la création des murs, on effectue un boucle sur la liste de coordonnées
-des cellules occupées pour un mur précédemment récupérée. Sur chacune des 
-coordonnées, on va regarder quatre de ses coordonnées adjacentes qui sont celles
-en haut, en bas, à gauche et à droite. Si l'une d'entre elles fait partie de 
-la liste des coordonnées des cellules alors on va incrémenter un compteur.
-Si ce compteur est égal à 1 ou 3 alors on va l'ajouter dans une liste de coordonnées
-dites utiles, c'est-à-dire que ceux sont les coordonnées des sommets des murs.
+Pour la création des murs, on effectue un boucle sur la liste de coordonnées des cellules occupées pour un mur précédemment récupérée. Sur chacune des coordonnées, on va regarder quatre de ses coordonnées adjacentes qui sont celles en haut, en bas, à gauche et à droite. Si l'une d'entre elles fait partie de la liste des coordonnées des cellules alors on va incrémenter un compteur. Si ce compteur est égal à 1 ou 3 alors on va l'ajouter dans une liste de coordonnées dites utiles, c'est-à-dire que ceux sont les coordonnées des sommets des murs.
 
 \paragraph{Triage des sommets:}
-Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets.
-Pour cela, nous effectuons un boucle tant que la taille de la liste des 
-sommets utiles est supérieur à la taille de la liste des sommets triés.
-Dans cette boucle, nous allons effectuer une boucle sur la liste des sommets
-utiles si le sommet est dans la liste des sommets triés ou non. Si il ne l'est
-pas alors on va récupérer les coordonnées de ce sommet et faire appel à une fonction
-pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets
-triés.
-Dans cette fonction, on va effectuer une boucle sur la liste des sommets utiles
-à partir du sommets donné en paramètre. On va regarder pour chaque sommet si il
-existe un sommet dans la direction choisie ainsi que dans sa direction opposée.
-(Explication de la fonction fctCanGo?)
+Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets. Pour cela, nous effectuons un boucle tant que la taille de la liste des sommets utiles est supérieur à la taille de la liste des sommets triés. Dans cette boucle, nous allons effectuer une boucle sur la liste des sommets utiles si le sommet est dans la liste des sommets triés ou non. Si il ne l'est pas alors on va récupérer les coordonnées de ce sommet et faire appel à une fonction pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets triés. Dans cette fonction, on va effectuer une boucle sur la liste des sommets utiles à partir du sommets donné en paramètre. On va regarder pour chaque sommet si il existe un sommet dans la direction choisie ainsi que dans sa direction opposée. (Explication de la fonction fctCanGo?)
 \begin{itemize}
-	\item Si il existe un sommet dans la direction choisie et aucun sommet dans
-	la direction opposée alors on va ajouter ce sommet dans la liste des sommets
-	triés.
-	\item Sinon si il existe un sommet dans la direction opposée et aucun sommet
-	dans la direction choisie alors on va ajouter le sommet de la direction opposée
-	dans la liste des sommets triés et changer la direction courante par la 
-	direction opposée.
-	\item Sinon 
+	\item Si il existe un sommet dans la direction choisie et aucun sommet dans la direction opposée alors on va ajouter ce sommet dans la liste des sommets triés.
+	\item Sinon si il existe un sommet dans la direction opposée et aucun sommet dans la direction choisie alors on va ajouter le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
+	\item Sinon
 	\begin{itemize}
-		\item Si il existe un sommet dans la direction choisie et un sommet 
-		dans la direction opposée alors on regarder si le sommet de la 
-		direction opposée n'est pas dans la liste des sommets triés et qu'un
-		changement de direction doit être effectué ou bien que le sommet de 
-		la direction choisie est dans la liste des sommets triés et qu'un 
-		chanegement de direction ne doit pas être effectué alors on va ajouter
-		le sommet de la direction opposée dans la liste des sommets triés
-		et changer la direction courante par la direction opposée.
-		\item Sinon on va ajouter le sommet de la direction choisie dans la liste 
-		des sommets triés.
-	\end{itemize}	
+		\item Si il existe un sommet dans la direction choisie et un sommet dans la direction opposée alors on regarder si le sommet de la direction opposée n'est pas dans la liste des sommets triés et qu'un changement de direction doit être effectué ou bien que le sommet de la direction choisie est dans la liste des sommets triés et qu'un chanegement de direction ne doit pas être effectué alors on va ajouter le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
+		\item Sinon on va ajouter le sommet de la direction choisie dans la liste des sommets triés.
+	\end{itemize}
 \end{itemize}
-On va changer de direction en fonction de la direction courante, si le changement
-de direction reste le même que l'ancien alors on va changer de direction.
-Si n'existe aucune sommet dans les directions choisies et opposées alors on
-va incrémenter un compteur. Si ce compteur est supérieur ou égal à 4 alors 
-on arrête la fonction de triage.
+On va changer de direction en fonction de la direction courante, si le changement de direction reste le même que l'ancien alors on va changer de direction. Si n'existe aucune sommet dans les directions choisies et opposées alors on va incrémenter un compteur. Si ce compteur est supérieur ou égal à 4 alors on arrête la fonction de triage.
 
 \paragraph{Contruction des murs:}
-Une fois les sommets utiles triés nous allons pouvoir construire les murs et
-les ajouter dans une liste de murs. Chaque murs de cette liste a pour attributs
-les coordonnées de ses sommets triés, les coordonnées de ses cellules occupées et
-la taille de son périmètre.
+Une fois les sommets utiles triés nous allons pouvoir construire les murs et les ajouter dans une liste de murs. Chaque murs de cette liste a pour attributs les coordonnées de ses sommets triés, les coordonnées de ses cellules occupées et la taille de son périmètre.
 
 \subsubsection{La boucle de jeu:}
 Dans cette partie nous allons détailler les différentes étapes de la boucle de jeu.
 
 \paragraph{Events:}
-Nous allons tous d'abord gérer la gestion des évènements. 
-Pour cela nous allons effectuer une boucle sur les évènements et pour chaque
-bouton sur lesquels nous avons ajouté une action, nous allons effectuer cette
-action. Nous allons aussi gérer les fonctions de déplacement de la vision 
-grâce à la souris avec la position relative de la souris. Ensuite, nous allons
-gérer la fonction d'envoie des portails en fonction du clic de la souris effectuer.
+Nous allons tous d'abord gérer la gestion des évènements. Pour cela nous allons effectuer une boucle sur les évènements et pour chaque bouton sur lesquels nous avons ajouté une action, nous allons effectuer cette action. Nous allons aussi gérer les fonctions de déplacement de la vision grâce à la souris avec la position relative de la souris. Ensuite, nous allons gérer la fonction d'envoie des portails en fonction du clic de la souris effectuer.
 
 \paragraph{Update:}
-Nous allons effectuer une update du jeu par rapport au temps écoulé depuis le
-dernier update. Cette update va permettre de mettre à jour (les attributs du 
-joueur). De calculer la nouvelle position du joueur si il est en colision avec 
-un mur. Et enfin calculer les nouveaux attributs du joueur si il est proche d'un
-portail lorsque les deux portails sont activés.
+Nous allons effectuer une update du jeu par rapport au temps écoulé depuis le dernier update. Cette update va permettre de mettre à jour (les attributs du joueur). De calculer la nouvelle position du joueur si il est en colision avec un mur. Et enfin calculer les nouveaux attributs du joueur si il est proche d'un portail lorsque les deux portails sont activés.
 
 \paragraph{Render:}
-Avant de faire le nouveau rendu des entités, nous allons d'abord effacer 
-tous les rendus précédents. Enuiste nous allons effectuer le rendu de toutes
-les entités que nous allons détaillés dans la parties suivante.
+Avant de faire le nouveau rendu des entités, nous allons d'abord effacer tous les rendus précédents. Enuiste nous allons effectuer le rendu de toutes les entités que nous allons détaillés dans la parties suivante.
 
 \subsubsection{Les renders:}
 Ici explication de chaque rendu des différentes entités
 
 \paragraph{Le rendu des murs:}
-Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommets
-triés. Pour chaque sommet, nous allons dessiner une ligne blanche entre le sommet
-suivant dans la liste des sommets triés et le sommet courant. Si nous sommes à
-la fin de la liste des sommets triés alors nous allons dessiner une ligne blanche
-entre le sommet courant et le premier sommet de la liste des sommets triés.
+Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommets triés. Pour chaque sommet, nous allons dessiner une ligne blanche entre le sommet suivant dans la liste des sommets triés et le sommet courant. Si nous sommes à la fin de la liste des sommets triés alors nous allons dessiner une ligne blanche entre le sommet courant et le premier sommet de la liste des sommets triés.
 
 \subsubsection{Les collisions:}
 
 Explication des collisions avec les murs et les portails avec les schémas.
-
-\subsubsection{Les portails:}
-
-Explication des portails avec les schémas.
-
 
 \section{Conclusion technique \& personnelle}
 \subsection{Bilan du projet}
@@ -420,6 +285,5 @@ Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelqu
 \section{Bibliographie}
 
 Gamedev Framework (GF): \href{https://gamedevframework.github.io/}{https://gamedevframework.github.io/}
-
 
 \end{document}
