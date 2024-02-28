@@ -72,6 +72,22 @@ Cela signifie Gamedev Framework.}.
 	\end{minipage}
 \end{figure}
 
+\begin{figure}
+	\begin{minipage}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{image/doom_1993.jpg}
+		\hspace*{-0.5cm}
+		\caption{Doom (1993)}
+		\label{fig:doom_1993}
+	\end{minipage}
+	\begin{minipage}{0.48\textwidth}
+		\includegraphics[width=\linewidth]{image/quake_1996.jpg}
+		\hspace*{-0.5cm}
+		\caption{Quake (1996)}
+		\label{fig:quake_1996}
+	\end{minipage}
+\end{figure}
+
+
 \paragraph{Les graphismes :}
 Au début des années 90, la société \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software} a entrepris des 
 recherches pionnières dans le domaine des graphismes 3D, alors principalement réservés aux simulateurs de vols tels 
@@ -99,12 +115,12 @@ développer un jeu d'action en 3D sous forme de shareware. Cela a conduit au lan
 \href{https://fr.wikipedia.org/wiki/Castle_Wolfenstein}{Castle Wolfenstein}. Sorti le 5 mai 1992 sur PC, ce jeu a 
 non seulement été un succès commercial mais a également posé les bases du genre du jeu de tir à la première personne, 
 préfigurant ainsi des titres légendaires tels que 
-\href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} et 
-\href{https://fr.wikipedia.org/wiki/Quake}{Quake}.
+\href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} (\nameref{fig:doom_1993}) et 
+\href{https://fr.wikipedia.org/wiki/Quake}{Quake} (\nameref{fig:quake_1996}).
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.5\textwidth]{image/schema_portal.png}
+	\href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{\includegraphics[width=0.5\textwidth]{image/schema_portal.png}}
 	\hspace*{-0.5cm}
 	\caption{Schéma de fonctionnement du système de portail}
 	\label{fig:schema_portal}
@@ -203,9 +219,66 @@ sont pour un rendu 3D, mais tout au long de ce projet les différentes étapes
 ont été tester sur un rendu 2D pour faciliter le développement.
 
 \subsubsection{Les maps:}
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[scale=0.5]
+
+		\fill[line width=1pt] (0, 0) -- (0, 10) -- (10, 10) -- (10, 0) -- cycle;
+		\fill[white] (1, 1) -- (6, 1) -- (6, 3) -- (3, 3) -- (3, 4) -- (8, 4) -- (8, 3) -- (7, 3) -- (7, 1) -- (9, 1) -- (9, 7) -- (8, 7) -- (8, 8) -- (9, 8) -- (9, 9) -- (7, 9) -- (7, 6) -- (6, 6) -- (6, 7) -- (4, 7) -- (4, 8) -- (6, 8) -- (6, 9) -- (3, 9) -- (3, 7) -- (2, 7) -- (2, 9) -- (1, 9) -- (1, 6) -- (5, 6) -- (5, 5) -- (1, 5) -- cycle;
+	
+	
+		\draw[color=lightgray] (2, 5) -- (2, 1);
+		\draw[color=lightgray] (2, 9) -- (2, 6);
+	
+		\draw[color=lightgray] (3, 5) -- (3, 1);
+		\draw[color=lightgray] (3, 9) -- (3, 6);
+	
+		\draw[color=lightgray] (4, 3) -- (4, 1);
+		\draw[color=lightgray] (4, 5) -- (4, 4);
+		\draw[color=lightgray] (4, 9) -- (4, 6);
+	
+		\draw[color=lightgray] (5, 3) -- (5, 1);
+		\draw[color=lightgray] (5, 7) -- (5, 4);
+		\draw[color=lightgray] (5, 9) -- (5, 8);
+	
+		\draw[color=lightgray] (6, 7) -- (6, 4);
+		\draw[color=lightgray] (6, 9) -- (6, 8);
+	
+		\draw[color=lightgray] (7, 7) -- (7, 4);
+		\draw[color=lightgray] (7, 9) -- (7, 8);
+		\draw[color=lightgray] (8, 9) -- (8, 1);
+	
+	
+		\draw[color=lightgray] (1, 9) -- (2, 9);
+		\draw[color=lightgray] (3, 9) -- (6, 9);
+		\draw[color=lightgray] (7, 9) -- (9, 9);
+	
+		\draw[color=lightgray] (1, 7) -- (6, 7);
+		\draw[color=lightgray] (7, 7) -- (9, 7);
+	
+		\draw[color=lightgray] (1, 6) -- (9, 6);
+	
+		\draw[color=lightgray] (1, 5) -- (9, 5);
+		
+		\draw[color=lightgray] (1, 4) -- (9, 4);
+	
+		\draw[color=lightgray] (1, 3) -- (6, 3); 
+		\draw[color=lightgray] (7, 3) -- (9, 3);
+		
+		\draw[color=lightgray] (1, 2) -- (6, 2); 
+		\draw[color=lightgray] (7, 2) -- (9, 2);
+		
+	\end{tikzpicture}
+	\hspace*{-0.5cm}
+	\caption{PNG d'une map}
+	\label{fig:png_map}
+\end{figure}
+
+
 Afin de pouvoir afficher des maps\footnote{En français les cartes}, 
 nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où
-nous dessinons les murs ainsi que la case de départ et d'arrivée. (insérer image ou schéma map)
+nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}).
 Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les
 différentes cases dans un tableau à deux dimensions. En même temps, le programme
 va regarder si les coordonnées correspondent à une cellule de mur, la case 
@@ -314,6 +387,10 @@ entre le sommet courant et le premier sommet de la liste des sommets triés.
 
 Explication des collisions avec les murs et les portails avec les schémas.
 
+\subsubsection{Les portails:}
+
+Explication des portails avec les schémas.
+
 
 \section{Conclusion technique \& personnelle}
 \subsection{Bilan du projet}
@@ -323,7 +400,21 @@ Explication des collisions avec les murs et les portails avec les schémas.
 
 \subsection{Perspectives}
 \subsubsection{Améliorations possibles}
+
+La plus grande amélioration possible serait de pouvoir voir à travers les portails
+lorsque les deux sont activés. (Bref explication de comment cela serai possible)
+
 \subsubsection{Nouvelles fonctionnalités}
+
+Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelques unes:
+\begin{itemize}
+	\item Permettre à l'utilisateur de créer ses propres maps
+	\item Avoir des murs où il est impossible de tirer un portail
+	\item Avoir des endroits au sol que lorsqu'on marche dessus, on est téléporter à la case départ
+	\item Pouvoir mettre plusieurs textures différentes sur les murs
+	\item Avoir des murs qui possèdent des trous permettant de voir ainsi que tirer des portails à travers
+\end{itemize}
+
 \subsubsection{Un plus dans nos CV}
 
 \section{Bibliographie}
