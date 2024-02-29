@@ -208,8 +208,62 @@ en visant chaque sommets au lieu de viser chaque colonne de pixel.
 \subsection{Détails du développement}
 Dans cette partie nous allons détailler les différentes étapes de développement de notre projet avec la seconde approche. En commencençant par la partie la moins technique pour finir par la partie la plus technique. Il faut noté que détails du développement dans les parties qui vont suivre sont pour un rendu 3D, mais tout au long de ce projet les différentes étapes ont été tester sur un rendu 2D pour faciliter le développement.
 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[scale=0.5]
+
+		\fill[line width=1pt] (0, 0) -- (0, 10) -- (10, 10) -- (10, 0) -- cycle;
+		\fill[white] (1, 1) -- (6, 1) -- (6, 3) -- (3, 3) -- (3, 4) -- (8, 4) -- (8, 3) -- (7, 3) -- (7, 1) -- (9, 1) -- (9, 7) -- (8, 7) -- (8, 8) -- (9, 8) -- (9, 9) -- (7, 9) -- (7, 6) -- (6, 6) -- (6, 7) -- (4, 7) -- (4, 8) -- (6, 8) -- (6, 9) -- (3, 9) -- (3, 7) -- (2, 7) -- (2, 9) -- (1, 9) -- (1, 6) -- (5, 6) -- (5, 5) -- (1, 5) -- cycle;
+	
+	
+		\draw[color=lightgray] (2, 5) -- (2, 1);
+		\draw[color=lightgray] (2, 9) -- (2, 6);
+	
+		\draw[color=lightgray] (3, 5) -- (3, 1);
+		\draw[color=lightgray] (3, 9) -- (3, 6);
+	
+		\draw[color=lightgray] (4, 3) -- (4, 1);
+		\draw[color=lightgray] (4, 5) -- (4, 4);
+		\draw[color=lightgray] (4, 9) -- (4, 6);
+	
+		\draw[color=lightgray] (5, 3) -- (5, 1);
+		\draw[color=lightgray] (5, 7) -- (5, 4);
+		\draw[color=lightgray] (5, 9) -- (5, 8);
+	
+		\draw[color=lightgray] (6, 7) -- (6, 4);
+		\draw[color=lightgray] (6, 9) -- (6, 8);
+	
+		\draw[color=lightgray] (7, 7) -- (7, 4);
+		\draw[color=lightgray] (7, 9) -- (7, 8);
+		\draw[color=lightgray] (8, 9) -- (8, 1);
+	
+	
+		\draw[color=lightgray] (1, 9) -- (2, 9);
+		\draw[color=lightgray] (3, 9) -- (6, 9);
+		\draw[color=lightgray] (7, 9) -- (9, 9);
+	
+		\draw[color=lightgray] (1, 7) -- (6, 7);
+		\draw[color=lightgray] (7, 7) -- (9, 7);
+	
+		\draw[color=lightgray] (1, 6) -- (9, 6);
+	
+		\draw[color=lightgray] (1, 5) -- (9, 5);
+		
+		\draw[color=lightgray] (1, 4) -- (9, 4);
+	
+		\draw[color=lightgray] (1, 3) -- (6, 3); 
+		\draw[color=lightgray] (7, 3) -- (9, 3);
+		
+		\draw[color=lightgray] (1, 2) -- (6, 2); 
+		\draw[color=lightgray] (7, 2) -- (9, 2);
+		
+	\end{tikzpicture}
+	\caption{PNG d'une map}
+	\label{fig:png_map}
+\end{figure}
+
 \subsubsection{Les maps:}
-Afin de pouvoir afficher des maps\footnote{En français les cartes}, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée. (insérer image ou schéma map) Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
+Afin de pouvoir afficher des maps\footnote{En français les cartes}, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}). Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
 
 \subsubsection{Les murs:}
 
@@ -255,8 +309,26 @@ Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommet
 
 \subsubsection{Les collisions:}
 
-Explication des collisions avec les murs et les portails avec les schémas.
+Dans ce point nous allons traiter des collisions. Notre objectif est d'empêcher
+que notre personnage puisse passe dans ainsi qu'à travers les murs.
+Le personnage est représenté par un point auquel nous accordons une largeur
+et donc un cercle centré autour de lui. Chaque mur étant composé de bloc carré unitaire.
+Ainsi, nous employons un système de collisions entre un cercle et un rectangle.
 
+Ce système s'appuie sur une méthode dite du "clampage" (explication du clampage en ref),
+qui permet de savoir si notre cercle est en collision avec notre rectangle.
+Alors deux cas s'ouvre à nous.
+
+\paragraph{Premier cas:} 
+Dans ce cas là, le cercle n'est pas en collision avec le rectangle, alors 
+tout va bien et aucun traitement spécifique n'est à prévoir.
+
+\paragraph{Second cas:} 
+Dans ce cas ci, le cercle est en collision avec le rectangle et nous devons
+alors procéder à un repositionnement du personnage de manière à ce qu'il ne
+soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel de glissement
+contre le rectangle.
+    
 \section{Conclusion technique \& personnelle}
 \subsection{Bilan du projet}
 \subsubsection{Résultats obtenus}
