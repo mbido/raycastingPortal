@@ -3,6 +3,7 @@
 \usepackage{BidoTexCourses}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{minted}
 
 
 \title{Compte rendu projet Portal 0.0}
@@ -328,6 +329,54 @@ Dans ce cas ci, le cercle est en collision avec le rectangle et nous devons
 alors procéder à un repositionnement du personnage de manière à ce qu'il ne
 soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel de glissement
 contre le rectangle.
+
+\paragraph{Aspect technique: }
+Maintenant, parlons de l'aspect technique.
+Nous définissons notre personnage, noté P, par des coordonnées représentant 
+sa position ainsi qu'un nombre représentant sa largeur. Ainsi :
+
+$P = ((x ; y) ; l), x, y, l \epsilon R$
+
+Nous fixons la valeur de l à 0,1.
+
+La méthode de "clampage" consiste à prendre la valeur la plus proche d'une 
+valeur donnée dans un intervalle donnée.
+Ce qui nous donne l'application suivante :
+
+\begin{minted}[autogobble]{C++}
+	float clamp(float min, float max, float value)
+	{
+		if (value < min)
+			return min;
+		if (value > max)
+			return max;
+		return value;
+	}
+\end{minted}
+
+
+A partir de cette application, nous pouvons trouver le point le plus proche 
+d'un mur. Nos murs sont composés de blocs unitaires, c'est-à-dire que ce 
+sont des carrées de longueur de côté 1. Pour expliquer le procéder, nous 
+prenons un de ces blocs, que l'on notera B, et qui est représenté par 
+l'ensemble des coordonnées des ses sommets. Pour se repérer dans l'espace, 
+il suffit d'une coordonnée pour avoir toutes les autres. Nous choisissons 
+arbitrairement de prendre la coordonnée à la plus basse abscisse et plus 
+basse ordonnée du bloc que nous noterons (a ; b). Nous avons alors :
+
+$B = {(a ; b) ; (a + 1 ; b) ; (a ; b + 1) ; (a + 1 ; b + 1)}$
+
+Que l'on simplifiera donc par
+
+$B = (a ; b)$
+
+Pour avoir le point le plus proche de B, noté C, nous devons alors "clamper" 
+l'abscisse, resp. l'ordonnée, du personnage sur l'intervalle d'abscisse, 
+resp. d'ordonnée, de B. Alors :
+
+$C = (clamp(P.x, B.a, B.a +1) ; clamp(P.y, B.b, B.b +1))$
+
+
     
 \section{Conclusion technique \& personnelle}
 \subsection{Bilan du projet}
