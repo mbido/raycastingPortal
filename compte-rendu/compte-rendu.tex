@@ -312,32 +312,40 @@ Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommet
 
 Dans ce point nous allons traiter des collisions. Notre objectif est d'empêcher
 que notre personnage puisse passe dans ainsi qu'à travers les murs.
-Le personnage est représenté par un point auquel nous accordons une largeur
-et donc un cercle centré autour de lui. Chaque mur étant composé de bloc carré unitaire.
-Ainsi, nous employons un système de collisions entre un cercle et un rectangle.
 
-Ce système s'appuie sur une méthode dite du "clampage" (explication du clampage en ref),
-qui permet de savoir si notre cercle est en collision avec notre rectangle.
+\paragraph{Aspect conceptuel:}
+Nous commençons avec l'aspect conceptuel.
+Le personnage est représenté par un point auquel nous accordons une 
+largeur et donc un cercle centré autour de lui. Chaque mur est composé de 
+blocs carrés unitaires. Ainsi, nous employons un système de collisions 
+entre un cercle et un rectangle (fig.1). 
+Ce système s'appuie sur une méthode dite du "clampage", qui permet de connaître le point du mur le plus proche 
+et ainsi de savoir si notre cercle est en collision avec notre rectangle.
 Alors deux cas s'ouvre à nous.
 
-\paragraph{Premier cas:} 
+\subparagraph{Premier cas:} 
 Dans ce cas là, le cercle n'est pas en collision avec le rectangle, alors 
-tout va bien et aucun traitement spécifique n'est à prévoir.
+tout va bien et aucun traitement spécifique n'est à prévoir (fig.2). 
 
-\paragraph{Second cas:} 
-Dans ce cas ci, le cercle est en collision avec le rectangle et nous devons
-alors procéder à un repositionnement du personnage de manière à ce qu'il ne
-soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel de glissement
-contre le rectangle.
+\subparagraph{Second cas:} 
+Dans ce cas ci, le cercle est en collision avec le rectangle (fig.3) et nous 
+devons alors procéder à un repositionnement du personnage de manière à ce 
+qu'il ne soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel 
+de glissement contre le rectangle.
+
+
+
 
 \paragraph{Aspect technique: }
 Maintenant, parlons de l'aspect technique.
 Nous définissons notre personnage, noté P, par des coordonnées représentant 
-sa position ainsi qu'un nombre représentant sa largeur. Ainsi :
+sa position ainsi qu'un nombre représentant sa largeur, noté L Ainsi :
 
-$P = ((x ; y) ; l), x, y, l \epsilon R$
-
-Nous fixons la valeur de l à 0,1.
+\begin{itemize}
+	\item[] $P = ((x ; y) ; l), x, y, l \epsilon R$ 
+	\item[] $L = 0,1$\footnote{Nous avons choisi cette valeur de manière 
+	empirique suite à une salve d’essais et de réflexions.}
+\end{itemize}
 
 La méthode de "clampage" consiste à prendre la valeur la plus proche d'une 
 valeur donnée dans un intervalle donnée.
@@ -364,18 +372,49 @@ il suffit d'une coordonnée pour avoir toutes les autres. Nous choisissons
 arbitrairement de prendre la coordonnée à la plus basse abscisse et plus 
 basse ordonnée du bloc que nous noterons (a ; b). Nous avons alors :
 
-$B = {(a ; b) ; (a + 1 ; b) ; (a ; b + 1) ; (a + 1 ; b + 1)}$
-
-Que l'on simplifiera donc par
-
-$B = (a ; b)$
+\begin{itemize}
+	\item[]	$B = \{(a ; b) ; (a + 1 ; b) ; (a ; b + 1) ; (a + 1 ; b + 1)\}$
+	\item[] Que l'on simplifiera donc par
+	\item[] $B = (a ; b)$
+\end{itemize}
 
 Pour avoir le point le plus proche de B, noté C, nous devons alors "clamper" 
 l'abscisse, resp. l'ordonnée, du personnage sur l'intervalle d'abscisse, 
-resp. d'ordonnée, de B. Alors :
+resp. d'ordonnée, de B (fig.4). Alors :
 
 $C = (clamp(P.x, B.a, B.a +1) ; clamp(P.y, B.b, B.b +1))$
 
+Grâce à C, nous pouvons maintenant vérifier si P est à moins de 0,1 de B, 
+et donc en collision. Pour cela, calculons la distance entre P et C :
+
+\begin{itemize}
+	\item[] $dist = \sqrt[]{((P.x - C.x)^2 + (P.y - C.y)^2)}$
+\end{itemize}
+
+Maintenant, nous pouvons généraliser notre réflexion à un mur pour nous 
+offrir une légère optimisation. Nos murs sont composés de plusieurs blocs. 
+En appliquant le traitement précédent à chaque bloc et en gardant la 
+distance minimale, nous pouvons déterminer le point le plus proche de 
+chaque mur cette fois ci. Ceci nous évite des comparaisons inutile par la 
+suite. On peut alors définir DistMur :
+
+\begin{itemize}
+	\item[] $DistMur = min(dist)$
+\end{itemize}
+
+
+Ensuite, si distMur $>$ P.l, c'est-à-dire si dist $>$ 0,1, alors P n'entre pas 
+en collision avec B (fig.2). Sinon, nous devons replacer P.
+
+Dans ce second cas, nous devons connaître la nouvelle position de P. Il 
+suffit alors d'ajouter la différence entre les coordonnées de P et de C :
+
+\begin{itemize}
+	\item[] $P = (P.x + (P.x - C.x) ; P.y + (P.y - C.y))$
+\end{itemize}
+
+Nous avons donc efficacement mis en place un système de gestion de 
+collisions entre un cercle et un rectangle.
 
     
 \section{Conclusion technique \& personnelle}
