@@ -4,7 +4,8 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{minted}
-
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 \title{Compte rendu projet Portal 0.0}
 \author{BIDAULT Matthieu, BADSTÜBER Elian, FOCHEUX Vital}
@@ -183,26 +184,65 @@ Programmer en C++ a pu s'avérer assez techniques car cela était un tout nouvea
 
 Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque GF. En effet, quand bien même c'est un bibliothèque possédant un bon nombre de fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet de donner des idées de méthodes à rajouter dans GF voire dans GF2.\footnote{GF2 est un projet qui est la suite de GF en C++ ainsi qu'en python3.}
 
-\subsection{Différentes stratégie}
-\subsubsection{Première approche - RayCasting}
+\subsection{Différentes stratégie pour le rendu 3D}
+Pour implémenter notre jeux, l'un des points les plus importants était de pouvoir afficher des murs en 3D. Pour cela, nous partions d'une grille de cellules 
+représentant les emplacements des murs donc d'un environnement 2D pour aller vers un rendu 3D.
+\subsubsection{Raycasting, l'approche historique}
+La première approche envisagée était celle historique : le raycasting.
 
-Une première approche pour l'affichage des murs était d'utiliser la technique de RayCasting historique. C'est à dire que pour chaque colonne de pixel de la fenêtre
-d'affichage, on lance un rayon depuis la position du joueur dans la direction de la colonne de pixel. On va ensuite regarder si ce rayon touche un mur ou non. 
-Si il touche un mur alors on va calculer la distance entre le joueur et le mur touché. 
-Ensuite on va calculer la hauteur du mur à afficher en fonction de la distance entre le joueur et le mur touché. 
-Enfin on va afficher le mur en fonction de la hauteur calculée.
-Pour cela on utilisait l'algorithme DDA (Digital Differential Analyzer) pour le rendu des murs.
+Le raycasting est une méthode de rendu graphique utilisée pour créer une perspective 3D dans des environnements 2D. Cet effet est réalisé en projetant des 
+rayons depuis la position de l'observateur à travers la scène pour déterminer les intersections avec les murs. Pour optimiser ce
+processus, nous avont utilisé l'algorithme Digital Differential Analyzer (DDA).
 
-DDA est un algorithme de tracé de ligne qui permet de ne regarder la collision du rayon avec les murs que sur les abscisses ou (au sens logique) les ordonnées entières.
-Cela permet de faire très peu de calculs avant de trouver une collision avec un mur.
+Le raycasting génère une illusion de profondeur en projetant des rayons depuis le point de vue du joueur jusqu'à ce qu'ils rencontrent un 
+objet dans l'espace de jeu. Le processus est répété pour chaque colonne de l'écran, permettant ainsi de dessiner une image 3D à partir d'une
+carte 2D. Les distances calculées entre le joueur et les points d'intersection sont utilisées pour déterminer la hauteur des objets rendus, 
+créant ainsi une perspective en fausse 3D.
 
-Cette première approche était très simple à implémenter et ce fut probablement son plus grand défaut. En effet, il fallait que ce projet soit enrichissant
-pour des étudiant de L3. C'est pourquoi une nouvelle approche, proposée par notre enseignant, \textit{M. Bernard}, a été adoptée.
-\subsubsection{Seconde approche plus technique - Line Of Sight}
+\paragraph{Expliquons plus en détail cet algorithme DDA :}
+L'algorithme DDA est historiquement conçu pour la rasterisation de lignes, c'est-à-dire la conversion de lignes géométriques en ligne visuelle composées de pixels 
+alignés. Dans le contexte du raycasting, DDA est employé pour déterminer où les rayons projetés à travers la scène intersectent avec les objets de l'environnement, 
+typiquement et dans notre cas représenté par une grille de cellules.
+
+Le principe fondamental de DDA repose sur l'itération linéaire. Plutôt que de calculer chaque point le long d'une demie droite en utilisant des formules de géométrie 
+directe, ce qui pourrait être coûteux en termes de performances, DDA avance par petits incréments. Cela signifie que pour chaque pas sur l'axe le plus 
+dominant (x ou y), DDA calcule l'emplacement correspondant sur l'autre axe en ajoutant un incrément constant. Cela se traduit par un parcours régulier et 
+efficace le long de la ligne en faisant des sauts à chaque intersection entre la demie droite et la grille 2D.
+
+Dans le raycasting, DDA est utilisé pour trouver rapidement et précisément les intersections entre les rayons et les murs. 
+
+\paragraph{Les avantages de DDA dans ce contexte :}
+\begin{itemize}
+\item \textbf{Efficacité :} DDA réduit la quantité de calculs nécessaires pour trouver les intersections. En progressant par 
+incréments réguliers, l'algorithme évite les calculs répétés ou complexes typiques des méthodes géométriques standards.
+\item \textbf{Précision :} Bien que simple, DDA maintient une précision élevée dans le calcul des intersections. Chaque étape 
+avance de manière incrémentielle, garantissant que le rayon suit précisément sa trajectoire prévue sans sauter de pixels ou de cellules.
+\item \textbf{Adaptabilité :} L'algorithme s'adapte bien aux grilles de toutes tailles, ce qui le rend idéal pour les jeux avec 
+différentes résolutions et des espaces de jeu variés.
+\item \textbf{Simplicité et Robustesse :} DDA est relativement simple à implémenter et à comprendre, ce qui réduit le risque 
+d'erreurs. Sa robustesse en fait une méthode fiable pour le raycasting dans des environnements de jeu variés.
+\end{itemize}
+
+Dans l'application concrète DDA au raycasting, l'algorithme calcule les pas nécessaires pour que le rayon 
+traverse une cellule de la grille, soit en horizontal, soit en vertical. Ces pas sont basés sur la direction du 
+rayon et sont ajustés à chaque étape pour correspondre à la grille du jeu. Cela permet au rayon de "marcher" à travers 
+la grille, cellule par cellule, en vérifiant à chaque pas si un mur a été rencontré.
+
+\noindent Cette approche est assez simple à implémenter, promettant par ailleurs des performances élevées et 
+une implémentation de la vue à travers les portails plus aisée. Cependant, cette simplicité est peut être ce qui 
+nous a fait choisir une autre approche, plus adaptée à un projet d'étudiants en 3ème année de licence informatique et plus moderne.
+
+\subsubsection{Line Of Sight, l'approche moderne}
 
 Cette seconde approche s'approche des algorithme \textit{Line Of Sight} et consiste à calculer la distance entre le joueur et chaque sommet de chaque mur.
 Pour ce faire on à pu récupérer l'algorithme DDA précédemment utilisé pour le rendu des murs mais cette fois-ci 
-en visant chaque sommets au lieu de viser chaque colonne de pixel.
+en visant chaque sommets au lieu de viser chaque colonne de pixel. Cela permet théoriquement de réduire considérablement le nombre de calculs à effectuer.
+Cependant des modifications sont importantes à faire pour que DDA fonctionne correctement dans ce contexte.
+
+\paragraph{title}
+
+En effet, si DDA est efficace et précis, si l'on vise un sommet de mur avec un rayon, la moindre approximation dans le calcule de l'angle avec lequel on 
+lance le rayon ferais rater en moyenne un sommet sur deux.
 
 
 
@@ -476,8 +516,11 @@ Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelqu
 \end{itemize}
 
 \subsubsection{Un plus dans nos CV}
+\cite{exemple}
 
-\section{Bibliographie}
+% \section{Bibliographie}
+\bibliographystyle{plain}
+\bibliography{references}
 
 Gamedev Framework (GF): \href{https://gamedevframework.github.io/}{https://gamedevframework.github.io/}
 

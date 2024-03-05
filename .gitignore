@@ -4,5 +4,6 @@ compte-rendu/*.*
 !compte-rendu/*.tex
 !compte-rendu/*.sty
 !compte-rendu/*.pdf
+!compte-rendu/*.bib
 .DS_Store
 *\[*\]*
