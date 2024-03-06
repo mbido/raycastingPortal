@@ -72,29 +72,19 @@ std::pair<double, gf::Vector2f> checkingCollisionsForEachPortal(struct portal *f
         switch ((firstPortal->facing + secondPortal->facing) % 4)
         {
         case 0:
-            // std::cout << "cas 0" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x + (p_position.x - firstPortal->position.x), secondPortal->position.y - (p_position.y - firstPortal->position.y));
-            // std::cout << "nextCoords.second : " << secondPortal->position.x + (p_position.x - firstPortal->position.x) << ";" << secondPortal->position.y - (p_position.y - firstPortal->position.y) << std::endl;
             break;
         case 1:
-            // std::cout << "cas 1" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x + (p_position.y - firstPortal->position.y), secondPortal->position.y + (p_position.x - firstPortal->position.x));
-            // std::cout << "nextCoords.second : " << secondPortal->position.x + (p_position.y - firstPortal->position.y) << ";" << secondPortal->position.y + (p_position.x - firstPortal->position.x) << std::endl;
             break;
         case 2:
-            // std::cout << "cas 2" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x - (p_position.x - firstPortal->position.x), secondPortal->position.y + (p_position.y - firstPortal->position.y));
-            // std::cout << "nextCoords.second : " << secondPortal->position.x - (p_position.x - firstPortal->position.x) << ";" << secondPortal->position.y + (p_position.y - firstPortal->position.y) << std::endl;
             break;
         case 3:
-            // std::cout << "cas 3" << std::endl;
             nextCoords.second = gf::Vector2f(secondPortal->position.x - (p_position.y - firstPortal->position.y), secondPortal->position.y - (p_position.x - firstPortal->position.x));
-            // std::cout << "nextCoords.second : " << secondPortal->position.x - (p_position.y - firstPortal->position.y) << ";" << secondPortal->position.y - (p_position.x - firstPortal->position.x) << std::endl;
             break;
         default:
-            // std::cout << "tous les autres cas : (secondPortal->facing - firstPortal->facing) % 4 = " << ((secondPortal->facing - firstPortal->facing) % 4) << std::endl;
             nextCoords.second = p_position;
-            // std::cout << "nextCoords.second : " << p_position.x << ";" << p_position.y << std::endl;
             break;
         }
 
@@ -224,7 +214,6 @@ void Game2D::update(gf::Time dt)
     m_windowSize = m_renderer.getSize();
     m_scaleUnit = std::min((int)(m_windowSize[0] / m_walls->getNbRows()), (int)(m_windowSize[1] / m_walls->getNbColumns()));
 
-    // if ((m_firstPortal != NULL && m_secondPortal != NULL) && (timeBeforeNextTP == TIME_DELTA_FOR_TP)) {
     if (m_firstPortal != NULL && m_secondPortal != NULL)
     {
         std::pair<bool, gf::Vector2f> tmp = getClosestPointOfPortal(m_firstPortal, m_secondPortal, m_player->getPosition());
@@ -242,7 +231,6 @@ void Game2D::update(gf::Time dt)
         if (m_player->getPosition() != positionPostTP.second)
         {
             didTP = true;
-            // std::cout << "Did tp !" << std::endl;
         }
     }
 
@@ -252,7 +240,6 @@ void Game2D::update(gf::Time dt)
         m_player->setPosition(m_player->getPosition() + newPos);
     }
 
-    // std::cout << timeBeforeNextTP << " and " << (didTP ? "tp" : "not tp") << std::endl;
     if (didTP)
         timeBeforeNextTP -= dt.asSeconds();
     if (timeBeforeNextTP <= 0)
@@ -369,12 +356,6 @@ gf::Vector2f castRay2D(gf::Vector2f position, gf::Vector2f direction, MapWalls *
 
 bool Game2D::isPartIncluded(std::vector<gf::Vector2f> subSegments)
 {
-    // std::cout << "Subsegments vector: [";
-    // for (const auto &segment : subSegments)
-    // {
-    //     std::cout << "(" << segment.x << ", " << segment.y << "), ";
-    // }
-    // std::cout << "]" << std::endl;
 
     for (int i = 0; i < subSegments.size() - 1; i += 2)
     {
@@ -390,24 +371,13 @@ bool Game2D::isPartIncluded(std::vector<gf::Vector2f> subSegments)
             gf::Vector2f start2 = subSegments[j];
             gf::Vector2f end2 = subSegments[j + 1];
 
-            // std::cout << std::fixed << std::setprecision(8);
-            // std::cout << "start1 : (" << start1.x << ", " << start1.y << ") end1 : (" << end1.x << ", " << end1.y << ")" << std::endl;
-            // std::cout << "start2 : (" << start2.x << ", " << start2.y << ") end2 : (" << end2.x << ", " << end2.y << ")" << std::endl;
-            // std::cout << std::endl;
-
             bool a = (start1.x <= start2.x && start2.x <= end1.x) || std::abs(start1.x - start2.x) < DELTA || std::abs(start2.x - end1.x) < DELTA;
             bool b = (start1.x >= start2.x && start2.x >= end1.x) || std::abs(start1.x - start2.x) < DELTA || std::abs(start2.x - end1.x) < DELTA;
             bool c = (start1.y <= start2.y && start2.y <= end1.y) || std::abs(start1.y - start2.y) < DELTA || std::abs(start2.y - end1.y) < DELTA;
             bool d = (start1.y >= start2.y && start2.y >= end1.y) || std::abs(start1.y - start2.y) < DELTA || std::abs(start2.y - end1.y) < DELTA;
 
-            // std::cout << "a : " << a << std::endl;
-            // std::cout << "b : " << b << std::endl;
-            // std::cout << "c : " << c << std::endl;
-            // std::cout << "d : " << d << std::endl;
-
             if ((a || b) && (c || d))
             {
-                // std::cout << "start2 is included in [start1, end1]" << std::endl;
                 return true;
             }
         }
@@ -640,8 +610,6 @@ void Game2D::castPortal(bool isFirstPortal)
         portal->linkedPortal = otherPortal;
         otherPortal->linkedPortal = portal;
     }
-
-    // std::cout << "portal position : (" << portal->position.x << ", " << portal->position.y << ")" << std::endl;
 }
 
 void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalSegment)
@@ -649,8 +617,6 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
 
     std::vector<Wall> walls = m_walls->getWalls();
     std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> segments;
-
-    // int nbSupplementaryRays = 0;
 
     gf::Vector2f position = m_player->getPosition();
     position.x = position.x + DELTA;
@@ -665,20 +631,6 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
     }
 
     // adding vertices at begins and ends of portals
-    // if (m_firstPortal != NULL)
-    // {
-    //     gf::Vector2f startPortal1(m_firstPortal->position.x - ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y - ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
-    //     gf::Vector2f endPortal1(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0));
-    //     sortedVertices.push_back(startPortal1);
-    //     sortedVertices.push_back(endPortal1);
-    // }
-    // if (m_secondPortal != NULL)
-    // {
-    //     gf::Vector2f startPortal2(m_secondPortal->position.x - ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y - ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
-    //     gf::Vector2f endPortal2(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0));
-    //     sortedVertices.push_back(startPortal2);
-    //     sortedVertices.push_back(endPortal2);
-    // }
 
     // if we are in a portal, we add a vertex at every intersection between a segment and the line defined by the segment of the portal
     // then we remove every vertices that are before that line
@@ -723,8 +675,6 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
     }
     std::sort(sortedVertices.begin(), sortedVertices.end(), CompareVerticesAngle(position));
 
-    // std::vector<gf::Vector2f> sortedVertices = wall.getSortedVertices(m_player->getPosition());
-
     std::vector<gf::Vector2f> hitPoints;
 
     for (int i = 0; i < sortedVertices.size(); i++)
@@ -751,8 +701,6 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
             {
                 for (auto segment : segmentsHit)
                 {
-                    // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
-                    // std::cout << " with point : (" << sortedVertices[i].x << ", " << sortedVertices[i].y << ")" << std::endl;
                     segments[segment].push_back(sortedVertices[i]);
                 }
             }
@@ -824,77 +772,32 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
                     {
                         for (auto segment : segmentsHit)
                         {
-                            // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")";
-                            // std::cout << " with point : (" << newEndPoint.x << ", " << newEndPoint.y << ")" << std::endl;
                             segments[segment].push_back(newEndPoint);
                         }
                     }
-
-                    // nbSupplementaryRays++;
                 }
             }
         }
     }
 
-    // std::cout << "nbSupplementaryRays : " << nbSupplementaryRays << std::endl;
-
-    // render the map :
-    // m_walls->render(m_renderer, m_scaleUnit);
     for (auto wall : walls)
     {
         wall.render(m_renderer, m_scaleUnit);
     }
-    // std::cout << std::endl;
 
     // render the segments :
-
-    // for (size_t i = 0; i < hitPoints.size() - 1; i++)
-    // {
-    //     // render the triangles :
-    //     gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
-    //     triangle[0].color = gf::Color::fromRgba32(0x77777777);
-    //     triangle[1].color = gf::Color::fromRgba32(0x77777777);
-    //     triangle[2].color = gf::Color::fromRgba32(0x77777777);
-
-    //     gf::Vector2f start = *(std::next(hitPoints.begin(), i));
-    //     gf::Vector2f end = *(std::next(hitPoints.begin(), i + 1));
-
-    //     triangle[0].position = start * m_scaleUnit;
-    //     triangle[1].position = end * m_scaleUnit;
-    //     triangle[2].position = m_player->getPosition() * m_scaleUnit;
-    //     m_renderer.draw(triangle);
-    // }
 
     for (auto segment : segments)
     {
 
-        // std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> segments;
-        // bool print = segment.first.first == gf::Vector2f(1, 5) && segment.first.second == gf::Vector2f(1, 1);
-
-        // if (print)
-        // {
-        //     std::cout << "INCLUDED ? " << std::endl;
-        // }
-
         //  does one part of the segment is included in another segment ?
         if (isPartIncluded(segment.second))
         {
-            // if (print)
-            // {
-            //     std::cout << "! YES !" << std::endl;
-            // }
             // we put the first point of the segment at the end of the vector
             gf::Vector2f firstPoint = segment.second[0];
             segment.second.erase(segment.second.begin());
             segment.second.push_back(firstPoint);
         }
-        // else
-        // {
-        //     if (print)
-        //     {
-        //         std::cout << "no" << std::endl;
-        //     }
-        // }
 
         // draw the triangles :
         gf::VertexArray triangle(gf::PrimitiveType::Triangles, 3);
@@ -930,10 +833,6 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
             line[0].position = segment.second[i] * m_scaleUnit;
             line[1].position = segment.second[i + 1] * m_scaleUnit;
             m_renderer.draw(line);
-
-            // line[0].position = segment.second[i + 1] * m_scaleUnit;
-            // line[1].position = m_player->getPosition() * m_scaleUnit;
-            // m_renderer.draw(line);
         }
     }
 
@@ -950,12 +849,7 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
         line[1].position = gf::Vector2f(m_firstPortal->position.x + ((m_firstPortal->facing % 2 == 1) ? m_firstPortal->width / 2 : 0), m_firstPortal->position.y + ((m_firstPortal->facing % 2 == 0) ? m_firstPortal->width / 2 : 0)) * m_scaleUnit;
 
         m_renderer.draw(line);
-        // std::cout << "first portal : (" << line[0].position.x << ", " << line[0].position.y << ") -> (" << line[1].position.x << ", " << line[1].position.y << ")" << std::endl;
     }
-    // else
-    // {
-    //     std::cout << "first portal : NULL" << std::endl;
-    // }
 
     if (m_secondPortal != NULL)
     {
@@ -966,27 +860,7 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
         line[1].position = gf::Vector2f(m_secondPortal->position.x + ((m_secondPortal->facing % 2 == 1) ? m_secondPortal->width / 2 : 0), m_secondPortal->position.y + ((m_secondPortal->facing % 2 == 0) ? m_secondPortal->width / 2 : 0)) * m_scaleUnit;
 
         m_renderer.draw(line);
-        // std::cout << "second portal : (" << line[0].position.x << ", " << line[0].position.y << ") -> (" << line[1].position.x << ", " << line[1].position.y << ")" << std::endl;
     }
-    // else
-    // {
-    //     std::cout << "second portal : NULL" << std::endl;
-    // }
-
-    // for (auto wall : m_walls->getWalls()) {
-    //     gf::VertexArray line(gf::PrimitiveType::Lines, 2);
-    //     line[0].position = getClosestPointOfWall(wall, m_player->getPosition()) * m_scaleUnit;
-    //     line[1].position = m_player->getPosition() * m_scaleUnit;
-    //     line[0].color = gf::Color::Cyan;
-    //     line[1].color = gf::Color::Cyan;
-    //     m_renderer.draw(line);
-
-    //     gf::CircleShape circle(m_scaleUnit / 16);
-    //     circle.setPosition(line[0].position);
-    //     circle.setColor(gf::Color::White);
-    //     circle.setAnchor(gf::Anchor::Center);
-    //     m_renderer.draw(circle);
-    // }
 
     if (m_firstPortal && m_secondPortal)
     {
@@ -1042,14 +916,5 @@ void Game2D::render(bool isPortal, std::pair<gf::Vector2f, gf::Vector2f> portalS
         line[0].position = positionCaster2 * m_scaleUnit;
         line[1].position = (positionCaster2 + gf::Vector2f(std::cos(angle), std::sin(angle))) * m_scaleUnit;
         m_renderer.draw(line);
-
-        std::cout << "m_firstPortal->facing : " << m_firstPortal->facing << std::endl;
-        std::cout << "m_secondPortal->facing : " << m_secondPortal->facing << std::endl;
-
-        // std::cout << "positionRenderer1 : (" << positionRenderer1.x << ", " << positionRenderer1.y << ")" << std::endl;
-        // std::cout << "positionRenderer2 : (" << positionRenderer2.x << ", " << positionRenderer2.y << ")" << std::endl;
-        // std::cout << "positionCaster1 : (" << positionCaster1.x << ", " << positionCaster1.y << ")" << std::endl;
-        // std::cout << "positionCaster2 : (" << positionCaster2.x << ", " << positionCaster2.y << ")" << std::endl;
-        // std::cout << "player angle : " << m_player->getAngle() << std::endl;
     }
 }

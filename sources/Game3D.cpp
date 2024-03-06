@@ -30,7 +30,6 @@ gf::Vector2f linesIntersection(gf::Vector2f A, gf::Vector2f B, gf::Vector2f C, g
 
     if (std::abs(delta) < DELTA)
     {
-        // std::cout << "Lines are parallel" << std::endl;
         return gf::Vector2f(0, 0);
     }
     else
@@ -210,12 +209,6 @@ struct PairComparator
 
 bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
 {
-    // std::cout << "Subsegments vector: [";
-    // for (const auto &segment : subSegments)
-    // {
-    //     std::cout << "(" << segment.x << ", " << segment.y << "), ";
-    // }
-    // std::cout << "]" << std::endl;
 
     for (int i = 0; i < subSegments.size() - 1; i += 2)
     {
@@ -231,24 +224,13 @@ bool isPartIncluded(std::vector<gf::Vector2f> subSegments)
             gf::Vector2f start2 = subSegments[j];
             gf::Vector2f end2 = subSegments[j + 1];
 
-            // std::cout << std::fixed << std::setprecision(8);
-            // std::cout << "start1 : (" << start1.x << ", " << start1.y << ") end1 : (" << end1.x << ", " << end1.y << ")" << std::endl;
-            // std::cout << "start2 : (" << start2.x << ", " << start2.y << ") end2 : (" << end2.x << ", " << end2.y << ")" << std::endl;
-            // std::cout << std::endl;
-
             bool a = (start1.x <= start2.x && start2.x <= end1.x) || std::abs(start1.x - start2.x) < DELTA || std::abs(start2.x - end1.x) < DELTA;
             bool b = (start1.x >= start2.x && start2.x >= end1.x) || std::abs(start1.x - start2.x) < DELTA || std::abs(start2.x - end1.x) < DELTA;
             bool c = (start1.y <= start2.y && start2.y <= end1.y) || std::abs(start1.y - start2.y) < DELTA || std::abs(start2.y - end1.y) < DELTA;
             bool d = (start1.y >= start2.y && start2.y >= end1.y) || std::abs(start1.y - start2.y) < DELTA || std::abs(start2.y - end1.y) < DELTA;
 
-            // std::cout << "a : " << a << std::endl;
-            // std::cout << "b : " << b << std::endl;
-            // std::cout << "c : " << c << std::endl;
-            // std::cout << "d : " << d << std::endl;
-
             if ((a || b) && (c || d))
             {
-                // std::cout << "start2 is included in [start1, end1]" << std::endl;
                 return true;
             }
         }
@@ -551,11 +533,9 @@ gf::Vector2f getIntersectionForPortals3D(std::pair<gf::Vector2f, gf::Vector2f> p
     bool isSegmentVertical = std::abs(segmentToIntersect.first.x - segmentToIntersect.second.x) < DELTA;
     bool isPlayerLeft = playerPosition.x < portalSegment.first.x;
     bool isPlayerUp = playerPosition.y < portalSegment.first.y;
-    // std::cout << "segment : (" << segmentToIntersect.first.x << ", " << segmentToIntersect.first.y << ") -> (" << segmentToIntersect.second.x << ", " << segmentToIntersect.second.y << ")" << std::endl;
 
     if (isPortalVertical && !isSegmentVertical && (segmentToIntersect.first.x <= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA) && segmentToIntersect.second.x >= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA) || segmentToIntersect.first.x >= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA) && segmentToIntersect.second.x <= portalSegment.first.x + (isPlayerLeft ? DELTA : -DELTA)))
     {
-        // std::cout << "INTERSECTION" << std::endl;
         return gf::Vector2f(portalSegment.first.x, segmentToIntersect.first.y);
     }
     else if (!isPortalVertical && isSegmentVertical && (portalSegment.first.y + (isPlayerUp ? DELTA : -DELTA) <= segmentToIntersect.first.y && portalSegment.second.y + (isPlayerUp ? DELTA : -DELTA) >= segmentToIntersect.first.y || portalSegment.first.y + (isPlayerUp ? DELTA : -DELTA) >= segmentToIntersect.first.y && portalSegment.second.y + (isPlayerUp ? DELTA : -DELTA) <= segmentToIntersect.first.y))
@@ -892,25 +872,11 @@ void renderRenderedPortal(bool isFirstPortal, gf::Vector2f startPortal, gf::Vect
         trapezoid[5].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
         trapezoid[5].texCoords = trapezoid[5].position / viewSize;
 
-        // trapezoid[0].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 - heightStart / 2);
-        // trapezoid[0].texCoords = {0.0f, 0.0f};
-        // trapezoid[1].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
-        // trapezoid[1].texCoords = {0.0f, 1.0f};
-        // trapezoid[2].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
-        // trapezoid[2].texCoords = {1.0f, 0.0f};
-        // trapezoid[3].position = gf::Vector2f(viewWidth / 2 + xPosStart, viewHeight / 2 + heightStart / 2);
-        // trapezoid[3].texCoords = {0.0f, 1.0f};
-        // trapezoid[4].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 - heightEnd / 2);
-        // trapezoid[4].texCoords = {1.0f, 0.0f};
-        // trapezoid[5].position = gf::Vector2f(viewWidth / 2 + xPosEnd, viewHeight / 2 + heightEnd / 2);
-        // trapezoid[5].texCoords = {1.0f, 1.0f};
-
         // render the scene in a texture
         gf::RenderTexture renderTexture(renderer.getSize());
         renderTexture.setActive();
 
         gf::RectangleShape rectangle(renderer.getSize());
-        // rectangle.setColor(isFirstPortal ? gf::Color::Cyan : gf::Color::Orange);
         rectangle.setColor(gf::Color::Black);
         renderTexture.draw(rectangle);
 
@@ -918,7 +884,6 @@ void renderRenderedPortal(bool isFirstPortal, gf::Vector2f startPortal, gf::Vect
         renderTexture.display();
 
         renderer.setActive();
-        // renderer.clear(gf::Color::Black);
 
         gf::RenderStates states;
         states.texture[0] = &(renderTexture.getTexture());
@@ -933,15 +898,11 @@ void resizePortal(gf::Vector2f &portalStart, gf::Vector2f &portalEnd, gf::Vector
 
     portalStart[index] = std::max(portalStart[index], std::min(segmentStart[index], segmentEnd[index]));
     portalEnd[index] = std::min(portalEnd[index], std::max(segmentStart[index], segmentEnd[index]));
-
-    // std::cout << "portalStart : (" << portalStart.x << ", " << portalStart.y << ")" << std::endl;
-    // std::cout << "portalEnd : (" << portalEnd.x << ", " << portalEnd.y << ")" << std::endl << std::endl;
 }
 
 bool isBetween(gf::Vector2f point, gf::Vector2f start, gf::Vector2f end)
 {
     bool isSegmentVertical = std::abs(start.x - end.x) < DELTA;
-    // std::cout << "isSegmentVertical : " << isSegmentVertical << std::endl;
     int index = (isSegmentVertical) ? 0 : 1;
     int index2 = (index + 1) % 2;
     bool isOnSegment = std::abs(point[index] - start[index]) < DELTA;
@@ -1030,36 +991,6 @@ void castSegments(std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf
         }
     }
 }
-
-// void setVerticesWhenPortal(std::vector<gf::Vector2f> &sortedVertices, const std::pair<gf::Vector2f, gf::Vector2f> &portalSegment, const Game3D &game)
-// {
-//     // adding the vertices :
-//     std::set<std::pair<gf::Vector2f, gf::Vector2f>, PairComparator> seenSegments;
-//     // a copy of sortedVertices is needed because we are adding vertices to the vector while iterating over it
-//     std::vector<gf::Vector2f> sortedVerticesCopy = sortedVertices;
-//     // removing the vertices not needed :
-//     removeVerticesBefore3D(sortedVertices, portalSegment, game.m_player->getPosition());
-//     for (auto v : sortedVerticesCopy)
-//     {
-//         // std::cout << "vertex : (" << v.x << ", " << v.y << ")" << std::endl;
-//         std::vector<std::pair<gf::Vector2f, gf::Vector2f>> vertexSegments;
-//         if (game.m_walls->getSegments(v, vertexSegments))
-//         {
-//             for (auto segment : vertexSegments)
-//             {
-//                 // std::cout << "in segment : (" << segment.first.x << ", " << segment.first.y << ") -> (" << segment.second.x << ", " << segment.second.y << ")" << std::endl;
-//                 if (seenSegments.insert(segment).second)
-//                 {
-//                     gf::Vector2f intersection = getIntersectionForPortals3D(portalSegment, segment, game.m_player->getPosition());
-//                     if (intersection != gf::Vector2f(0, 0))
-//                     {
-//                         sortedVertices.push_back(gf::Vector2f(intersection.x, intersection.y));
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
 
 void renderSegments(const std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> &segments, std::pair<gf::Vector2f, gf::Vector2f> firstPortalSegment, std::pair<gf::Vector2f, gf::Vector2f> secondPortalSegment, const Game3D &game, gf::RenderTarget &renderer, gf::Vector2f position, gf::Vector2f casterPosition, double angle)
 {
@@ -1233,7 +1164,6 @@ void renderHelper(const Game3D &game, gf::RenderTarget &renderer, bool isPortal,
             {
                 return;
             }
-            // std::cout << "---rendering for the first portal---" << std::endl;
             angle = getRendererAngle(game.m_secondPortal, game.m_firstPortal, game.m_player->getAngle());
             rendererPosition = getRendererPosition(game.m_secondPortal, game.m_firstPortal, game.m_player->getPosition());
             casterPosition = game.m_secondPortal->position;
@@ -1248,7 +1178,6 @@ void renderHelper(const Game3D &game, gf::RenderTarget &renderer, bool isPortal,
             {
                 return;
             }
-            // std::cout << "---rendering for the second portal---" << std::endl;
             angle = getRendererAngle(game.m_firstPortal, game.m_secondPortal, game.m_player->getAngle());
             rendererPosition = getRendererPosition(game.m_firstPortal, game.m_secondPortal, game.m_player->getPosition());
             casterPosition = game.m_firstPortal->position;
@@ -1260,29 +1189,16 @@ void renderHelper(const Game3D &game, gf::RenderTarget &renderer, bool isPortal,
     }
     else
     {
-        // std::cout << "---rendering for the player---" << std::endl;
         casterPosition = game.m_player->getPosition();
         rendererPosition = game.m_player->getPosition();
         angle = game.m_player->getAngle();
     }
-    // if (game.m_firstPortal && game.m_secondPortal)
-    // {
-    //     std::cout << "m_firstPortal->facing : " << game.m_firstPortal->facing << std::endl;
-    //     std::cout << "m_secondPortal->facing : " << game.m_secondPortal->facing << std::endl;
-    // }
-    // std::cout << "angle : " << angle << std::endl;
-    // std::cout << "renderPosition : (" << rendererPosition.x << ", " << rendererPosition.y << ")" << std::endl;
-    // std::cout << "casterPosition : (" << casterPosition.x << ", " << casterPosition.y << ")" << std::endl;
 
     std::vector<Wall> walls = game.m_walls->getWalls();
     std::map<std::pair<gf::Vector2f, gf::Vector2f>, std::vector<gf::Vector2f>, PairComparator> segments;
     std::vector<gf::Vector2f> sortedVertices = game.m_walls->getVertices();
 
     // to see if needed but for now, i think it is not
-    // if (isPortal)
-    // {
-    //     setVerticesWhenPortal(sortedVertices, portalSegment, game);
-    // }
 
     // !!! IL FAUT CHANGER L'ORDRE !!!
     if (isPortal && game.m_player->getAngle() == std::fmod(portal->facing * gf::Pi / 2 + gf::Pi, 2 * gf::Pi))
@@ -1311,12 +1227,4 @@ void Game3D::render()
     nbFirstPortalRendered = 0;
     nbSecondPortalRendered = 0;
     renderHelper(*this, m_renderer);
-    // if (m_firstPortal && m_secondPortal)
-    // {
-    //     renderHelper(*this, m_renderer, true, m_firstPortal);
-    // }
-    // else
-    // {
-    //     renderHelper(*this, m_renderer);
-    // }
 }
