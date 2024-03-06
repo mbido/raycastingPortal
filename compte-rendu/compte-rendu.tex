@@ -31,12 +31,12 @@ qui a su nous guider et nous conseiller tout au long de ce projet.
 
 Dans le cadre du projet semestriel de troisième année de licence
 informatique à l'université de Franche-Comté, nous proposons de coder
-une version très simplifiée du jeu \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}
+une version très simplifiée du jeu \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}\cite{Portal}
 qui sera afficher grâce à un moteur de type Raycaster à la façon du jeu
-\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}.
+\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D}.
 Il a pour but de nous faire découvrir le monde du développement de jeux 
 vidéo en nous faisant réaliser un jeu vidéo en C++ avec la bibliothèque 
-\href{https://gamedevframework.github.io/}{Gamedev Framework} (GF)\footnote{Tous au long de ce rapport, nous utiliserons abbrévation GF.
+\href{https://gamedevframework.github.io/}{Gamedev Framework} (GF\cite{GF})\footnote{Tous au long de ce rapport, nous utiliserons abbrévation GF.
 Cela signifie Gamedev Framework.}.
 
 
@@ -91,34 +91,34 @@ Cela signifie Gamedev Framework.}.
 
 
 \paragraph{Les graphismes :}
-Au début des années 90, la société \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software} a entrepris des 
+Au début des années 90, la société \href{https://fr.wikipedia.org/wiki/Id_Software}{Id Software}\cite{Id_Software} a entrepris des 
 recherches pionnières dans le domaine des graphismes 3D, alors principalement réservés aux simulateurs de vols tels 
-que \href{https://fr.wikipedia.org/wiki/Wing_Commander_(jeu_vid%C3%A9o)}{Wing Commander} ou 
-\href{https://en.wikipedia.org/wiki/Knights_of_the_Sky}{Knights of the Sky} (\nameref{fig:knights-of-the-sky}), deux titres parus en 1990. Face aux 
+que \href{https://fr.wikipedia.org/wiki/Wing_Commander_(jeu_vid%C3%A9o)}{Wing Commander}\cite{Wing_Commander} ou 
+\href{https://en.wikipedia.org/wiki/Knights_of_the_Sky}{Knights of the Sky}\cite{Knights_of_the_Sky} (\nameref{fig:knights-of-the-sky}), deux titres parus en 1990. Face aux 
 contraintes de performance des ordinateurs de l'époque, le développement de jeux d'action en 3D rapide représentait 
-un défi de taille. C'est dans ce contexte que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} a 
-proposé l'utilisation de la technique du \href{https://fr.wikipedia.org/wiki/Raycasting}{raycasting}, permettant 
+un défi de taille. C'est dans ce contexte que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack}\cite{John_Carmack} a 
+proposé l'utilisation de la technique du \href{https://fr.wikipedia.org/wiki/Raycasting}{raycasting}\cite{Raycasting}, permettant 
 de calculer uniquement les surfaces visibles par le joueur. En six semaines, Carmack développe un moteur 3D innovant 
 utilisant des sprites 2D pour représenter les entités du jeu. Ce moteur a été utilisé dans le jeu 
-\href{https://fr.wikipedia.org/wiki/Hovertank_3D}{Hovertank 3D} (\nameref{fig:hovertank3d}), publié en avril 1991.
-À l'automne 1991, alors que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack} et 
-\href{https://fr.wikipedia.org/wiki/John_Romero}{John Romero} finalisaient le moteur de 
-\href{https://en.wikipedia.org/wiki/Commander_Keen_in_Goodbye,_Galaxy}{Commander Keen in Goodbye, Galaxy}, Carmack 
-découvre \href{https://fr.wikipedia.org/wiki/Ultima_Underworld}{Ultima Underworld} (\nameref{fig:ultimaunderworld}), un jeu développé par 
-\href{https://fr.wikipedia.org/wiki/Looking_Glass_Studios}{Blue Sky Productions} (qui deviendra plus tard Looking Glass Studios), 
+\href{https://fr.wikipedia.org/wiki/Hovertank_3D}{Hovertank 3D}\cite{Hovertank3D} (\nameref{fig:hovertank3d}), publié en avril 1991.
+À l'automne 1991, alors que \href{https://fr.wikipedia.org/wiki/John_Carmack}{John Carmack}\cite{John_Carmack} et 
+\href{https://fr.wikipedia.org/wiki/John_Romero}{John Romero}\cite{John_Romero} finalisaient le moteur de 
+\href{https://en.wikipedia.org/wiki/Commander_Keen_in_Goodbye,_Galaxy}{Commander Keen in Goodbye, Galaxy}\cite{Commander_Keen_in_Goodbye_Galaxy}, Carmack 
+découvre \href{https://fr.wikipedia.org/wiki/Ultima_Underworld}{Ultima Underworld}\cite{Ultima_Underworld} (\nameref{fig:ultimaunderworld}), un jeu développé par 
+\href{https://fr.wikipedia.org/wiki/Looking_Glass_Studios}{Blue Sky Productions}\cite{Looking_Glass_Studios} (qui deviendra plus tard Looking Glass Studios), 
 doté d'un moteur capable de rendre des graphismes 3D texturés sans subir les limitations de Hovertank 3D.
 Inspiré, Carmack décide d'améliorer son propre moteur pour 
 intégrer le mapping de textures tout en conservant de hautes performances. Après un intense travail de six semaines, 
-le nouveau moteur 3D est achevé et utilisé pour le jeu \href{https://fr.wikipedia.org/wiki/Catacomb_3D}{Catacomb 3D},
+le nouveau moteur 3D est achevé et utilisé pour le jeu \href{https://fr.wikipedia.org/wiki/Catacomb_3D}{Catacomb 3D}\cite{Catacomb3D},
 publié en novembre 1991. La révélation de Catacomb 3D a poussé 
-\href{https://fr.wikipedia.org/wiki/Scott_Miller_(programmeur)}{Scott Miller} d'Apogee à convaincre l'équipe de 
+\href{https://fr.wikipedia.org/wiki/Scott_Miller_(programmeur)}{Scott Miller}\cite{Scott_Miller} d'Apogee à convaincre l'équipe de 
 développer un jeu d'action en 3D sous forme de shareware. Cela a conduit au lancement du projet 
-\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D} (\nameref{fig:wolfenstein3d}), un remake en 3D de 
-\href{https://fr.wikipedia.org/wiki/Castle_Wolfenstein}{Castle Wolfenstein}. Sorti le 5 mai 1992 sur PC, ce jeu a 
+\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D} (\nameref{fig:wolfenstein3d}), un remake en 3D de 
+\href{https://fr.wikipedia.org/wiki/Castle_Wolfenstein}{Castle Wolfenstein}\cite{Castle_Wolfenstein}. Sorti le 5 mai 1992 sur PC, ce jeu a 
 non seulement été un succès commercial mais a également posé les bases du genre du jeu de tir à la première personne, 
 préfigurant ainsi des titres légendaires tels que 
-\href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom} (\nameref{fig:doom_1993}) et 
-\href{https://fr.wikipedia.org/wiki/Quake}{Quake} (\nameref{fig:quake_1996}).
+\href{https://fr.wikipedia.org/wiki/Doom_(jeu_vid%C3%A9o,_1993)}{Doom}\cite{Doom_1993} (\nameref{fig:doom_1993}) et 
+\href{https://fr.wikipedia.org/wiki/Quake}{Quake}\cite{Quake} (\nameref{fig:quake_1996}).
 
 \begin{figure}
 	\centering
@@ -129,9 +129,9 @@ préfigurant ainsi des titres légendaires tels que
 \end{figure}
 
 \paragraph{Le système de jeu : }
-En 2007, \href{https://fr.wikipedia.org/wiki/Valve_Corporation}{Valve Corporation} a révolutionné le genre des jeux 
+En 2007, \href{https://fr.wikipedia.org/wiki/Valve_Corporation}{Valve Corporation}\cite{Valve_Corporation} a révolutionné le genre des jeux 
 de réflexion à la première personne avec la sortie de 
-\href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}. Ce jeu introduit un mécanisme unique 
+\href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}\cite{Portal}. Ce jeu introduit un mécanisme unique 
 permettant au joueur de générer deux portails, l'un orange et l'autre bleu, sur des surfaces planes et 
 interconnectées. Ces portails offrent la possibilité de traverser instantanément l'espace d'un point à un autre, 
 tout en conservant l'inertie. L'objectif est de résoudre divers puzzles en se servant de cette capacité à manipuler 
@@ -143,9 +143,9 @@ l'espace pour atteindre la sortie des différents niveaux proposés.
 
 
 L'une des motivations principales de ce projet est de réaliser un jeu vidéo
-avec graphique comme à l'époque de \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D} 
-mais avec des comcepts de jeux plus récentes et qui plus est pourrai être
-un préquel de \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}.
+avec graphique comme à l'époque de \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D}
+mais avec des concepts de jeux plus récentes et qui plus est pourrai être
+un préquel de \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}\cite{Portal}.
 \subsection{Objectif et contraintes}
 
 Les principaux objectifs de ce projet sont :
@@ -171,18 +171,14 @@ Mais avec des contraintes :
 \subsection{L'équipe}
 \subsection{Planification et outils de gestion}
 
-Pour la gestion du projet nous avons utilisé le site \href{https://github.com/}{github} qui est un outil de gestion de projet en ligne.
+Pour la gestion du projet nous avons utilisé le site \href{https://github.com/}{github}\cite{Github} qui est un outil de gestion de projet en ligne.
 
 \subsection{Répartition des tâches}
 
 \section{Développement}
-\subsection{Programmer en C++}
-
+\subsection{Des technologies nouvelles ou presque}
 Programmer en C++ a pu s'avérer assez techniques car cela était un tout nouveau langage de programmation à apprendre pour nous car il n'avait jamais été abordé auparavant lors de notre parcours universitaire.
-
-\subsection{Apprendre à utiliser la bibliothèque GF}
-
-Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque GF. En effet, quand bien même c'est un bibliothèque possédant un bon nombre de fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet de donner des idées de méthodes à rajouter dans GF voire dans GF2.\footnote{GF2 est un projet qui est la suite de GF en C++ ainsi qu'en python3.}
+Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque GF. En effet, quand bien même c'est un bibliothèque possédant un bon nombre de fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet de donner des idées de méthodes à rajouter dans GF voire dans GF2.\cite{GF2}
 
 \subsection{Différentes stratégie pour le rendu 3D}
 Pour implémenter notre jeux, l'un des points les plus importants était de pouvoir afficher des murs en 3D. Pour cela, nous partions d'une grille de cellules 
@@ -231,23 +227,74 @@ la grille, cellule par cellule, en vérifiant à chaque pas si un mur a été re
 \noindent Cette approche est assez simple à implémenter, promettant par ailleurs des performances élevées et 
 une implémentation de la vue à travers les portails plus aisée. Cependant, cette simplicité est peut être ce qui 
 nous a fait choisir une autre approche, plus adaptée à un projet d'étudiants en 3ème année de licence informatique et plus moderne.
-
+ 
 \subsubsection{Line Of Sight, l'approche moderne}
 
-Cette seconde approche s'approche des algorithme \textit{Line Of Sight} et consiste à calculer la distance entre le joueur et chaque sommet de chaque mur.
+Cette seconde approche s'approche des algorithme \textit{Line Of Sight} et consiste à calculer la distance entre le 
+joueur et chaque sommet de chaque mur.
 Pour ce faire on à pu récupérer l'algorithme DDA précédemment utilisé pour le rendu des murs mais cette fois-ci 
-en visant chaque sommets au lieu de viser chaque colonne de pixel. Cela permet théoriquement de réduire considérablement le nombre de calculs à effectuer.
-Cependant des modifications sont importantes à faire pour que DDA fonctionne correctement dans ce contexte.
+en visant chaque sommets au lieu de viser chaque colonne de pixel. Cela permet théoriquement de réduire considérablement 
+le nombre de calculs à effectuer.
+\paragraph{Cependant, des problèmes ont été rencontrés, les voici avec leur solution :}
+\begin{itemize}
+	\item \textbf{Viser un sommet avec DDA : } Si DDA est efficace et précis cela peut être la cause de certain problèmes. 
+	En effet, si l'on vise un sommet de mur avec un rayon, la moindre approximation dans le calcule de l'angle avec lequel on 
+	lance le rayon ferais rater le sommet en moyenne une fois sur deux.
 
-\paragraph{title}
+	\textbf{Solution : }Pour remédier à cela, nous avons ajuster DDA pour qu'à chaque fois qu'un pas
+	passe assez proche d'un sommet, si l'une des quatre cellules adjacentes est
+	un mur alors on considère que le rayon à toucher le sommet.
 
-En effet, si DDA est efficace et précis, si l'on vise un sommet de mur avec un rayon, la moindre approximation dans le calcule de l'angle avec lequel on 
-lance le rayon ferais rater en moyenne un sommet sur deux.
+	\item \textbf{Continuer le rayon après avoir touché un sommet :} Si l'on touche un sommet avec 
+	un rayon, il faut déterminer si le rayon doit continuer ou non. Cela est important dans le cas ou l'on 
+	est au bord d'un mur est qu'il faut faire le rendu du mur se trouvant derrière
+
+	\textbf{Solution : }Pour déterminer si le rayon doit continuer ou non, il faut regarder si
+	dans les cellules adjacentes au sommet touché, il y a exactement un mur et que ce mur
+	ne se trouve pas dans la direction du rayon. Si c'est le cas alors on lance un nouveau rayon 
+	partant du sommet touché dans la même direction que le rayon précédent.
+
+	\item \textbf{Récupérer les sommets touchés dans le bon ordre :} Pour afficher tous les murs correctement,
+	nous avons rangé les sommets dans l'ordre croissant de leur angle par rapport au joueur. Cela permet d'afficher
+	les murs par segments en prenant les sommets deux par deux. Cependant, dans certains cas, le premier sommet 
+	dois être relié au dernier sommet.
+
+	\textbf{Solution : }Pour identifier ces cas, nous regardons si dans la liste des sommets, il y a au moins
+	un segment qui en contient un autre. Si c'est le cas alors on lie le premier sommet au dernier.
+
+	\item \textbf{Impossibilité de générer les murs à plus de 180° :} Lorsque l'on a envoyé tous les rayons,
+	afin de générer tous les murs visibles par le joueur, si l'on essaie de projeter un mur se trouvant derrière
+	le joueur sur le plan de projection, alors la projection se retrouve de l'autre coté du plan en symétrie 
+	par rapport au joueur. Concrètement, cela signifie que la carte graphique ne peux pas gérer ces mur les
+	affichant alors devant le joueur.
+
+	\textbf{Solution : }Pour régler ce problèmes, il faut créer une droite imaginaire passant par le 
+	joueur et orthogonale à la direction dans laquelle le joueur regarde. Ensuite, il faut retirer
+	tous les segments qui se trouvent de l'autre coté de cette droite. Puis, il faut ajouter un sommet
+	à l'intersection de cette droite avec chaque segment l'intersectant, en plaçant ces points, 
+	légèrement décalé de l'intersection entre la droite et le segment, car sinon il serait impossible de
+	projeter ce point sur le plan de projection, le plan étant lui même parallèle à la droite. Enfin, 
+	on peut générer les murs comme précédemment.
+
+	\item \textbf{Afficher des textures sur les murs :}Pour afficher des murs texturés, il faut
+	pouvoir mapper une texture sur un trapèze en deux dimensions. Cependant il ne suffit pas d'afficher 
+	une texture coupé en deux triangles. En effet, il faut que la déformation soit correcte
+	du point de vue de la perspective et ce problème est loin d'être trivial.
+
+	\textbf{Solution : }Ce problème étant très complexe à régler, nous avons décider de choisir
+	une autre méthode qui consiste à couper le trapèze en six triangles choisis de telle 
+	sorte que la déformation ne soit pas trop flagrante. Cela dit, cette méthode empêche 
+	l'utilisation de textures avec des motifs réguliers et principalement horizontaux.
+\end{itemize}
 
 
 
 \subsection{Détails du développement}
-Dans cette partie nous allons détailler les différentes étapes de développement de notre projet avec la seconde approche. En commencençant par la partie la moins technique pour finir par la partie la plus technique. Il faut noté que détails du développement dans les parties qui vont suivre sont pour un rendu 3D, mais tout au long de ce projet les différentes étapes ont été tester sur un rendu 2D pour faciliter le développement.
+Dans cette partie nous allons détailler les différentes étapes de développement de notre 
+projet avec la seconde approche. En commençant par la partie la moins technique pour 
+finir par la partie la plus technique. Il faut noté que détails du développement dans les 
+parties qui vont suivre sont pour un rendu 3D, mais tout au long de ce projet les 
+différentes étapes ont été tester sur un rendu 2D pour faciliter le développement.
 
 \begin{figure}
 	\centering
@@ -305,7 +352,6 @@ Dans cette partie nous allons détailler les différentes étapes de développem
 
 \subsubsection{Les maps:}
 Afin de pouvoir afficher des maps\footnote{En français les cartes}, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}). Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
-
 \subsubsection{Les murs:}
 
 Dans cette partie nous allons détaillés les différentes étapes pour la création des murs.
@@ -329,24 +375,6 @@ On va changer de direction en fonction de la direction courante, si le changemen
 
 \paragraph{Contruction des murs:}
 Une fois les sommets utiles triés nous allons pouvoir construire les murs et les ajouter dans une liste de murs. Chaque murs de cette liste a pour attributs les coordonnées de ses sommets triés, les coordonnées de ses cellules occupées et la taille de son périmètre.
-
-\subsubsection{La boucle de jeu:}
-Dans cette partie nous allons détailler les différentes étapes de la boucle de jeu.
-
-\paragraph{Events:}
-Nous allons tous d'abord gérer la gestion des évènements. Pour cela nous allons effectuer une boucle sur les évènements et pour chaque bouton sur lesquels nous avons ajouté une action, nous allons effectuer cette action. Nous allons aussi gérer les fonctions de déplacement de la vision grâce à la souris avec la position relative de la souris. Ensuite, nous allons gérer la fonction d'envoie des portails en fonction du clic de la souris effectuer.
-
-\paragraph{Update:}
-Nous allons effectuer une update du jeu par rapport au temps écoulé depuis le dernier update. Cette update va permettre de mettre à jour (les attributs du joueur). De calculer la nouvelle position du joueur si il est en colision avec un mur. Et enfin calculer les nouveaux attributs du joueur si il est proche d'un portail lorsque les deux portails sont activés.
-
-\paragraph{Render:}
-Avant de faire le nouveau rendu des entités, nous allons d'abord effacer tous les rendus précédents. Enuiste nous allons effectuer le rendu de toutes les entités que nous allons détaillés dans la parties suivante.
-
-\subsubsection{Les renders:}
-Ici explication de chaque rendu des différentes entités
-
-\paragraph{Le rendu des murs:}
-Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommets triés. Pour chaque sommet, nous allons dessiner une ligne blanche entre le sommet suivant dans la liste des sommets triés et le sommet courant. Si nous sommes à la fin de la liste des sommets triés alors nous allons dessiner une ligne blanche entre le sommet courant et le premier sommet de la liste des sommets triés.
 
 \subsubsection{Les collisions:}
 
@@ -461,7 +489,6 @@ resp. d'ordonnée, de B (fig.4). Alors :
 
 Grâce à C, nous pouvons maintenant vérifier si P est à moins de 0,1 de B, 
 et donc en collision. Pour cela, calculons la distance entre P et C :
-
 \begin{itemize}
 	\item[] $dist = \sqrt[]{((P.x - C.x)^2 + (P.y - C.y)^2) xx  x}$
 \end{itemize}
@@ -491,13 +518,35 @@ suffit alors d'ajouter la différence entre les coordonnées de P et de C :
 Nous avons donc efficacement mis en place un système de gestion de 
 collisions entre un cercle et un rectangle.
 
+
+\subsubsection{La boucle de jeu:}
+Dans cette partie nous allons détailler les différentes étapes de la boucle de jeu.
+
+\paragraph{Events:}
+Nous allons tous d'abord gérer la gestion des évènements. Pour cela nous allons effectuer une boucle sur les évènements et pour chaque bouton sur lesquels nous avons ajouté une action, nous allons effectuer cette action. Nous allons aussi gérer les fonctions de déplacement de la vision grâce à la souris avec la position relative de la souris. Ensuite, nous allons gérer la fonction d'envoie des portails en fonction du clic de la souris effectuer.
+
+\paragraph{Update:}
+Nous allons effectuer une update du jeu par rapport au temps écoulé depuis le dernier update. Cette update va permettre de mettre à jour (les attributs du joueur). De calculer la nouvelle position du joueur si il est en colision avec un mur. Et enfin calculer les nouveaux attributs du joueur si il est proche d'un portail lorsque les deux portails sont activés.
+
+\paragraph{Render:}
+Avant de faire le nouveau rendu des entités, nous allons d'abord effacer tous les rendus précédents. Enuiste nous allons effectuer le rendu de toutes les entités que nous allons détaillés dans la parties suivante.
+
+\subsubsection{Les renders:}
+Ici explication de chaque rendu des différentes entités
+
+\paragraph{Le rendu des murs:}
+Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommets triés. 
+Pour chaque sommet, nous allons dessiner une ligne blanche entre le sommet suivant dans la 
+liste des sommets triés et le sommet courant. Si nous sommes à la fin de la liste des sommets
+triés alors nous allons dessiner une ligne blanche entre le sommet courant et le premier sommet 
+de la liste des sommets triés.
+
+
     
 \section{Conclusion technique \& personnelle}
-\subsection{Bilan du projet}
+\subsection{Bilan technique}
 \subsubsection{Résultats obtenus}
-\subsubsection{Apports technique}
-\subsubsection{Apports personnels}
-
+\subsection{Bilan personnel}
 \subsection{Perspectives}
 \subsubsection{Améliorations possibles}
 
@@ -516,12 +565,8 @@ Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelqu
 \end{itemize}
 
 \subsubsection{Un plus dans nos CV}
-\cite{exemple}
 
 % \section{Bibliographie}
 \bibliographystyle{plain}
 \bibliography{references}
-
-Gamedev Framework (GF): \href{https://gamedevframework.github.io/}{https://gamedevframework.github.io/}
-
 \end{document}
