@@ -1,11 +1,12 @@
 % Document principal LaTeX pour compte-rendu
-\documentclass[12pt]{report}
+\documentclass[11pt]{report}
 \usepackage{BidoTexCourses}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{minted}
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{amsmath}
 
 \title{Compte rendu projet Portal 0.0}
 \author{BIDAULT Matthieu, BADSTÜBER Elian, FOCHEUX Vital}
@@ -36,8 +37,7 @@ qui sera afficher grâce à un moteur de type Raycaster à la façon du jeu
 \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D}.
 Il a pour but de nous faire découvrir le monde du développement de jeux 
 vidéo en nous faisant réaliser un jeu vidéo en C++ avec la bibliothèque 
-\href{https://gamedevframework.github.io/}{Gamedev Framework} (GF\cite{GF})\footnote{Tous au long de ce rapport, nous utiliserons abbrévation GF.
-Cela signifie Gamedev Framework.}.
+\href{https://gamedevframework.github.io/}{Gamedev Framework} (GF\cite{GF})\footnote{Tous au long de ce rapport, l’abréviation GF (pour Gamedev Framework) est utilisée.}.
 
 
 \section{Besoins et objectifs du projet}
@@ -171,7 +171,8 @@ Mais avec des contraintes :
 \subsection{L'équipe}
 \subsection{Planification et outils de gestion}
 
-Pour la gestion du projet nous avons utilisé le site \href{https://github.com/}{github}\cite{Github} qui est un outil de gestion de projet en ligne.
+Pour la gestion du projet nous avons utilisé le versionneur \href{https://github.com/}{github}\cite{Github} 
+qui est un outil de gestion de projet en ligne.
 
 \subsection{Répartition des tâches}
 
@@ -184,11 +185,11 @@ Une des plus grandes difficultés de ce projet était de développé avec la bib
 Pour implémenter notre jeux, l'un des points les plus importants était de pouvoir afficher des murs en 3D. Pour cela, nous partions d'une grille de cellules 
 représentant les emplacements des murs donc d'un environnement 2D pour aller vers un rendu 3D.
 \subsubsection{Raycasting, l'approche historique}
-La première approche envisagée était celle historique : le raycasting.
+La première approche envisagée était celle du raycasting historique.
 
-Le raycasting est une méthode de rendu graphique utilisée pour créer une perspective 3D dans des environnements 2D. Cet effet est réalisé en projetant des 
-rayons depuis la position de l'observateur à travers la scène pour déterminer les intersections avec les murs. Pour optimiser ce
-processus, nous avont utilisé l'algorithme Digital Differential Analyzer (DDA).
+Historiquement, le raycasting est une méthode de rendu graphique utilisée pour créer une perspective 3D à partir d'un environnement 2D. Cet effet est réalisé en projetant des 
+rayons depuis la position du joueur à travers la scène pour déterminer les intersections avec les murs. Pour optimiser ce
+processus, l'algorithme Digital Differential Analyzer (DDA) a été utilisé.
 
 Le raycasting génère une illusion de profondeur en projetant des rayons depuis le point de vue du joueur jusqu'à ce qu'ils rencontrent un 
 objet dans l'espace de jeu. Le processus est répété pour chaque colonne de l'écran, permettant ainsi de dessiner une image 3D à partir d'une
@@ -200,7 +201,7 @@ L'algorithme DDA est historiquement conçu pour la rasterisation de lignes, c'es
 alignés. Dans le contexte du raycasting, DDA est employé pour déterminer où les rayons projetés à travers la scène intersectent avec les objets de l'environnement, 
 typiquement et dans notre cas représenté par une grille de cellules.
 
-Le principe fondamental de DDA repose sur l'itération linéaire. Plutôt que de calculer chaque point le long d'une demie droite en utilisant des formules de géométrie 
+Plutôt que de calculer chaque point le long d'une demie droite en utilisant des formules de géométrie 
 directe, ce qui pourrait être coûteux en termes de performances, DDA avance par petits incréments. Cela signifie que pour chaque pas sur l'axe le plus 
 dominant (x ou y), DDA calcule l'emplacement correspondant sur l'autre axe en ajoutant un incrément constant. Cela se traduit par un parcours régulier et 
 efficace le long de la ligne en faisant des sauts à chaque intersection entre la demie droite et la grille 2D.
@@ -445,7 +446,7 @@ La méthode de "clampage" consiste à prendre la valeur la plus proche d'une
 valeur donnée dans un intervalle donnée.
 Ce qui nous donne l'application suivante :
 
-\begin{minted}[autogobble]{C++}
+\begin{codeFrame}{c++}{clampage}
 	float clamp(float min, float max, float value)
 	{
 		if (value < min)
@@ -454,7 +455,7 @@ Ce qui nous donne l'application suivante :
 			return max;
 		return value;
 	}
-\end{minted}
+\end{codeFrame}
 
 
 A partir de cette application, nous pouvons trouver le point le plus proche 
@@ -529,20 +530,66 @@ Nous allons tous d'abord gérer la gestion des évènements. Pour cela nous allo
 Nous allons effectuer une update du jeu par rapport au temps écoulé depuis le dernier update. Cette update va permettre de mettre à jour (les attributs du joueur). De calculer la nouvelle position du joueur si il est en colision avec un mur. Et enfin calculer les nouveaux attributs du joueur si il est proche d'un portail lorsque les deux portails sont activés.
 
 \paragraph{Render:}
-Avant de faire le nouveau rendu des entités, nous allons d'abord effacer tous les rendus précédents. Enuiste nous allons effectuer le rendu de toutes les entités que nous allons détaillés dans la parties suivante.
+Avant de faire le nouveau rendu des entités, nous allons d'abord effacer tous les rendus précédents. Ensuite nous allons effectuer le rendu de toutes les entités que nous allons détaillés dans la parties suivante.
 
-\subsubsection{Les renders:}
-Ici explication de chaque rendu des différentes entités
+\subsubsection{Le rendu des murs:}
 
-\paragraph{Le rendu des murs:}
-Pour le rendu des murs, nous allons effectuer une boucle sur la liste des sommets triés. 
-Pour chaque sommet, nous allons dessiner une ligne blanche entre le sommet suivant dans la 
-liste des sommets triés et le sommet courant. Si nous sommes à la fin de la liste des sommets
-triés alors nous allons dessiner une ligne blanche entre le sommet courant et le premier sommet 
-de la liste des sommets triés.
+\begin{figure}
+	\begin{minipage}{\textwidth}
+		\includegraphics[width=\linewidth]{image/shemaLanceRayon01.jpeg}
+		\hspace*{-0.5cm}
+		\caption{Lancé d'un rayon}
+		\label{fig:shemaLanceRayon01}
+	\end{minipage}
+\end{figure}
 
 
-    
+Pour le rendu des murs, tous les sommets de chaque mur sont récupérés et triés selon leur angle par rapport au joueur.
+Ensuite, ces sommets sont parcourus dans ce nouvel ordre pour y envoyer un rayon grâce à DDA. Connaissant alors l'angle
+avec lequel le rayon est envoyé, la distance entre le joueur et le sommet est calculée en prenant le projeter orthogonale
+du sommet sur la droite de direction de vue du joueur (cf : \nameref{fig:shemaLanceRayon01}). Avec ces deux informations, nous pouvons alors calculer le projeté
+du sommet sur le plan de projection. Chaque sommet de mur est, sur la carte en 2D, un point. Sur le plan de projection, 
+chaque sommet est représenté par un segment vertical. Il faut donc, pour projeter un sommet sur le plan de projection, connaître
+deux points. Ces points étant verticalement alignés, il faut déterminer l'abscisse commun à ces deux points et leur ordonnée 
+respectives. Les deux points étant une symétrie l'un de l'autre par rapport à la droite horizontale passant par le centre du plan,
+il nous faut connaître deux informations seulement : l'abscisse du sommet sur le plan et la distance entre le joueur et le sommet
+afin d'en déduire la taille du sommet (cf: \nameref{fig:shemaLanceRayon01}) : \\
+
+On pause $(x_j, y_j)$ les coordonnées du joueur,  $(x_s, y_s)$ celles du sommet, $W$ la largeur de la
+vue et $H$ sa hauteur. On a alors : \\
+\begin{itemize}
+	\item[] \textbf{Pour l'angle du sommet : } \\
+	\[
+		\theta = atan2(y_s - y_j, x_s - x_j)
+	\]
+
+	la fonction $atan2(y, x)$ permet de calculer l'angle entre l'origine du plan et le point (x, y).
+
+	\item[] \textbf{Pour la distance du sommet : } \\
+	\[
+		dist = \cos(\theta - \theta_{joueur})\sqrt{(x_s - x_j)(x_s - x_j) + (y_s - y_j)(y_s - y_j)}
+	\]
+	
+	\item[] \textbf{Pour l'abscisse des deux points : } \\
+	\[
+		x = \frac{W\tan(\theta -  \theta_{joueur})}{2}
+	\]
+
+	\item[] \textbf{Pour la hauteur du segment vertical : } \\ 
+	\[
+		h = 
+		\begin{cases}
+			\frac{H}{2dist} & \text{si } dist \neq 0 \\
+			2H & \text{sinon }
+		\end{cases}
+	\]
+\end{itemize}
+
+On obtient alors les deux points du segment représentant le sommet sur le plan comme suit :
+\begin{align*}
+    P_1 &= (x + \frac{W}{2}, \frac{H}{2} - \frac{h}{2}) \\
+	P_2 &= (x + \frac{W}{2}, \frac{H}{2} + \frac{h}{2})
+\end{align*}
 \section{Conclusion technique \& personnelle}
 \subsection{Bilan technique}
 \subsubsection{Résultats obtenus}
