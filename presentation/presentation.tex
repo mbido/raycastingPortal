@@ -1,0 +1,192 @@
+\documentclass{beamer}
+\usepackage{caption}
+
+% Pour quel partie chaque personne parle :
+% Mise en contexte -> Vital
+% Technologies utilisées -> Elian? Vital?
+% Différentes stratégies pour un rendu 3D :
+%   Approche historique -> Vital
+%   Explication de DDA  -> Matthieu
+%   Approche moderne -> Matthieu
+% Construction de mur -> Vital
+% Les collisions -> Elian
+% Les portails -> Matthieu
+% Les renders -> Matthieu
+% Conclusion -> Elian? Vital?
+
+
+\usetheme{Berlin}
+
+\begin{document}
+
+\title{Présentation du projet Portal 0.0}
+\author{BADSTÜBER Elian, BIDAULT Matthieu, FOCHEUX Vital \\
+        Licence 3 Informatique}
+\date{\today}
+
+\begin{frame}
+    \titlepage
+
+    \vfill % Insertion d'un espace vertical flexible pour pousser le texte en bas
+    \begin{columns}
+        \column{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/logo-UFR-ST.jpg} 
+    
+        \column{0.4\textwidth}
+        \begin{flushright}
+            \small Tuteur : Julien BERNARD
+        \end{flushright}    
+    \end{columns}
+\end{frame}
+
+\setcounter{framenumber}{0}
+\setbeamertemplate{page number in head/foot}[totalframenumber]
+
+\begin{frame}
+    \frametitle{Table des matières}
+    \tableofcontents
+\end{frame}
+
+\section{Mise en contexte}
+
+\begin{frame}
+    \frametitle{Mise en contexte}
+    \begin{block}{}
+        Portal 0.0 est un jeu vidéo qui reprends les principes techniques 
+        de plusieurs jeux vidéos connus.
+    \end{block}
+
+    \begin{block}{Technique graphique}
+        L'utilisation de la méthode du raycasting, pour un rendu 2.5D qui a été 
+        popularisé dans le début des années 90.
+    \end{block}
+
+    \begin{block}{Système de jeu}
+        Le principe du jeu vidéo Portal (2007), où l'on doit résoudre des énigmes
+        à l'aide de portails, dans lesquels on se téléporte lorsqu'on passe à travers.
+    \end{block}
+\end{frame}
+
+\section{Technologies utilisées}
+
+\begin{frame}
+    \frametitle{Technologies utilisées}
+    \begin{columns}
+        \column{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/cpp.png} 
+    
+        \column{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/GF.png}
+        \captionof{figure}{Gamedev Framework}
+
+        \column{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/github.png}
+    \end{columns}
+\end{frame}
+
+\section{Détails du développement}
+\subsection{Différentes stratégies pour un rendu 3D}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small Approche historique}
+    \begin{block}{}
+        Le raycasting est une méthode de rendu graphique utilisée pour créer 
+        une perspective 3D dans des environnements 2D. Ce rendu est réalisé
+        en projetant des rayons depuis la position du joueur à travser la scène
+        pour déterminer les intersections avec les murs. Pour l'optimisation,
+        l'algorithme DDA (Digital Differential Analyzer) est utilisé.
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{}
+        L'algorithme DDA est historiquement conçu pour la rasterisation de 
+        lignes, c'est-à-dire la conversion de lignes geometriques en ligne 
+        visuelle composées de pixels alignés. Dans le contexte du raycasting, 
+        DDA est employé pour déterminer où les rayons projetés à travers la 
+        scène intersectent avec les objets de l'environnement, typiquement et 
+        dans notre cas représenté par une grille de cellules. Le principe 
+        fondamental de DDA repose sur l'itération linéaire. Plutôt que de 
+        calculer chaque point le long d'une demie droite en utilisant des formules 
+        de géométrie directe, ce qui pourrait être coûteux en termes de performances, 
+        DDA avance par petits incr ́ements. Cela signifie que pour chaque
+        pas sur l'axe le plus dominant (x ou y), DDA calcule l'emplacement 
+        correspondant sur l'autre axe en ajoutant un incrément constant. 
+        Cela se traduit par un parcours régulier et efficace le long de la 
+        ligne en faisant des sauts à chaque intersection entre la demie 
+        droite et la grille 2D. Dans le raycasting, DDA est utilisé pour 
+        trouver rapidement et précisément les intersections entre les rayons 
+        et les murs
+    \end{block}    
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small Approche moderne}           
+    \begin{block}{}
+        
+    \end{block}    
+\end{frame}
+
+\subsection{Construction de mur}
+
+\begin{frame}
+    \frametitle{Construction de mur}
+    \begin{block}{}
+    \end{block}
+\end{frame}
+
+\subsection{Les collisions}
+
+\begin{frame}
+    \frametitle{Les collisions}
+    \begin{block}{}
+    \end{block}
+\end{frame}
+
+\subsection{Les portails}
+
+\begin{frame}
+    \frametitle{Les portails}
+    \begin{block}{title}
+        
+    \end{block}
+\end{frame}
+
+\subsection{Les renders}
+
+\begin{frame}
+    \frametitle{Les renders}
+    \begin{block}{title}
+        
+    \end{block}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+    \frametitle{Conclusion}
+    \begin{block}{}
+        \centering
+        Merci de votre attention.
+    \end{block}
+\end{frame}
+
+\section*{Questions}
+
+\begin{frame}
+    \frametitle{Questions}
+    \begin{block}{}
+        \centering
+        Avez-vous des questions ?
+    \end{block}
+\end{frame}
+
+\end{document}
