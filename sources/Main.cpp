@@ -24,13 +24,13 @@
 
 #include "GameHub.hpp"
 #include "Game2D.hpp"
-#include "Game3D.hpp"
+//#include "Game3D.hpp"
 #include "MapTemplate.hpp"
 #include "MapWalls.hpp"
 #include "Player.hpp"
 
-#define RENDER_IN_3D
-// #define WORKING_ON_SCENES
+//#define RENDER_IN_3D
+#define WORKING_ON_SCENES
 
 gf::Vector2f linesIntersectionTEST(gf::Vector2f A, gf::Vector2f B, gf::Vector2f C, gf::Vector2f D)
 {
@@ -157,7 +157,12 @@ int main()
 
 #ifdef RENDER_IN_3D
 
+  // gf::Cursor cursor(gf::Cursor::Type::Cross);
+  // window.setMouseCursor(cursor);
+  // window.setMouseCursorGrabbed(true);
+
   window.setMouseRelative(true);
+  // window.setMouseCursorVisible(false);
 
 #endif
 
@@ -231,7 +236,34 @@ int main()
   std::filesystem::path cheminRelatif("./sources/map/image.png");
   std::string cheminAbsolu = std::filesystem::absolute(cheminRelatif).string();
 
+  // MapWalls map(cheminAbsolu);
   MapWalls map;
+
+  /*const int nbRows = 10;
+  const int nbColumns = 10;
+
+  MapWalls map(nbRows, nbColumns);
+
+
+  map.setTile(1, 2, 1);
+  map.setTile(1, 6, 1);
+  map.setTile(2, 2, 1);
+  map.setTile(2, 4, 1);
+  map.setTile(2, 5, 1);
+  map.setTile(2, 6, 1);
+  map.setTile(2, 8, 1);
+  map.setTile(3, 6, 1);
+  map.setTile(4, 1, 1);
+  map.setTile(4, 2, 1);
+  map.setTile(4, 3, 1);
+  map.setTile(4, 4, 1);
+  map.setTile(6, 3, 1);
+  map.setTile(6, 4, 1);
+  map.setTile(6, 5, 1);
+  map.setTile(6, 6, 1);
+  map.setTile(6, 7, 1);
+  map.setTile(7, 6, 1);
+  map.setTile(8, 6, 1);*/
 
   // game
 
@@ -257,6 +289,36 @@ int main()
   //-----------------------------------------------
 
   // // testing the textures :
+  // gf::VertexArray trapeze(gf::PrimitiveType::Triangles, 24);
+  // // Premier triangle (Haut-gauche, Milieu, Haut-Milieu)
+  // trapeze[0].position = {500.0f, 100.0f}; // Haut-gauche
+  // trapeze[1].position = {550.0f, 150.0f}; // Milieu
+  // trapeze[2].position = {550.0f, 83.333f};  // Haut-Milieu
+
+  // // Deuxième triangle (Haut-Milieu, Milieu, Haut-droite)
+  // trapeze[3].position = {550.0f, 83.333}; // Haut-Milieu
+  // trapeze[4].position = {550.0f, 150.0f}; // Milieu
+  // trapeze[5].position = {650.0f, 50.0f}; // Haut-droite
+
+  // // Troisième triangle (Bas-gauche, Milieu, Bas-Milieu)
+  // trapeze[6].position = {500.0f, 200.0f}; // Bas-gauche
+  // trapeze[7].position = {550.0f, 150.0f}; // Milieu
+  // trapeze[8].position = {550.0f, 216.666f}; // Bas-Milieu
+
+  // // Quatrième triangle (Bas-Milieu, Milieu, Bas-droite)
+  // trapeze[9].position = {550.0f, 216.666f}; // Bas-Milieu
+  // trapeze[10].position = {550.0f, 150.0f}; // Milieu
+  // trapeze[11].position = {650.0f, 250.0f}; // Bas-droite
+
+  // // Cinquième triangle (Haut-gauche, Milieu, Bas-Gauche)
+  // trapeze[12].position = {500.0f, 100.0f}; // Haut-gauche
+  // trapeze[13].position = {550.0f, 150.0f}; // Milieu
+  // trapeze[14].position = {500.0f, 200.0f}; // Bas-gauche
+
+  // // Sixième triangle (Haut-droite, Milieu, Bas-droite)
+  // trapeze[15].position = {650.0f, 50.0f}; // Haut-droite
+  // trapeze[16].position = {550.0f, 150.0f}; // Milieu
+  // trapeze[17].position = {650.0f, 250.0f}; // Bas-droite
 
   gf::VertexArray trapeze(gf::PrimitiveType::Triangles, 3);
   // Premier triangle (Haut-gauche, Milieu, Haut-Milieu)
@@ -344,13 +406,24 @@ int main()
         yaw = mouseDelta.x * sensivity;
         pitch = mouseDelta.y * sensivity;
 
+        // pitch = std::clamp(pitch, -89.0f, 89.0f);
+        // std::cout << yaw << std::endl;
+
         if (yaw < 0)
         {
+          // std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
+          //           << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl;
+          // std::cout << yaw << std::endl;
+          // std::cout << "Look at left" << std::endl;
           angularVelocity -= (gf::Pi / 2) * (1 + std::abs(yaw));
         }
         if (yaw > 0)
         {
+          // std::cout << "Mouse cursor position curr : (" << mouseCursorCurr.x << ";" << mouseCursorCurr.y << ")" << std::endl
+          //           << "Mouse cursor position next : (" << mouseCursorNext.x << ";" << mouseCursorNext.y << ")" << std::endl;
+          // std::cout << yaw << std::endl;
           angularVelocity += (gf::Pi / 2) * (1 + std::abs(yaw));
+          // std::cout << "Look at right" << std::endl;
         }
       }
       mouseCursorCurr = mouseCursorNext;
@@ -369,17 +442,38 @@ int main()
 
     gf::Time time = clock.restart();
 
+    // fps :
+    // frameCount++;
+    // if (fpsClock.getElapsedTime() >= gf::seconds(1.0f)) {
+    //   float fps = frameCount / fpsClock.restart().asSeconds();
+    //   //std::cout << "FPS: " << fps << std::endl;
+    //   //std::cout << "Player Position : (" << player.getPosition().x << ";" << player.getPosition().y << ")" << std::endl;
+    //   //std::cout << "Next Player Position : (" << nextPosition.x << ";" << nextPosition.y << ")" << std::endl;
+    //   //std::cout << "Direction : (" << direction.x << ";" << direction.y << ")" << std::endl;
+    //   //std::cout << "Next Correct direction : (" << nextCorrectDir.x << ";" << nextCorrectDir.y << ")" << std::endl;
+    //   //std::cout << "Angle : " << player.getAngle() << std::endl;
+    //   frameCount = 0;
+    // }
+
     if (event.type == gf::EventType::MouseButtonPressed && (event.mouseButton.button == gf::MouseButton::Left || event.mouseButton.button == gf::MouseButton::Right))
     {
       mouseButtonEvent = event.mouseButton;
+      // std::cout << "Mouse button pressed at (" << mouseButtonEvent.coords.x << ";" << mouseButtonEvent.coords.y << ")" << std::endl;
       if (mouseButtonEvent.button == gf::MouseButton::Left)
       {
+        // bluePortal = mouseButtonEvent.coords;
+        // std::cout << "Left button pressed" << std::endl;
         game.castPortal(true);
       }
       else if (mouseButtonEvent.button == gf::MouseButton::Right)
       {
+        // orangePortal = mouseButtonEvent.coords;
+        // std::cout << "Right button pressed" << std::endl;
         game.castPortal(false);
       }
+      // std::cout << "Player Position : (" << player.getPosition().x << ";" << player.getPosition().y << ")" << std::endl
+      //           << "Player Angle : " << player.getAngle() << std::endl
+      //           << "Player direction : (" << std::cos(player.getAngle()) << ";" << std::sin(player.getAngle()) << ")" << std::endl;
     }
 
     game.update(time);
@@ -397,6 +491,10 @@ int main()
 
     renderer.setView(hudView);
     game.render();
+    // game.render(true, std::make_pair(gf::Vector2i(3, 2), gf::Vector2i(3, 3)));
+    // renderer.draw(trapeze, states);
+
+    // renderAWallTexturedTEST({0.0f, 0.0f}, {1.0f, 0.0f}, {{500.0f, 100.0f}, {650.0f, 50.0f}, {500.0f, 200.0f}, {650.0f, 250.0f}}, texture, renderer);
 
 #endif
     renderer.display();
