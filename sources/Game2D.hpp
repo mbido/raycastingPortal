@@ -1,5 +1,8 @@
+#ifndef Game2D_HPP
+#define Game2D_HPP
+
 #include <gf/Vector.h>
-#include <gf/RenderWindow.h>
+#include <gf/RenderTarget.h>
 #include <gf/Shapes.h>
 
 #include "Player.hpp"
@@ -9,7 +12,7 @@
 
 class Game2D {
     public:
-        Game2D(Player *player, MapWalls *walls, gf::RenderWindow& renderer)
+        Game2D(Player *player, MapWalls *walls, gf::RenderTarget& renderer)
         : m_player(player)
         , m_walls(walls)
         , m_renderer(renderer)
@@ -27,9 +30,10 @@ class Game2D {
         struct portal *m_secondPortal;
         Player *m_player;
         MapWalls *m_walls;
-        gf::RenderWindow& m_renderer;
+        gf::RenderTarget& m_renderer;
         int m_scaleUnit;
         gf::Vector2u m_windowSize;
         bool getVisibleSegment(gf::Vector2f &start, gf::Vector2f &end, gf::Vector2f playerPosition, double playerAngle, double a, double b);
         bool isPartIncluded(std::vector<gf::Vector2f> subSegments);
 };
+#endif // Game2D_HPP

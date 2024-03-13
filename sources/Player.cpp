@@ -54,7 +54,7 @@ void Player::update(gf::Time dt){
     m_projectionPlane = perpendicular * 0.66;
 }
 
-void Player::render(gf::RenderWindow& renderer, int sizeUnit){
+void Player::render(gf::RenderTarget& renderer, int sizeUnit){
 
     // the direction is represented by a red ligne :
     double lineLength = 2.0f; // longueur fixe de la ligne

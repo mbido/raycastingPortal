@@ -3,7 +3,7 @@
 
 #include <gf/Entity.h>
 #include <gf/Vector.h>
-#include <gf/RenderWindow.h>
+#include <gf/RenderTarget.h>
 
 #include "MapWalls.hpp"
 
@@ -24,7 +24,7 @@ public:
     void setAngle(double angle);
     double getAngle();
     void update(gf::Time dt);
-    void render(gf::RenderWindow &renderer, int sizeUnit);
+    void render(gf::RenderTarget &renderer, int sizeUnit);
 
 private:
     gf::Vector2f m_position;

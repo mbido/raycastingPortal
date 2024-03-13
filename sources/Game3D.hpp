@@ -1,5 +1,8 @@
+#ifndef Game3D_HPP
+#define Game3D_HPP
+
 #include <gf/Vector.h>
-#include <gf/RenderWindow.h>
+#include <gf/RenderTarget.h>
 #include <gf/Shapes.h>
 
 #include "Player.hpp"
@@ -28,12 +31,12 @@ public:
     struct portal *m_secondPortal;
     Player *m_player;
     MapWalls *m_walls;
-    gf::RenderWindow &m_renderer;
+    gf::RenderTarget &m_renderer;
     int m_scaleUnit;
     gf::Vector2u m_windowSize;
     gf::Texture m_texture;
 
-    Game3D(Player *player, MapWalls *walls, gf::RenderWindow &renderer)
+    Game3D(Player *player, MapWalls *walls, gf::RenderTarget &renderer)
         : m_player(player), m_walls(walls), m_renderer(renderer), m_firstPortal(NULL), m_secondPortal(NULL), m_texture(gf::Texture(std::filesystem::path("../sources/resources/wall-02.png")))
     {
         m_texture.setRepeated(true);
@@ -46,3 +49,5 @@ public:
 
 private:
 };
+
+#endif // Game3D_HPP

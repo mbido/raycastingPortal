@@ -2,7 +2,7 @@
 #define WALL_HPP
 
 #include <gf/Vector.h>
-#include <gf/RenderWindow.h>
+#include <gf/RenderTarget.h>
 #include <gf/Shapes.h>
 #include <gf/Curves.h>
 
@@ -29,7 +29,7 @@ public:
     std::vector<gf::Vector2f> getVertices();
     std::vector<gf::Vector2f> getOccupiedCells();
 
-    void render(gf::RenderWindow &window, int scale);
+    void render(gf::RenderTarget &window, int scale);
 
     bool getSegments(gf::Vector2f point, std::vector<std::pair<gf::Vector2f, gf::Vector2f>> &segments);
 
