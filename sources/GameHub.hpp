@@ -14,7 +14,7 @@ namespace gh {
 
         MenuScene menu;
         SelectLevelScene selectLevel;
-        LevelScene level;
+        LevelScene level1;
 
     };
 }

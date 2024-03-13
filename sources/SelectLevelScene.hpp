@@ -30,6 +30,9 @@ namespace gh {
         gf::Action m_triggerAction;
 
         gf::TextButtonWidget m_level1;
+        gf::TextButtonWidget m_level2;
+        gf::TextButtonWidget m_level3;
+        gf::TextButtonWidget m_level4;
         gf::TextButtonWidget m_back2menu;
 
         gf::WidgetContainer m_widgets;

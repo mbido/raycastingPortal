@@ -7,7 +7,7 @@ namespace gh
 {
 
     SelectLevelScene::SelectLevelScene(GameHub &game)
-        : gf::Scene(game.getRenderer().getSize()), m_game(game), m_backgroundTexture(game.resources.getTexture("bgTexture.png")), m_upAction("UpAction"), m_downAction("DownAction"), m_triggerAction("TriggerAction"), m_back2menuAction("Menu"), m_level1("Level 1", game.resources.getFont("Underdog.otf")), m_back2menu("Menu", game.resources.getFont("Underdog.otf"))
+        : gf::Scene(game.getRenderer().getSize()), m_game(game), m_backgroundTexture(game.resources.getTexture("bgTexture.png")), m_upAction("UpAction"), m_downAction("DownAction"), m_triggerAction("TriggerAction"), m_back2menuAction("Menu"), m_level1("Level 1", game.resources.getFont("Underdog.otf")), m_level2("Level 2", game.resources.getFont("Underdog.otf")), m_level3("Level 3", game.resources.getFont("Underdog.otf")), m_level4("Level 4", game.resources.getFont("Underdog.otf")), m_back2menu("Menu", game.resources.getFont("Underdog.otf"))
     {
         setClearColor(gf::Color::Black);
 
@@ -52,7 +52,11 @@ namespace gh
         };
 
         setupButtonBlue(m_level1, [&]()
-                        { m_game.replaceAllScenes(m_game.level); });
+                        // {
+                            // LevelScene lvl1(m_game);
+                            // m_game.replaceAllScenes(lvl1);
+                        // });
+                        { m_game.replaceAllScenes(m_game.level1); });
 
         setupButtonOrange(m_back2menu, [&]()
                           { m_game.replaceAllScenes(m_game.menu); });
@@ -82,7 +86,7 @@ namespace gh
 
         if (m_back2menuAction.isActive())
         {
-            m_game.popAllScenes();
+            m_game.replaceAllScenes(m_game.menu);
         }
     }
 

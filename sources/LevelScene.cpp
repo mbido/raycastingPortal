@@ -3,153 +3,168 @@
 
 #include "GameHub.hpp"
 
+namespace gh
+{
 
-namespace gh {
+	LevelScene::LevelScene(GameHub &game)
+		: gf::Scene(game.getRenderer().getSize()), m_game(game), m_back2menuAction("Menu"), m_map("../sources/map/image.png"), m_player(gf::Vector2f(1.5, 1.5), 0, 2), m_game3D(&m_player, &m_map, game.getRenderer()), m_direction(0.0f, 0.0f), m_angularVelocity(0), m_upAction("UpAction"), m_downAction("DownAction"), m_rightAction("RightAction"), m_leftAction("LeftAction"), m_lookLeftAction("LookLeft"), m_lookRightAction("LookRight")
+	{
+		setClearColor(gf::Color::Black);
 
-    LevelScene::LevelScene(GameHub& game)
-    : gf::Scene(game.getRenderer().getSize())
-    , m_game(game)
-    // , m_backgroundTexture(game.resources.getTexture("bgTexture.png"))
-    // , m_upAction("UpAction")
-    // , m_downAction("DownAction")
-    // , m_triggerAction("TriggerAction")
-    // , m_back2menuAction("Menu")
-    // , m_level1("Level 1", game.resources.getFont("Underdog.otf"))
-    // , m_back2menu("Menu", game.resources.getFont("Underdog.otf"))
-    {
-        setClearColor(gf::Color::Black);
+		m_back2menuAction.addScancodeKeyControl(gf::Scancode::Escape);
+		addAction(m_back2menuAction);
 
-        // m_back2menuAction.addKeycodeKeyControl(gf::Keycode::Escape);
-        // addAction(m_back2menuAction);
+		m_upAction.addScancodeKeyControl(gf::Scancode::Up);
+		m_upAction.addScancodeKeyControl(gf::Scancode::W);
+		m_upAction.setContinuous();
+		addAction(m_upAction);
 
-        // m_upAction.addKeycodeKeyControl(gf::Keycode::Up);
-        // addAction(m_upAction);
- 
-        // m_downAction.addKeycodeKeyControl(gf::Keycode::Down);
-        // addAction(m_downAction);
+		m_downAction.addScancodeKeyControl(gf::Scancode::Down);
+		m_downAction.addScancodeKeyControl(gf::Scancode::S);
+		m_downAction.setContinuous();
+		addAction(m_downAction);
 
-        // m_triggerAction.addMouseButtonControl(gf::MouseButton::Left);
-        // addAction(m_triggerAction);
+		// gf::Action fullscreenAction("Fullscreen");
+		// fullscreenAction.addKeycodeKeyControl(gf::Keycode::F);
+		// actions.addAction(fullscreenAction);
 
-        // auto setupButtonBlue = [&] (gf::TextButtonWidget& button, auto callback) {
-            // button.setDefaultTextColor(gf::Color::Black);
-            // button.setDefaultBackgroundColor(gf::Color::Gray(0.7f));
-            // button.setSelectedTextColor(gf::Color::Black);
-            // button.setSelectedBackgroundColor(gf::Color::Cyan);
-            // button.setDisabledTextColor(gf::Color::Black);
-            // button.setDisabledBackgroundColor(gf::Color::Red);
-            // button.setAnchor(gf::Anchor::TopLeft);
-            // button.setAlignment(gf::Alignment::Center);
-            // button.setCallback(callback);
-            // m_widgets.addWidget(button);
-        // };
-// 
-        // auto setupButtonOrange = [&] (gf::TextButtonWidget& button, auto callback) {
-            // button.setDefaultTextColor(gf::Color::Black);
-            // button.setDefaultBackgroundColor(gf::Color::Gray(0.7f));
-            // button.setSelectedTextColor(gf::Color::Black);
-            // button.setSelectedBackgroundColor(gf::Color::Orange);
-            // button.setDisabledTextColor(gf::Color::Black);
-            // button.setDisabledBackgroundColor(gf::Color::Red);
-            // button.setAnchor(gf::Anchor::TopLeft);
-            // button.setAlignment(gf::Alignment::Center);
-            // button.setCallback(callback);
-            // m_widgets.addWidget(button);
-        // };
-// 
-        // setupButtonBlue(m_level1, [&] () {
-            // m_game.replaceAllScenes(m_game.level);
-        // });
-// 
-        // setupButtonOrange(m_back2menu, [&] () {
-            // m_game.replaceAllScenes(m_game.menu);
-        // });
-    }
+		m_rightAction.addScancodeKeyControl(gf::Scancode::D);
+		m_rightAction.setContinuous();
+		addAction(m_rightAction);
 
-    void LevelScene::doHandleActions([[maybe_unused]] gf::Window& window) {
-        if (!isActive()) {
-            return;
-        }
+		m_leftAction.addScancodeKeyControl(gf::Scancode::A);
+		m_leftAction.setContinuous();
+		addAction(m_leftAction);
 
-        // if (m_upAction.isActive()) {
-            // m_widgets.selectPreviousWidget();
-        // }
-// 
-        // if (m_downAction.isActive()) {
-            // m_widgets.selectNextWidget();
-        // }
-// 
-        // if (m_triggerAction.isActive()) {
-            // m_widgets.triggerAction();
-        // }
-// 
-        // if (m_quitAction.isActive()) {
-            // m_game.popAllScenes();
-        // }
-    } 
+		m_lookLeftAction.addScancodeKeyControl(gf::Scancode::Left);
+		m_lookLeftAction.setContinuous();
+		addAction(m_lookLeftAction);
 
-    void LevelScene::doProcessEvent(gf::Event& event) {
-        // switch (event.type)
-        // {
-            // case gf::EventType::MouseMoved:
-            // m_widgets.pointTo(m_game.computeWindowToGameCoordinates(event.mouseCursor.coords, getHudView()));
-            // break;
-        // }
-    }
+		m_lookRightAction.addScancodeKeyControl(gf::Scancode::Right);
+		m_lookRightAction.setContinuous();
+		addAction(m_lookRightAction);
+	}
 
-    void LevelScene::doRender(gf::RenderTarget& target, const gf::RenderStates &states) {
-        // gf::Coordinates coords(target);
-// 
-        // float backgroundHeight = coords.getRelativeSize(gf::vec(0.0f, 1.0f)).height;
-        // float backgroundScale = backgroundHeight / m_backgroundTexture.getSize().height;
-// 
-        // gf::Sprite background(m_backgroundTexture);
-        // background.setColor(gf::Color::Opaque(0.20f));
-        // background.setPosition(coords.getCenter());
-        // background.setAnchor(gf::Anchor::Center);
-        // background.setScale(backgroundScale);
-        // target.draw(background, states);
-// 
-        // target.setView(getHudView());
-// 
-        // unsigned titleCharacterSize = coords.getRelativeCharacterSize(0.1f);
-// 
-        // gf::Text title("Portal 0.0", m_game.resources.getFont("Underdog.otf"), titleCharacterSize);
-        // title.setColor(gf::Color::White);
-        // title.setPosition(coords.getRelativePoint({ 0.5f, 0.1f }));
-        // title.setAnchor(gf::Anchor::TopCenter);
-        // target.draw(title, states);
-// 
-        // constexpr float characterSize = 0.075f;
-        // constexpr float spaceBetweenButton = 0.045f;
-        // constexpr gf::Vector2f backgroundSize(0.5f, 0.3f);
-// 
-        // const float paragraphWidth = coords.getRelativeSize(backgroundSize - 0.05f).x;
-        // const float paddingSize = coords.getRelativeSize({0.01f, 0.f}).x;
-        // const unsigned resumeCharacterSize = coords.getRelativeCharacterSize(characterSize);
-// 
-        // m_newGame.setCharacterSize(resumeCharacterSize);
-        // m_newGame.setPosition(coords.getRelativePoint({0.275f, 0.425f}));
-        // m_newGame.setParagraphWidth(paragraphWidth);
-        // m_newGame.setPadding(paddingSize);
-// 
-        // m_quit.setCharacterSize(resumeCharacterSize);
-        // m_quit.setPosition(coords.getRelativePoint({0.275f, 0.425f + (characterSize + spaceBetweenButton) * 3}));
-        // m_quit.setParagraphWidth(paragraphWidth);
-        // m_quit.setPadding(paddingSize);
-// 
-        // m_widgets.render(target, states);
-    }
+	LevelScene::LevelScene(GameHub &game, int level)
+		: gf::Scene(game.getRenderer().getSize()), m_game(game), m_back2menuAction("Menu"), m_map("../sources/map/image" + std::to_string(level) + ".png"), m_player(gf::Vector2f(1.5, 1.5), 0, 2), m_game3D(&m_player, &m_map, game.getRenderer()), m_direction(0.0f, 0.0f), m_angularVelocity(0), m_upAction("UpAction"), m_downAction("DownAction"), m_rightAction("RightAction"), m_leftAction("LeftAction"), m_lookLeftAction("LookLeft"), m_lookRightAction("LookRight")
+	{
+		
 
-    void LevelScene::doShow() {
-        // m_widgets.clear();
-// 
-        // m_widgets.addWidget(m_newGame);
-// 
-        // m_widgets.addWidget(m_quit);
-// 
-        // m_widgets.selectNextWidget();
-    } 
+		setClearColor(gf::Color::Black);
 
+		m_back2menuAction.addScancodeKeyControl(gf::Scancode::Escape);
+		addAction(m_back2menuAction);
 
-}   
+		m_upAction.addScancodeKeyControl(gf::Scancode::Up);
+		m_upAction.addScancodeKeyControl(gf::Scancode::W);
+		m_upAction.setContinuous();
+		addAction(m_upAction);
+
+		m_downAction.addScancodeKeyControl(gf::Scancode::Down);
+		m_downAction.addScancodeKeyControl(gf::Scancode::S);
+		m_downAction.setContinuous();
+		addAction(m_downAction);
+
+		// gf::Action fullscreenAction("Fullscreen");
+		// fullscreenAction.addKeycodeKeyControl(gf::Keycode::F);
+		// actions.addAction(fullscreenAction);
+
+		m_rightAction.addScancodeKeyControl(gf::Scancode::D);
+		m_rightAction.setContinuous();
+		addAction(m_rightAction);
+
+		m_leftAction.addScancodeKeyControl(gf::Scancode::A);
+		m_leftAction.setContinuous();
+		addAction(m_leftAction);
+
+		m_lookLeftAction.addScancodeKeyControl(gf::Scancode::Left);
+		m_lookLeftAction.setContinuous();
+		addAction(m_lookLeftAction);
+
+		m_lookRightAction.addScancodeKeyControl(gf::Scancode::Right);
+		m_lookRightAction.setContinuous();
+		addAction(m_lookRightAction);
+	}
+
+	void LevelScene::doHandleActions([[maybe_unused]] gf::Window & window)
+	{
+		gf::Time time = m_clock.restart();
+
+		if (!isActive())
+		{
+			return;
+		}
+
+		if (m_rightAction.isActive())
+		{
+			m_direction += gf::Vector2f(1.0f, 0.0f);
+			printf("d pressed\n");
+		}
+		if (m_leftAction.isActive())
+		{
+			m_direction += gf::Vector2f(-1.0f, 0.0f);
+			printf("q pressed\n");
+		}
+		if (m_upAction.isActive())
+		{
+			m_direction += gf::Vector2f(0.0f, -1.0f);
+			printf("z pressed\n");
+		}
+		if (m_downAction.isActive())
+		{
+			m_direction += gf::Vector2f(0.0f, 1.0f);
+			printf("s pressed\n");
+		}
+		if (m_lookLeftAction.isActive())
+		{
+			m_angularVelocity -= gf::Pi / 2;
+		}
+		if (m_lookRightAction.isActive())
+		{
+			m_angularVelocity += gf::Pi / 2;
+		}
+
+		if (m_back2menuAction.isActive())
+		{
+			m_game.replaceAllScenes(m_game.selectLevel);
+		}
+
+		m_player.setVelocity(m_direction);
+		m_player.setAngularVelocity(m_angularVelocity);
+
+		m_game3D.update(time);
+
+		m_direction = gf::Vector2f(0.0f, 0.0f);
+		m_angularVelocity = 0;
+	}
+
+	void LevelScene::doProcessEvent(gf::Event &event)
+	{
+		switch (event.type)
+		{
+		case gf::EventType::MouseButtonPressed:
+			if (event.mouseButton.button == gf::MouseButton::Left || event.mouseButton.button == gf::MouseButton::Right)
+			{
+				gf::MouseButtonEvent mouseButtonEvent = event.mouseButton;
+				if (mouseButtonEvent.button == gf::MouseButton::Left)
+					m_game3D.castPortal(true);
+				else if (mouseButtonEvent.button == gf::MouseButton::Right)
+					m_game3D.castPortal(false);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	void LevelScene::doRender(gf::RenderTarget &target, const gf::RenderStates &states)
+	{
+		m_game3D.render();
+	}
+
+	void LevelScene::doShow()
+	{
+		m_game3D.render();
+	}
+
+}

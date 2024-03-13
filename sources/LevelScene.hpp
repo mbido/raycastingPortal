@@ -5,6 +5,10 @@
 #include <gf/Event.h>
 #include <gf/Text.h>
 
+#include "MapWalls.hpp"
+#include "Player.hpp"
+#include "Game3D.hpp"
+
 namespace gh {
 
     struct GameHub;
@@ -12,6 +16,7 @@ namespace gh {
     class LevelScene : public gf::Scene {
     public:
         LevelScene(GameHub& game);
+        LevelScene(GameHub& game, int level);
 
     private:
         void doProcessEvent(gf::Event& event) override;
@@ -19,20 +24,28 @@ namespace gh {
         void doRender(gf::RenderTarget& target, const gf::RenderStates &states) override;
         void doShow() override;
     
-    private:
         GameHub& m_game;
-        //gf::Texture& m_backgroundTexture;
-        //
-        //gf::Action m_back2menuAction;
-        //
-        //gf::Action m_upAction;
-        //gf::Action m_downAction;
-        //gf::Action m_triggerAction;
-        //
-        //gf::TextButtonWidget m_level1;
-        //gf::TextButtonWidget m_back2menu;
-        //
-        //gf::WidgetContainer m_widgets;
+        
+        gf::Action m_back2menuAction;
+
+        gf::Clock m_clock;
+
+        MapWalls m_map;
+
+        Player m_player;
+        
+        Game3D m_game3D;
+
+        gf::Vector2f m_direction;
+        float m_angularVelocity;
+
+        gf::Action m_upAction;
+        gf::Action m_downAction;
+        gf::Action m_rightAction;
+        gf::Action m_leftAction;
+        gf::Action m_lookLeftAction;
+        gf::Action m_lookRightAction;
+
     };
 
 }
