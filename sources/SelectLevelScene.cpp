@@ -53,10 +53,11 @@ namespace gh
 
         setupButtonBlue(m_level1, [&]()
                         // {
-                            // LevelScene lvl1(m_game);
-                            // m_game.replaceAllScenes(lvl1);
+                        // LevelScene lvl1(m_game);
+                        // m_game.replaceAllScenes(lvl1);
                         // });
-                        { m_game.replaceAllScenes(m_game.level1); });
+                        { m_game.getWindow().setMouseRelative(true);
+                        m_game.replaceAllScenes(m_game.level1); });
 
         setupButtonOrange(m_back2menu, [&]()
                           { m_game.replaceAllScenes(m_game.menu); });

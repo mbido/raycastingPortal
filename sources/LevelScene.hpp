@@ -49,6 +49,10 @@ namespace gh {
         gf::Action m_lookLeftAction;
         gf::Action m_lookRightAction;
 
+        gf::Vector2f m_mouseCursorCurr;
+        gf::Vector2f m_mouseCursorNext;
+        float m_sensivity;
+
     };
 
 }
