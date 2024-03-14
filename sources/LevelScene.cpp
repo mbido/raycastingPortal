@@ -165,8 +165,14 @@ namespace gh
 					m_game3D.castPortal(false);
 			}
 			break;
+		/*case gf::EventType::MouseEntered:
+			m_mouseCursorCurr = event.mouseCursor.motion;
+			break;
+		case gf::EventType::MouseLeft:
+			m_mouseCursorCurr = {-1.0f, -1.0f};
+			break;*/
 		case gf::EventType::MouseMoved:
-			if (m_mouseCursorCurr.x == -1 && m_mouseCursorCurr.y == -1)
+			if ((int) m_mouseCursorCurr.x == -1 && (int) m_mouseCursorCurr.y == -1)
 			{
 				m_mouseCursorCurr = event.mouseCursor.motion;
 			}
