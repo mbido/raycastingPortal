@@ -1,32 +1,50 @@
 \documentclass{beamer}
 \usepackage{caption}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 
 % Pour quel partie chaque personne parle :
 % Mise en contexte -> Vital
-% Technologies utilisées -> Elian? Vital?
+% Technologies utilisées -> Vital
 % Différentes stratégies pour un rendu 3D :
-%   Approche historique -> Vital
+%   Approche historique -> Matthieu
 %   Explication de DDA  -> Matthieu
 %   Approche moderne -> Matthieu
 % Construction de mur -> Vital
 % Les collisions -> Elian
-% Les portails -> Matthieu
+% Les portails -> Matthieu / Elian
 % Les renders -> Matthieu
-% Conclusion -> Elian? Vital?
+% Conclusion -> Elian
 
 
-\usetheme{Berlin}
+\usetheme{Boadilla}
 
 \begin{document}
 
-\title{Présentation du projet Portal 0.0}
-\author{BADSTÜBER Elian, BIDAULT Matthieu, FOCHEUX Vital \\
-        Licence 3 Informatique}
-\date{\today}
+% Définition de la mise en page du pied de page avec un espacement réduit
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor\hspace*{2em}
+    \insertshorttitle\hspace*{2em}\insertframenumber{} / \inserttotalframenumber
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
 
+\title{Présentation du projet Portal 0.0}
+\author[BADSTÜBER E. BIDAULT M. FOCHEUX V.]{BADSTÜBER Elian BIDAULT Matthieu FOCHEUX Vital \\
+                                                Licence 3 Informatique}
+\date{Mars 2024}
+
+\setcounter{framenumber}{0}
+% \setbeamertemplate{page number in head/foot}{}
+
+{
+\setbeamertemplate{footline}{}
 \begin{frame}
     \titlepage
-
+    
     \vfill % Insertion d'un espace vertical flexible pour pousser le texte en bas
     \begin{columns}
         \column{0.3\textwidth}
@@ -39,6 +57,7 @@
         \end{flushright}    
     \end{columns}
 \end{frame}
+}
 
 \setcounter{framenumber}{0}
 \setbeamertemplate{page number in head/foot}[totalframenumber]
@@ -53,18 +72,31 @@
 \begin{frame}
     \frametitle{Mise en contexte}
     \begin{block}{}
-        Portal 0.0 est un jeu vidéo qui reprends les principes techniques 
-        de plusieurs jeux vidéos connus.
+        % Portal 0.0 est un jeu vidéo qui reprends les principes techniques 
+        % de plusieurs jeux vidéos connus.
+        \begin{itemize}
+            \item Portal 0.0 $\rightarrow $ principes techniques de plusieurs jeux vidéos connus
+        \end{itemize}
     \end{block}
 
     \begin{block}{Technique graphique}
-        L'utilisation de la méthode du raycasting, pour un rendu 2.5D qui a été 
-        popularisé dans le début des années 90.
+        \begin{itemize}
+            \item Méthode raycasting
+            \item Rendu 2.5D popularisé dans les années 90
+            \item Principe de Wolfenstein3D (1992)
+        \end{itemize}
+        % L'utilisation de la méthode du raycasting, pour un rendu 2.5D qui a été 
+        % popularisé dans le début des années 90.
     \end{block}
 
     \begin{block}{Système de jeu}
-        Le principe du jeu vidéo Portal (2007), où l'on doit résoudre des énigmes
-        à l'aide de portails, dans lesquels on se téléporte lorsqu'on passe à travers.
+        \begin{itemize}
+            \item Résolution d'énigmes à l'aide de portails
+            \item Téléportation lorsqu'on passe à travers
+            \item Principe de Portal (2007)
+        \end{itemize}
+        % Le principe du jeu vidéo Portal (2007), où l'on doit résoudre des énigmes
+        % à l'aide de portails, dans lesquels on se téléporte lorsqu'on passe à travers.
     \end{block}
 \end{frame}
 
@@ -94,12 +126,20 @@
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
                 \small Approche historique}
+    \begin{block}{Raycasting}
+        \begin{itemize}
+            \item Méthode de rendu graphique
+            \item Création d'une perspective 3D dans des environnements 2D
+            \item Réalisation grâce à une projection de rayons à travers la scène
+        \end{itemize}
+    \end{block}
     \begin{block}{}
-        Le raycasting est une méthode de rendu graphique utilisée pour créer 
-        une perspective 3D dans des environnements 2D. Ce rendu est réalisé
-        en projetant des rayons depuis la position du joueur à travser la scène
-        pour déterminer les intersections avec les murs. Pour l'optimisation,
-        l'algorithme DDA (Digital Differential Analyzer) est utilisé.
+        % Le raycasting est une méthode de rendu graphique utilisée pour créer 
+        % une perspective 3D dans des environnements 2D. Ce rendu est réalisé
+        % en projetant des rayons depuis la position du joueur à travser la scène
+        % pour déterminer les intersections avec les murs. Pour l'optimisation,
+        % l'algorithme DDA (Digital Differential Analyzer) est utilisé.
+        Pour l'optimisation, l'algorithme DDA (Digital Differential Analyzer) est utilisé.
     \end{block}
 \end{frame}
 
@@ -107,23 +147,57 @@
     \frametitle{Différentes stratégie pour un rendu 3D \\
                 \small DDA}           
     \begin{block}{}
-        L'algorithme DDA est historiquement conçu pour la rasterisation de 
-        lignes, c'est-à-dire la conversion de lignes geometriques en ligne 
-        visuelle composées de pixels alignés. Dans le contexte du raycasting, 
-        DDA est employé pour déterminer où les rayons projetés à travers la 
-        scène intersectent avec les objets de l'environnement, typiquement et 
-        dans notre cas représenté par une grille de cellules. Le principe 
-        fondamental de DDA repose sur l'itération linéaire. Plutôt que de 
-        calculer chaque point le long d'une demie droite en utilisant des formules 
-        de géométrie directe, ce qui pourrait être coûteux en termes de performances, 
-        DDA avance par petits incr ́ements. Cela signifie que pour chaque
-        pas sur l'axe le plus dominant (x ou y), DDA calcule l'emplacement 
-        correspondant sur l'autre axe en ajoutant un incrément constant. 
-        Cela se traduit par un parcours régulier et efficace le long de la 
-        ligne en faisant des sauts à chaque intersection entre la demie 
-        droite et la grille 2D. Dans le raycasting, DDA est utilisé pour 
-        trouver rapidement et précisément les intersections entre les rayons 
-        et les murs
+        \begin{itemize}
+            \item Conçu pour la rasterisation de lignes
+            \item Employé pour déterminer où les rayons projetés intersectent avec les objets de l'environnement
+            \item Repose sur l'itération linéaire
+        \end{itemize}
+        % L'algorithme DDA est historiquement conçu pour la rasterisation de 
+        % lignes, c'est-à-dire la conversion de lignes geometriques en ligne 
+        % visuelle composées de pixels alignés. Dans le contexte du raycasting, 
+        % DDA est employé pour déterminer où les rayons projetés à travers la 
+        % scène intersectent avec les objets de l'environnement, typiquement et 
+        % dans notre cas représenté par une grille de cellules. Le principe 
+        % fondamental de DDA repose sur l'itération linéaire. Plutôt que de 
+        % calculer chaque point le long d'une demie droite en utilisant des formules 
+        % de géométrie directe, ce qui pourrait être coûteux en termes de performances, 
+        % DDA avance par petits incr ́ements. Cela signifie que pour chaque
+        % pas sur l'axe le plus dominant (x ou y), DDA calcule l'emplacement 
+        % correspondant sur l'autre axe en ajoutant un incrément constant. 
+        % Cela se traduit par un parcours régulier et efficace le long de la 
+        % ligne en faisant des sauts à chaque intersection entre la demie 
+        % droite et la grille 2D. Dans le raycasting, DDA est utilisé pour 
+        % trouver rapidement et précisément les intersections entre les rayons 
+        % et les murs
+    \end{block}    
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{}
+        \begin{itemize}
+            \item Calcule l'emplacement correspondant sur l'autre axe en ajoutant un incrément constant
+            \item Utilisé pour trouver rapidement et précisément les intersections entre les rayons 
+            et les murs dans le raycasting
+        \end{itemize}
+        % L'algorithme DDA est historiquement conçu pour la rasterisation de 
+        % lignes, c'est-à-dire la conversion de lignes geometriques en ligne 
+        % visuelle composées de pixels alignés. Dans le contexte du raycasting, 
+        % DDA est employé pour déterminer où les rayons projetés à travers la 
+        % scène intersectent avec les objets de l'environnement, typiquement et 
+        % dans notre cas représenté par une grille de cellules. Le principe 
+        % fondamental de DDA repose sur l'itération linéaire. Plutôt que de 
+        % calculer chaque point le long d'une demie droite en utilisant des formules 
+        % de géométrie directe, ce qui pourrait être coûteux en termes de performances, 
+        % DDA avance par petits incr ́ements. Cela signifie que pour chaque
+        % pas sur l'axe le plus dominant (x ou y), DDA calcule l'emplacement 
+        % correspondant sur l'autre axe en ajoutant un incrément constant. 
+        % Cela se traduit par un parcours régulier et efficace le long de la 
+        % ligne en faisant des sauts à chaque intersection entre la demie 
+        % droite et la grille 2D. Dans le raycasting, DDA est utilisé pour 
+        % trouver rapidement et précisément les intersections entre les rayons 
+        % et les murs
     \end{block}    
 \end{frame}
 
@@ -151,20 +225,23 @@
     \end{block}
 \end{frame}
 
+
+
+\section{Spécifications}
 \subsection{Les portails}
 
 \begin{frame}
     \frametitle{Les portails}
-    \begin{block}{title}
+    \begin{block}{}
         
     \end{block}
 \end{frame}
 
-\subsection{Les renders}
+\subsection{Les rendus}
 
 \begin{frame}
-    \frametitle{Les renders}
-    \begin{block}{title}
+    \frametitle{Les rendus}
+    \begin{block}{}
         
     \end{block}
 \end{frame}
