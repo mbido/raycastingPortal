@@ -1,5 +1,5 @@
-#ifndef MENU_SCENE_HPP
-#define MENU_SCENE_HPP
+#ifndef LVL_END_SCENE
+#define LVL_END_SCENE
 
 #include <gf/Scene.h>
 #include <gf/Action.h>
@@ -12,9 +12,9 @@ namespace gh {
 
     struct GameHub;
 
-    class MenuScene : public gf::Scene {
+    class LevelEndScene : public gf::Scene {
     public:
-        MenuScene(GameHub& game);
+        LevelEndScene(GameHub& game);
 
     private:
         void doProcessEvent(gf::Event& event) override;
@@ -32,12 +32,11 @@ namespace gh {
         gf::Action m_downAction;
         gf::Action m_triggerAction;
 
-        gf::TextButtonWidget m_newGame;
+        gf::TextButtonWidget m_menu;
         gf::TextButtonWidget m_quit;
 
         gf::WidgetContainer m_widgets;
     };
-
 }
 
-#endif // MENU_SCENE_HPP
+#endif // LVL_END_SCENE

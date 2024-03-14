@@ -19,6 +19,7 @@ add_executable(mygame
   MenuScene.cpp
   SelectLevelScene.cpp
   LevelScene.cpp
+  LevelEndScene.cpp
 )
 
 target_link_libraries(mygame

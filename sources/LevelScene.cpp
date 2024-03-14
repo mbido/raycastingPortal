@@ -7,7 +7,7 @@ namespace gh
 {
 
 	LevelScene::LevelScene(GameHub &game)
-		: gf::Scene(game.getRenderer().getSize()), m_game(game), m_back2menuAction("Menu"), m_map("../sources/map/image.png"), m_player(gf::Vector2f(1.5, 1.5), 0, 2), m_game3D(&m_player, &m_map, game.getRenderer()), m_direction(0.0f, 0.0f), m_angularVelocity(0), m_upAction("UpAction"), m_downAction("DownAction"), m_rightAction("RightAction"), m_leftAction("LeftAction"), m_lookLeftAction("LookLeft"), m_lookRightAction("LookRight")
+		: gf::Scene(game.getRenderer().getSize()), m_game(game), m_back2menuAction("Menu"), m_map("../sources/map/image8.png"), m_player(m_map.getBeginCell() + 0.5, 0, 2), m_game3D(&m_player, &m_map, game.getRenderer()), m_direction(0.0f, 0.0f), m_angularVelocity(0), m_upAction("UpAction"), m_downAction("DownAction"), m_rightAction("RightAction"), m_leftAction("LeftAction"), m_lookLeftAction("LookLeft"), m_lookRightAction("LookRight")
 	{
 		setClearColor(gf::Color::Black);
 
@@ -46,7 +46,7 @@ namespace gh
 	}
 
 	LevelScene::LevelScene(GameHub &game, int level)
-		: gf::Scene(game.getRenderer().getSize()), m_game(game), m_back2menuAction("Menu"), m_map("../sources/map/image" + std::to_string(level) + ".png"), m_player(gf::Vector2f(1.5, 1.5), 0, 2), m_game3D(&m_player, &m_map, game.getRenderer()), m_direction(0.0f, 0.0f), m_angularVelocity(0), m_upAction("UpAction"), m_downAction("DownAction"), m_rightAction("RightAction"), m_leftAction("LeftAction"), m_lookLeftAction("LookLeft"), m_lookRightAction("LookRight")
+		: gf::Scene(game.getRenderer().getSize()), m_game(game), m_back2menuAction("Menu"), m_map("../sources/map/image" + std::to_string(level) + ".png"), m_player(m_map.getBeginCell() + 0.5, 0, 2), m_game3D(&m_player, &m_map, game.getRenderer()), m_direction(0.0f, 0.0f), m_angularVelocity(0), m_upAction("UpAction"), m_downAction("DownAction"), m_rightAction("RightAction"), m_leftAction("LeftAction"), m_lookLeftAction("LookLeft"), m_lookRightAction("LookRight")
 	{
 		
 
@@ -98,22 +98,22 @@ namespace gh
 		if (m_rightAction.isActive())
 		{
 			m_direction += gf::Vector2f(1.0f, 0.0f);
-			printf("d pressed\n");
+			//printf("d pressed\n");
 		}
 		if (m_leftAction.isActive())
 		{
 			m_direction += gf::Vector2f(-1.0f, 0.0f);
-			printf("q pressed\n");
+			//printf("q pressed\n");
 		}
 		if (m_upAction.isActive())
 		{
 			m_direction += gf::Vector2f(0.0f, -1.0f);
-			printf("z pressed\n");
+			//printf("z pressed\n");
 		}
 		if (m_downAction.isActive())
 		{
 			m_direction += gf::Vector2f(0.0f, 1.0f);
-			printf("s pressed\n");
+			//printf("s pressed\n");
 		}
 		if (m_lookLeftAction.isActive())
 		{
@@ -136,6 +136,11 @@ namespace gh
 
 		m_direction = gf::Vector2f(0.0f, 0.0f);
 		m_angularVelocity = 0;
+
+		if ((int) m_player.getPosition().x == (int) m_map.getArrivalCell().x && (int) m_player.getPosition().y == (int) m_map.getArrivalCell().y){
+			m_player.setPosition(m_map.getBeginCell() + 0.5);
+			m_game.replaceAllScenes(m_game.level1End);
+		}
 	}
 
 	void LevelScene::doProcessEvent(gf::Event &event)

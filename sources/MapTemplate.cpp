@@ -63,14 +63,12 @@ void MapTemplate::init()
             // If the pixel is green
             else if (static_cast<int>(pixelColor.r) == 0 && static_cast<int>(pixelColor.g) == 255 && static_cast<int>(pixelColor.b) == 0)
             {
-                m_map[i][j] = 2;
                 m_begin = gf::Vector2f(i, j);
             }
 
             // If the pixel is red
             else if (static_cast<int>(pixelColor.r) == 255 && static_cast<int>(pixelColor.g) == 0 && static_cast<int>(pixelColor.b) == 0)
             {
-                m_map[i][j] = 3;
                 m_arrival = gf::Vector2f(i, j);
             }
         }

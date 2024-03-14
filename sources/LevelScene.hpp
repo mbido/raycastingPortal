@@ -1,3 +1,6 @@
+#ifndef LEVEL_SCENE_HPP
+#define LEVEL_SCENE_HPP
+
 #include <gf/Scene.h>
 #include <gf/Action.h>
 #include <gf/WidgetContainer.h>
@@ -49,3 +52,5 @@ namespace gh {
     };
 
 }
+
+#endif // LEVEL_SCENE_HPP

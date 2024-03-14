@@ -1,3 +1,6 @@
+#ifndef SELECT_LVL_SCENE_HPP
+#define SELECT_LVL_SCENE_HPP
+
 #include <gf/Scene.h>
 #include <gf/Action.h>
 #include <gf/WidgetContainer.h>
@@ -39,3 +42,5 @@ namespace gh {
     };
 
 }
+
+#endif // SELECT_LVL_SCENE_HPP

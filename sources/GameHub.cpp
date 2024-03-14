@@ -6,7 +6,8 @@ namespace gh {
     : GameManager("Portal 0.0", { "../sources/resources" })
     , menu(*this)
     , selectLevel(*this)
-    , level1(*this, 1)
+    , level1(*this, 8)
+    , level1End(*this)
     {
         pushScene(menu);
     }
