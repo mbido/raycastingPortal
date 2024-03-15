@@ -170,6 +170,10 @@
         % trouver rapidement et précisément les intersections entre les rayons 
         % et les murs
     \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA.jpg}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -203,18 +207,51 @@
 
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
-                \small Approche moderne}           
+                \small Approche moderne (Line Of Sight)}           
     \begin{block}{}
-        
+        \begin{itemize}
+            \item Calcul distance entre le joueur et chaque sommet de chaque mur
+        \end{itemize}
+%         Cette seconde approche s’approche des algorithme Line Of Sight et consiste
+% a calculer la distance entre le joueur et chaque sommet de chaque mur.
+% Pour ce faire on a pu recuperer l’algorithme DDA precedemment utilise
+% pour le rendu des murs mais cette fois-ci en visant chaque sommets au lieu
+% de viser chaque colonne de pixel. Cela permet theoriquement de reduire
+% considerablement le nombre de calculs a effectuer.
+
     \end{block}    
 \end{frame}
 
 \subsection{Construction de mur}
 
 \begin{frame}
-    \frametitle{Construction de mur}
+    \frametitle{Construction de mur \\
+                \small Sommets utiles}
     \begin{block}{}
+        \begin{itemize}
+            \item Boucle sur les coordonnées des cellules
+            \item Vérification des sommets adjacents
+        \end{itemize}
     \end{block}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/sommets_utiles.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Construction de mur \\
+                \small Trie des sommets}
+    \begin{block}{}
+        \begin{itemize}
+            \item Boucle sur les sommets utiles
+            \item Méthode : Droit > Bas > Gauche > Haut
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/tri_sommet.jpg}
+    \end{figure}
 \end{frame}
 
 \subsection{Les collisions}
@@ -222,16 +259,26 @@
 \begin{frame}
     \frametitle{Les collisions}
     \begin{block}{}
+        \begin{itemize}
+            \item Utilisation de la fonction clamp
+        \end{itemize}
     \end{block}
 \end{frame}
-
-
 
 \section{Spécifications}
 \subsection{Les portails}
 
 \begin{frame}
-    \frametitle{Les portails}
+    \frametitle{Les portails \\
+                \small La téléportation}
+    \begin{block}{}
+        
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Les portails \\
+                \small ??}
     \begin{block}{}
         
     \end{block}
@@ -242,7 +289,13 @@
 \begin{frame}
     \frametitle{Les rendus}
     \begin{block}{}
-        
+        \begin{itemize}
+            \item Récupération des sommets triés
+            \item Parcours des sommets pour y envoyer un rayon grâce à DDA
+            \item Connaissant alors l'angle avec lequel le rayon est envoyé, la distance
+            entre le joueur et le sommet est calculée en prenant le projeter orthogonale
+            du sommet sur la droite de direction de vue du joueur 
+        \end{itemize}
     \end{block}
 \end{frame}
 
@@ -254,6 +307,14 @@
         \centering
         Merci de votre attention.
     \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Conclusion \\
+                \small Remerciements}      
+    \begin{block}{}
+        
+    \end{block}         
 \end{frame}
 
 \section*{Questions}
