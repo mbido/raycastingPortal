@@ -386,14 +386,14 @@ différentes étapes ont été tester sur un rendu 2D pour faciliter le dévelop
 Afin de pouvoir afficher des cartes, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}). Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
 \subsubsection{Les murs:}
 
-Dans cette partie nous allons détaillés les différentes étapes pour la création des murs.
+Dans cette partie nous allons détailler les différentes étapes pour la création des murs.
 
 \paragraph{Récupération des sommets utiles:}
 
 Pour la création des murs, on effectue un boucle sur la liste de coordonnées des cellules occupées pour un mur précédemment récupérée. Sur chacune des coordonnées, on va regarder quatre de ses coordonnées adjacentes qui sont celles en haut, en bas, à gauche et à droite. Si l'une d'entre elles fait partie de la liste des coordonnées des cellules alors on va incrémenter un compteur. Si ce compteur est égal à 1 ou 3 alors on va l'ajouter dans une liste de coordonnées dites utiles, c'est-à-dire que ceux sont les coordonnées des sommets des murs.
 
 \paragraph{Triage des sommets:}
-Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets. Pour cela, nous effectuons un boucle tant que la taille de la liste des sommets utiles est supérieur à la taille de la liste des sommets triés. Dans cette boucle, nous allons effectuer une boucle sur la liste des sommets utiles si le sommet est dans la liste des sommets triés ou non. Si il ne l'est pas alors on va récupérer les coordonnées de ce sommet et faire appel à une fonction pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets triés. Dans cette fonction, on va effectuer une boucle sur la liste des sommets utiles à partir du sommets donné en paramètre. On va regarder pour chaque sommet si il existe un sommet dans la direction choisie ainsi que dans sa direction opposée. (Explication de la fonction fctCanGo?)
+Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets. Pour cela, nous effectuons un boucle tant que la taille de la liste des sommets utiles est supérieur à la taille de la liste des sommets triés. Dans cette boucle, nous allons effectuer une boucle sur la liste des sommets utiles si le sommet est dans la liste des sommets triés ou non. Si il ne l'est pas alors on va récupérer les coordonnées de ce sommet et faire appel à une fonction pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets triés. Dans cette fonction, on va effectuer une boucle sur la liste des sommets utiles à partir du sommets donné en paramètre. On va regarder pour chaque sommet si il existe un sommet dans la direction choisie ainsi que dans sa direction opposée. %(Explication de la fonction fctCanGo?)
 \begin{itemize}
 	\item Si il existe un sommet dans la direction choisie et aucun sommet dans la direction opposée alors on va ajouter ce sommet dans la liste des sommets triés.
 	\item Sinon si il existe un sommet dans la direction opposée et aucun sommet dans la direction choisie alors on va ajouter le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
@@ -422,11 +422,11 @@ que notre personnage puisse passe dans ainsi qu'à travers les murs.
 	\label{fig:collision_cercle_rectangle}
 \end{figure}
 
-Nous commençons avec l'aspect conceptuel.
+% Nous commençons avec l'aspect conceptuel.
 Le personnage est représenté par un point auquel nous accordons une 
 largeur et donc un cercle centré autour de lui. Chaque mur est composé de 
 blocs carrés unitaires. Ainsi, nous employons un système de collisions 
-entre un cercle et un rectangle (fig.1). 
+entre un cercle et un rectangle (cf: \nameref{fig:collision_cercle_rectangle}). 
 Ce système s'appuie sur une méthode dite du "clampage", qui permet de connaître le point du mur le plus proche 
 et ainsi de savoir si notre cercle est en collision avec notre rectangle.
 Alors deux cas s'ouvre à nous.
@@ -448,13 +448,13 @@ Alors deux cas s'ouvre à nous.
 
 
 Dans ce cas là, le cercle n'est pas en collision avec le rectangle, alors 
-tout va bien et aucun traitement spécifique n'est à prévoir (fig.2). 
+tout va bien et aucun traitement spécifique n'est à prévoir (cf: \nameref{fig:pas_de_collision}). 
 
 \subparagraph{Second cas:} 
 
 
 
-Dans ce cas ci, le cercle est en collision avec le rectangle (fig.3) et nous 
+Dans ce cas ci, le cercle est en collision avec le rectangle (cf: \Nameref{fig:collision}) et nous 
 devons alors procéder à un repositionnement du personnage de manière à ce 
 qu'il ne soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel 
 de glissement contre le rectangle.
@@ -463,7 +463,7 @@ de glissement contre le rectangle.
 
 
 \paragraph{Aspect technique: }
-Maintenant, parlons de l'aspect technique.
+% Maintenant, parlons de l'aspect technique.
 Nous définissons notre personnage, noté P, par des coordonnées représentant 
 sa position ainsi qu'un nombre représentant sa largeur, noté L Ainsi :
 
@@ -513,7 +513,7 @@ basse ordonnée du bloc que nous noterons (a ; b). Nous avons alors :
 
 Pour avoir le point le plus proche de B, noté C, nous devons alors "clamper" 
 l'abscisse, resp. l'ordonnée, du personnage sur l'intervalle d'abscisse, 
-resp. d'ordonnée, de B (fig.4). Alors :
+resp. d'ordonnée, de B (cf: \nameref{fig:clampage}). Alors :
 
 \begin{itemize}
 	\item[] $C = (clamp(P.x, B.a, B.a +1) ; clamp(P.y, B.b, B.b +1))$
@@ -586,7 +586,7 @@ respectives. Les deux points étant une symétrie l'un de l'autre par rapport à
 il nous faut connaître deux informations seulement : l'abscisse du sommet sur le plan et la distance entre le joueur et le sommet
 afin d'en déduire la taille du sommet (cf: \nameref{fig:shemaLanceRayon01}) : \\
 
-On pause $(x_j, y_j)$ les coordonnées du joueur,  $(x_s, y_s)$ celles du sommet, $W$ la largeur de la
+On pose $(x_j, y_j)$ les coordonnées du joueur,  $(x_s, y_s)$ celles du sommet, $W$ la largeur de la
 vue et $H$ sa hauteur. On a alors : \\
 \begin{itemize}
 	\item[] \textbf{Pour l'angle du sommet : } \\
