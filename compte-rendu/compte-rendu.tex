@@ -47,13 +47,26 @@ qui a su nous guider et nous conseiller tout au long de ce projet.
 \section{Introduction}
 
 Portal 0.0 est un jeu vidéo de type puzzle à la première personne.
-Etant une version très simplifiée du jeu \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}\cite{Portal}
-qui sera afficher grâce à un moteur de type Raycaster à la façon du jeu
-\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D}.
-Portal 0.0 s'inscrit dans le cadre du projet semestriel de troisième année de licence
-informatique à l'université de Franche-Comté. Il a pour but de nous faire 
-découvrir le monde du développement de jeux vidéo en nous faisant réaliser un jeu 
-vidéo en C++ avec la bibliothèque \href{https://gamedevframework.github.io/}{Gamedev Framework} (GF\cite{GF})\footnote{Tous au long de ce rapport, l’abréviation GF (pour Gamedev Framework) est utilisée.}.
+Il est une version très simplifiée du jeu \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}\cite{Portal}
+qui utilise un moteur de type Raycaster à la façon du jeu
+\href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D} pour afficher les éléments
+du jeu.
+
+L'objectif de ce projet est de réaliser un jeu vidéo en C++ avec la bibliothèque Gamedev Framework\cite{GF} (GF) afin 
+d'occuper M. Bernard lorsqu'il ne veux pas corriger les copies de ses élèves.
+
+Lors de ce rapport, nous allons détailler les différents aspects conceptuels et
+techniques de ce projet. Nous commencerons par présenter les besoins, les 
+contraintes et les objectifs du projet. Ensuite, nous détaillerons différentes phases de 
+développement du projet, comme les stratégies envisageables pour le rendu 3D. Nous continuerons
+dans les spécifications techniques du projet en détaillant la façon dont les rendus 3D on été
+réalisés. Nous parlerons ensuite rapidement de notre politique de gestion de projet. Enfin,
+nous terminerons par une conclusion sur le travail réalisé et les perspectives d'avenir.
+
+% Portal 0.0 s'inscrit dans le cadre du projet semestriel de troisième année de licence
+% informatique à l'université de Franche-Comté. Il a pour but de nous faire 
+% découvrir le monde du développement de jeux vidéo en nous faisant réaliser un jeu 
+% vidéo en C++ avec la bibliothèque \href{https://gamedevframework.github.io/}{Gamedev Framework} (GF\cite{GF})\footnote{Tous au long de ce rapport, l’abréviation GF (pour Gamedev Framework) est utilisée.}.
 
 % Dans le cadre du projet semestriel de troisième année de licence
 % informatique à l'université de Franche-Comté, nous proposons de coder
@@ -104,7 +117,7 @@ vidéo en C++ avec la bibliothèque \href{https://gamedevframework.github.io/}{G
 		\includegraphics[width=\linewidth]{image/doom_1993.jpg}
 		\hspace*{-0.5cm}
 		\caption{Doom (1993)}
-		\label{fig:doom_1993}
+		\label{fig:doom_1993} 
 	\end{minipage}
 	\begin{minipage}{0.48\textwidth}
 		\includegraphics[width=\linewidth]{image/quake_1996.jpg}
@@ -192,14 +205,7 @@ Mais avec des contraintes :
 	\item L'apprentissage de la programmation d'un système de jeu
 \end{itemize}
 
-\section{Gestion du projet}
-\subsection{L'équipe}
-\subsection{Planification et outils de gestion}
 
-Pour la gestion du projet nous avons utilisé le versionneur \href{https://github.com/}{github}\cite{Github} 
-qui est un outil de gestion de projet en ligne.
-
-\subsection{Répartition des tâches}
 
 \section{Développement}
 \subsection{Des technologies nouvelles ou presque}
@@ -618,6 +624,15 @@ On obtient alors les deux points du segment représentant le sommet sur le plan 
 
 \section{Spécifications}
 
+\section{Gestion du projet}
+\subsection{L'équipe}
+\subsection{Planification et outils de gestion}
+
+Pour la gestion du projet nous avons utilisé le versionneur \href{https://github.com/}{github}\cite{Github} 
+qui est un outil de gestion de projet en ligne.
+
+\subsection{Répartition des tâches}
+
 
 \section{Conclusion technique \& personnelle}
 \subsection{Bilan technique}
@@ -645,4 +660,14 @@ Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelqu
 % \section{Bibliographie}
 \bibliographystyle{plain}
 \bibliography{references}
+
+
+\newpage
+% 4ème de couverture
+\thispagestyle{empty}
+\begin{center}
+\textbf{4ème de couverture}
+\end{center}
+
+
 \end{document}
