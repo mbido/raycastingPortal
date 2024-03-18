@@ -13,7 +13,7 @@
 %   Approche moderne -> Matthieu
 % Construction de mur -> Vital
 % Les collisions -> Elian
-% Les portails -> Matthieu / Elian
+% Les portails -> Elian
 % Les renders -> Matthieu
 % Conclusion -> Elian
 
@@ -181,26 +181,21 @@
     \begin{block}{}
         \begin{itemize}
             \item Conçu pour la rasterisation de lignes
-            \item Employé pour déterminer où les rayons projetés intersectent avec les objets de l'environnement
             \item Repose sur l'itération linéaire
+            \item Employé pour déterminer où les rayons projetés intersectent avec les objets de l'environnement
         \end{itemize}
-        % L'algorithme DDA est historiquement conçu pour la rasterisation de 
-        % lignes, c'est-à-dire la conversion de lignes geometriques en ligne 
-        % visuelle composées de pixels alignés. Dans le contexte du raycasting, 
-        % DDA est employé pour déterminer où les rayons projetés à travers la 
-        % scène intersectent avec les objets de l'environnement, typiquement et 
-        % dans notre cas représenté par une grille de cellules. Le principe 
-        % fondamental de DDA repose sur l'itération linéaire. Plutôt que de 
-        % calculer chaque point le long d'une demie droite en utilisant des formules 
-        % de géométrie directe, ce qui pourrait être coûteux en termes de performances, 
-        % DDA avance par petits incr ́ements. Cela signifie que pour chaque
-        % pas sur l'axe le plus dominant (x ou y), DDA calcule l'emplacement 
-        % correspondant sur l'autre axe en ajoutant un incrément constant. 
-        % Cela se traduit par un parcours régulier et efficace le long de la 
-        % ligne en faisant des sauts à chaque intersection entre la demie 
-        % droite et la grille 2D. Dans le raycasting, DDA est utilisé pour 
-        % trouver rapidement et précisément les intersections entre les rayons 
-        % et les murs
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{}
+        \center{Fonctionnement de DDA.}
     \end{block}    
     \begin{figure}
         \centering
@@ -350,6 +345,32 @@
     \begin{figure}
         \centering
         \includegraphics[width=0.7\textwidth]{images/shemaLanceRayon01.jpeg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Les rendus}
+    \begin{block}{}
+        \begin{itemize}
+            \item Résultat sans textures.
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/rendu-sans-texture.jpeg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Les rendus}
+    \begin{block}{}
+        \begin{itemize}
+            \item Résultat avec textures.
+        \end{itemize}
+    \end{block}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/rendu-avec-texture.jpeg}
     \end{figure}
 \end{frame}
 
