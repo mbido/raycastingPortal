@@ -89,6 +89,38 @@
         % popularisé dans le début des années 90.
     \end{block}
 
+    \invisible{\begin{block}{Système de jeu}
+        \begin{itemize}
+            \item Résolution d'énigmes à l'aide de portails
+            \item Téléportation lorsqu'on passe à travers
+            \item Principe de Portal (2007)
+        \end{itemize}
+        % Le principe du jeu vidéo Portal (2007), où l'on doit résoudre des énigmes
+        % à l'aide de portails, dans lesquels on se téléporte lorsqu'on passe à travers.
+    \end{block}}
+\end{frame}
+
+\begin{frame}
+    \label{sl: identical-numbers}
+    \frametitle{Mise en contexte}
+    \begin{block}{}
+        % Portal 0.0 est un jeu vidéo qui reprends les principes techniques 
+        % de plusieurs jeux vidéos connus.
+        \begin{itemize}
+            \item Portal 0.0 $\rightarrow $ principes techniques de plusieurs jeux vidéos connus
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Technique graphique}
+        \begin{itemize}
+            \item Méthode raycasting
+            \item Rendu 2.5D popularisé dans les années 90
+            \item Principe de Wolfenstein3D (1992)
+        \end{itemize}
+        % L'utilisation de la méthode du raycasting, pour un rendu 2.5D qui a été 
+        % popularisé dans le début des années 90.
+    \end{block}
+
     \begin{block}{Système de jeu}
         \begin{itemize}
             \item Résolution d'énigmes à l'aide de portails
@@ -128,18 +160,18 @@
                 \small Approche historique}
     \begin{block}{Raycasting}
         \begin{itemize}
-            \item Méthode de rendu graphique
-            \item Création d'une perspective 3D dans des environnements 2D
-            \item Réalisation grâce à une projection de rayons à travers la scène
+            \item Méthode de rendu graphique en 2.5D
+            \item Illusion d'une perspective 3D à partir d'un environnement 2D
+            \item Projection de rayons depuis la position du joueur
         \end{itemize}
     \end{block}
-    \begin{block}{}
+    \begin{block}{Optimisation}
         % Le raycasting est une méthode de rendu graphique utilisée pour créer 
         % une perspective 3D dans des environnements 2D. Ce rendu est réalisé
         % en projetant des rayons depuis la position du joueur à travser la scène
         % pour déterminer les intersections avec les murs. Pour l'optimisation,
         % l'algorithme DDA (Digital Differential Analyzer) est utilisé.
-        Pour l'optimisation, l'algorithme DDA (Digital Differential Analyzer) est utilisé.
+        Lancé des rayons avec DDA (Digital Differential Analyzer).
     \end{block}
 \end{frame}
 
@@ -299,7 +331,7 @@
     \begin{block}{}
         \begin{itemize}
             \item Récupération des sommets triés
-            \item Parcours des sommets pour y envoyer un rayon grâce à DDA
+            \item Envoie des rayons dans l'ordre avec DDA
         \end{itemize}
     \end{block}
     \begin{figure}
@@ -310,9 +342,9 @@
 
 \begin{frame}
     \frametitle{Les rendus}
-    \begin{block}{}
+    \begin{block}{Projection des sommets}
         \begin{itemize}
-            \item Déterminer la hauteur du segment et sa position.
+            \item Déterminer la hauteur du segment (sommet en 3D) et sa position.
         \end{itemize}
     \end{block}
     \begin{figure}
