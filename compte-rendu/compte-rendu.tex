@@ -622,6 +622,89 @@ On obtient alors les deux points du segment représentant le sommet sur le plan 
 \end{align*}
 
 \section{Spécifications}
+\subsection{Les portails}
+
+Le personnage dispose d’un portail bleu et un portail orange que l’on active en utilisant le clique droit et gauche. Ils se positionnent chacun sur un mur. Les portails servent à créer un passage d’un point A à un point B pour ainsi gagner de la distance et du temps.
+Pour utiliser les portails, il faut commencer par posé les deux portails. Ensuite, il faut se déplacer en continue contre l’un des deux portails ce qui permet de sortir par l’autre.
+
+D’un point de vue technique, nous utilisons une structure qui contient les coordonnées du portail, la direction du portail (s’il est sur la droite, la gauche, le haut ou le bas d’un mur) représentée par un entier, un pointeur sur le portail associé ainsi que la largeur du portail.
+
+Pour positionner un portail lors d’un clique, on récupère le point d’intersection entre la direction regardée par le personnage et le premier mur rencontré. Ce point sert alors de coordonnées à notre portail. Pour connaître la direction du portail, nous voyons d’abord si le mur utilisé comme support est vertical ou horizontal. 
+Si le mur est vertical (resp. horizontal) alors si l’abscisse (resp. ordonnée) du personnage est inférieur à l’abscisse (resp. ordonnée) du mur, alors le portail est posé sur la gauche (resp. le haut) du mur. Sinon  le portail est posé sur la droite (resp. le bas) du mur.
+
+Pour savoir si le personnage rencontre un portail, on utilise le même système de collision utilisé avec les murs et l’on vérifie les collisions avec les portails avant celles des murs.
+
+Pour effectuer le passage d’un portail à l’autre, on doit calculer les nouvelles coordonnées du personnage (noté C) ainsi que l’angle (noté $\alpha$) indiquant sa direction. Les portails sont notés Pe (portail d’entrée) et Ps (portail de sortie).
+En ce qui concerne le nouvelle angle, on utilise la direction des portails et l’angle actuel du personnage (noté $\beta$). La relation suivante permet de calculer cet angle :
+
+$\alpha = \beta + \pi + (Ps.dir – Pe.dir) * \pi / 2$
+
+Cette relation, trouvée empiriquement, utilise la différence entre les directions des portails pour connaître le nombre de quart de tours nécessaires. On doit ajouter un demi-tour et l’angle actuel du personnage pour garder l’orientation du personnage.
+
+Pour trouver les nouvelles coordonnées, on réutilise les directions des portails. On effectue une superposition imaginaire entre les portails et l’on doit transformer les coordonnées pour avoir une suite logique à travers les portails.
+
+
+Droite (0)
+Bas (1)
+Gauche (2)
+Haut (3)
+Portail de sortie
+Droite (0)
+(Ps.x + (J.x – Pe.x) ;
+Ps.y - (J.y – Pe.y))
+(Ps.x + (J.y – Pe.y) ;
+Ps.y + (J.x – Pe.x))
+(Ps.x - (J.x – Pe.x) ;
+Ps.y + (J.y – Pe.y))
+(Ps.x - (J.y – Pe.y) ;
+Ps.y - (J.x – Pe.x))
+
+Bas (1)
+(Ps.x + (J.y – Pe.y) ;
+Ps.y + (J.x – Pe.x))
+(Ps.x - (J.x – Pe.x) ;
+Ps.y + (J.y – Pe.y))
+(Ps.x - (J.y – Pe.y) ;
+Ps.y - (J.x – Pe.x))
+(Ps.x + (J.x – Pe.x) ;
+Ps.y - (J.y – Pe.y))
+
+Gauche (2)
+(Ps.x - (J.x – Pe.x) ;
+Ps.y + (J.y – Pe.y))
+(Ps.x - (J.y – Pe.y) ;
+Ps.y - (J.x – Pe.x))
+(Ps.x + (J.x – Pe.x) ;
+Ps.y - (J.y – Pe.y))
+(Ps.x + (J.y – Pe.y) ;
+Ps.y + (J.x – Pe.x))
+
+Haut (3)
+(Ps.x - (J.y – Pe.y) ;
+Ps.y - (J.x – Pe.x))
+(Ps.x + (J.x – Pe.x) ;
+Ps.y - (J.y – Pe.y))
+(Ps.x + (J.y – Pe.y) ;
+Ps.y + (J.x – Pe.x))
+(Ps.x - (J.x – Pe.x) ;
+Ps.y + (J.y – Pe.y))
+
+Portail d’entrée
+
+
+
+
+
+
+Notation :	- Pe.x (resp. Pe.y) → abscisse (resp. ordonnée) du portail d’entrée
+	- Ps.x (resp. Ps.y) → abscisse (resp. ordonnée) du portail de sortie
+	- J.x (resp. J.y) → abscisse (resp. ordonnée) du joueur/personnage
+
+On peut alors se rendre compte qu’il y a quatre possibilités de nouvelles coordonnées (noté c) et chacun des cas correspond au résultat du calcul suivant :
+
+$Ps.dir + Pe.dir \equiv c (4)$
+
+Nous avons donc les nouvelles coordonnées ainsi que le nouvel angle du personnage.
 
 \section{Gestion du projet}
 \subsection{L'équipe}
