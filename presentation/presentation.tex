@@ -292,10 +292,18 @@
 \subsection{Les collisions}
 
 \begin{frame}
-    \frametitle{Les collisions}
+    \frametitle{Les collisions \\
+                \small Système de collision cercle/rectangle}
     \begin{block}{}
         \begin{itemize}
-            \item Utilisation de la fonction clamp
+            \item Recherche du point le plus proche
+            \begin{itemize}
+                \item méthode de clampage
+            \end{itemize}
+            \item Validation de proximité
+            \begin{itemize}
+                \item replacement éventuel du personnage
+            \end{itemize}
         \end{itemize}
     \end{block}
 \end{frame}
@@ -306,9 +314,6 @@
 \begin{frame}
     \frametitle{Les portails \\
                 \small La téléportation}
-    \begin{block}{}
-        
-    \end{block}
     \begin{minipage}{0.48\textwidth}
 		\includegraphics[width=\linewidth]{images/portal1.png}
 	\end{minipage}
@@ -319,27 +324,30 @@
 
 \begin{frame}
     \frametitle{Les portails \\
-                \small ??}
+                \small Calculs de position et de direction}
     \begin{block}{}
+        \begin{itemize}
+            \item Calcul de la nouvelle direction
+            $$\alpha = \beta + \pi + (Ps.dir - Pe.dir) \times \pi / 2$$
+        \end{itemize}
+    \end{block}
+    \begin{block}{}
+        \begin{itemize}
+            \item Nouvelles positions possible
+            $$(Ps_x + (J_x - Pe_x) ; Ps_y - (J_y - Pe_y))$$
+            $$(Ps_x + (J_y - Pe_y) ; Ps_y + (J_x - Pe_x))$$
+            $$(Ps_x - (J_x - Pe_x) ; Ps_y + (J_y - Pe_y))$$
+            $$(Ps_x - (J_y - Pe_y) ; Ps_y - (J_x - Pe_x))$$
+        \end{itemize}
+        \begin{itemize}
+            \item Déterminisation du cas 
+            $$Ps.dir + Pe.dir \equiv cas_n (4)$$
+        \end{itemize}
         
     \end{block}
 \end{frame}
 
 \subsection{Les rendus}
-
-\begin{frame}
-    \frametitle{Les rendus}
-    \begin{block}{}
-        \begin{itemize}
-            \item Récupération des sommets triés
-            \item Envoie des rayons dans l'ordre avec DDA
-        \end{itemize}
-    \end{block}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.7\textwidth]{images/envoie-rayon-ordre.jpeg}
-    \end{figure}
-\end{frame}
 
 \begin{frame}
     \frametitle{Les rendus}
