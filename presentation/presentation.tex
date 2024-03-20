@@ -136,20 +136,30 @@
 
 \begin{frame}
     \frametitle{Technologies utilisées}
-    \begin{columns}
-        \column{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/cpp.png} 
+    % \begin{columns}
+    %     \column{0.33\textwidth}
+    %     \centering
+    %     \includegraphics[width=0.8\textwidth]{images/cpp.png} 
     
-        \column{0.4\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/GF.png}
-        \captionof{figure}{Gamedev Framework}
+    %     \column{0.33\textwidth}
+    %     \centering
+    %     \includegraphics[width=\textwidth]{images/GF.png}
+    %     \captionof{figure}{Gamedev Framework}
 
-        \column{0.4\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/github.png}
-    \end{columns}
+    %     \column{0.43\textwidth}
+    %     \centering
+    %     \includegraphics[width=\textwidth]{images/github.png}
+    % \end{columns}
+    \hspace{5mm}
+    \raisebox{-8mm}{
+        \includegraphics[width=0.25\textwidth]{images/cpp.png}
+    }
+    \hspace{-1mm}
+    \raisebox{-8mm}{
+        \includegraphics[width=0.33\textwidth]{images/GF.png}
+    }
+    \hspace{-15mm}
+    \includegraphics[width=0.40\textwidth]{images/github.png}
 \end{frame}
 
 \section{Détails du développement}
@@ -169,7 +179,7 @@
         \includegraphics[width=0.5\textwidth]{images/rendu-historique.jpg}
     \end{figure}
     \vspace*{-5mm}
-    \begin{block}{Optimisation}
+    \begin{block}{Optimisation} 
         Lancé des rayons avec DDA (Digital Differential Analyzer).
     \end{block}
 \end{frame}
@@ -343,7 +353,7 @@
             $$Ps.dir + Pe.dir \equiv cas_n (4)$$
         \end{itemize}
         
-    \end{block}
+    \end{block} 
 \end{frame}
 
 \subsection{Les rendus}
@@ -352,13 +362,13 @@
     \frametitle{Les rendus}
     \begin{block}{}
         \begin{itemize}
-            \item Récupération des sommets triés
+            \item Récupération des sommets triés 
             \item Envoie des rayons dans l'ordre avec DDA
         \end{itemize}
     \end{block}
     \begin{figure}
         \centering
-        \includegraphics[width=0.7\textwidth]{images/envoie-rayon-ordre.jpeg}
+        \includegraphics[width=0.7\textwidth]{images/envoie-rayon-ordre.jpg}
     \end{figure}
 \end{frame}
 
