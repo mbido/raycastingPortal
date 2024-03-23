@@ -2,7 +2,8 @@
 \usepackage{caption}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-
+\usepackage{tikz}
+\usepackage{fancyvrb}
 
 % Pour quel partie chaque personne parle :
 % Mise en contexte -> Vital
@@ -37,6 +38,14 @@
                                                 Licence 3 Informatique}
 \date{Mars 2024}
 
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \tableofcontents[currentsection,currentsubsection,subsubsectionstyle=show/show/hide/hide]
+  \end{frame}
+}
+
 \setcounter{framenumber}{0}
 % \setbeamertemplate{page number in head/foot}{}
 
@@ -67,89 +76,55 @@
     \tableofcontents
 \end{frame}
 
-\section{Mise en contexte}
+\section{Introduction}
 
 \begin{frame}
-    \frametitle{Mise en contexte}
+    \frametitle{Introduction \\
+                \small Système de jeu}
     \begin{block}{}
-        % Portal 0.0 est un jeu vidéo qui reprends les principes techniques 
-        % de plusieurs jeux vidéos connus.
         \begin{itemize}
             \item Portal 0.0 $\rightarrow $ principes techniques de plusieurs jeux vidéos connus
         \end{itemize}
     \end{block}
-
-    \begin{block}{Technique graphique}
-        \begin{itemize}
-            \item Méthode raycasting
-            \item Rendu 2.5D popularisé dans les années 90
-            \item Principe de Wolfenstein3D (1992)
-        \end{itemize}
-        % L'utilisation de la méthode du raycasting, pour un rendu 2.5D qui a été 
-        % popularisé dans le début des années 90.
-    \end{block}
-
-    \invisible{\begin{block}{Système de jeu}
+    \begin{block}{}
         \begin{itemize}
             \item Résolution d'énigmes à l'aide de portails
             \item Téléportation lorsqu'on passe à travers
             \item Principe de Portal (2007)
         \end{itemize}
-        % Le principe du jeu vidéo Portal (2007), où l'on doit résoudre des énigmes
-        % à l'aide de portails, dans lesquels on se téléporte lorsqu'on passe à travers.
-    \end{block}}
+    \end{block}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/portal.jpg}
+        \caption{Portal (2007)}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
-    \label{sl: identical-numbers}
-    \frametitle{Mise en contexte}
+    \frametitle{Introduction \\
+                \small Technique graphique}
     \begin{block}{}
-        % Portal 0.0 est un jeu vidéo qui reprends les principes techniques 
-        % de plusieurs jeux vidéos connus.
         \begin{itemize}
             \item Portal 0.0 $\rightarrow $ principes techniques de plusieurs jeux vidéos connus
         \end{itemize}
     \end{block}
-
-    \begin{block}{Technique graphique}
+    \begin{block}{}
         \begin{itemize}
             \item Méthode raycasting
             \item Rendu 2.5D popularisé dans les années 90
             \item Principe de Wolfenstein3D (1992)
         \end{itemize}
-        % L'utilisation de la méthode du raycasting, pour un rendu 2.5D qui a été 
-        % popularisé dans le début des années 90.
     \end{block}
-
-    \begin{block}{Système de jeu}
-        \begin{itemize}
-            \item Résolution d'énigmes à l'aide de portails
-            \item Téléportation lorsqu'on passe à travers
-            \item Principe de Portal (2007)
-        \end{itemize}
-        % Le principe du jeu vidéo Portal (2007), où l'on doit résoudre des énigmes
-        % à l'aide de portails, dans lesquels on se téléporte lorsqu'on passe à travers.
-    \end{block}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/doom_1993.jpg}
+        \caption{Doom (1993)}
+    \end{figure}
 \end{frame}
 
-\section{Technologies utilisées}
-
 \begin{frame}
-    \frametitle{Technologies utilisées}
-    % \begin{columns}
-    %     \column{0.33\textwidth}
-    %     \centering
-    %     \includegraphics[width=0.8\textwidth]{images/cpp.png} 
-    
-    %     \column{0.33\textwidth}
-    %     \centering
-    %     \includegraphics[width=\textwidth]{images/GF.png}
-    %     \captionof{figure}{Gamedev Framework}
-
-    %     \column{0.43\textwidth}
-    %     \centering
-    %     \includegraphics[width=\textwidth]{images/github.png}
-    % \end{columns}
+    \frametitle{Introduction \\
+                \small Technologies utilisées}
     \hspace{5mm}
     \raisebox{-8mm}{
         \includegraphics[width=0.25\textwidth]{images/cpp.png}
@@ -270,6 +245,82 @@
 
 \begin{frame}
     \frametitle{Construction de mur \\
+                \small Commencement}
+    \begin{block}{}
+        \begin{itemize}
+            \item Création de la carte à partir d'un PNG
+            \item Récupération des coordonnées des cellules à l'aide d'un parcours en profondeur
+        \end{itemize}
+    \end{block}
+    \hspace{5mm}
+    \begin{minipage}{\textwidth}
+        \begin{minipage}{0.25\textwidth}
+            \begin{figure}
+                \begin{tikzpicture}[scale=0.3]
+            
+                    \fill[line width=1pt] (0, 0) -- (0, 10) -- (10, 10) -- (10, 0) -- cycle;
+                    \fill[white] (1, 1) -- (6, 1) -- (6, 3) -- (3, 3) -- (3, 4) -- (8, 4) -- (8, 3) -- (7, 3) -- (7, 1) -- (9, 1) -- (9, 7) -- (8, 7) -- (8, 8) -- (9, 8) -- (9, 9) -- (7, 9) -- (7, 6) -- (6, 6) -- (6, 7) -- (4, 7) -- (4, 8) -- (6, 8) -- (6, 9) -- (3, 9) -- (3, 7) -- (2, 7) -- (2, 9) -- (1, 9) -- (1, 6) -- (5, 6) -- (5, 5) -- (1, 5) -- cycle;
+                
+                
+                    \draw[color=lightgray] (2, 5) -- (2, 1);
+                    \draw[color=lightgray] (2, 9) -- (2, 6);
+                
+                    \draw[color=lightgray] (3, 5) -- (3, 1);
+                    \draw[color=lightgray] (3, 9) -- (3, 6);
+                
+                    \draw[color=lightgray] (4, 3) -- (4, 1);
+                    \draw[color=lightgray] (4, 5) -- (4, 4);
+                    \draw[color=lightgray] (4, 9) -- (4, 6);
+                
+                    \draw[color=lightgray] (5, 3) -- (5, 1);
+                    \draw[color=lightgray] (5, 7) -- (5, 4);
+                    \draw[color=lightgray] (5, 9) -- (5, 8);
+                
+                    \draw[color=lightgray] (6, 7) -- (6, 4);
+                    \draw[color=lightgray] (6, 9) -- (6, 8);
+                
+                    \draw[color=lightgray] (7, 7) -- (7, 4);
+                    \draw[color=lightgray] (7, 9) -- (7, 8);
+                    \draw[color=lightgray] (8, 9) -- (8, 1);
+                
+                
+                    \draw[color=lightgray] (1, 9) -- (2, 9);
+                    \draw[color=lightgray] (3, 9) -- (6, 9);
+                    \draw[color=lightgray] (7, 9) -- (9, 9);
+                
+                    \draw[color=lightgray] (1, 7) -- (6, 7);
+                    \draw[color=lightgray] (7, 7) -- (9, 7);
+                
+                    \draw[color=lightgray] (1, 6) -- (9, 6);
+                
+                    \draw[color=lightgray] (1, 5) -- (9, 5);
+                    
+                    \draw[color=lightgray] (1, 4) -- (9, 4);
+                
+                    \draw[color=lightgray] (1, 3) -- (6, 3); 
+                    \draw[color=lightgray] (7, 3) -- (9, 3);
+                    
+                    \draw[color=lightgray] (1, 2) -- (6, 2); 
+                    \draw[color=lightgray] (7, 2) -- (9, 2);
+                    
+                \end{tikzpicture}
+            \end{figure}
+        \end{minipage}
+        \hspace{5mm}
+        \begin{minipage}{0.7\textwidth}
+            \begin{block}{}
+                \begin{itemize}
+                    \item Les coordonnées des cellules corresondent au coin supérieur gauche de chaque cellule
+                    \item Une cellule correspond à un bloc unitaire de la carte
+                \end{itemize}                
+            \end{block}
+        \end{minipage}
+        
+    \end{minipage}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Construction de mur \\
                 \small Sommets utiles}
     \begin{block}{}
         \begin{itemize}
@@ -283,18 +334,26 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Construction de mur \\
                 \small Trie des sommets}
-    \begin{block}{}
-        \begin{itemize}
-            \item Boucle sur les sommets utiles
-            \item Méthode : Droit > Bas > Gauche > Haut
-        \end{itemize}
-    \end{block}
+    \hspace*{-2.5cm}
+    \begin{minipage}[t][3.5cm][t]{-1\textwidth} % La hauteur est contrôlée ici, ajustez 3cm selon vos besoins
+       
+        \begin{verbatim}
+            d = {'d', 'b', 'g', 'h'}
+            dir = d[i%4], dir2 = d[(i+1)%4]
+            while(v.contient(sommetA(dir)) ou v.contient(sommetA(dir2))):
+                if canGo(dir) and !canGo(dir2):
+                    v <- sommetA(dir)
+                else:
+                    v <- sommetA(dir2)
+                    echange(dir, dir2)
+        \end{verbatim}
+    \end{minipage}
     \begin{figure}
         \centering
-        \includegraphics[width=0.7\textwidth]{images/tri_sommet.jpg}
+        \includegraphics[width=0.5\textwidth]{images/tri_sommet.jpg}
     \end{figure}
 \end{frame}
 
@@ -419,14 +478,6 @@
         \centering
         Merci de votre attention.
     \end{block}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Conclusion \\
-                \small Remerciements}      
-    \begin{block}{}
-        
-    \end{block}         
 \end{frame}
 
 \section*{Questions}
