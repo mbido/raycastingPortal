@@ -308,19 +308,119 @@
     \end{block}    
     \begin{figure}
         \centering
-        \includegraphics[width=0.7\textwidth]{images/DDA.jpg}
+        \includegraphics[width=0.7\textwidth]{images/DDA 0.jpg}
     \end{figure}
 \end{frame}
 
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
                 \small DDA}           
-    \begin{block}{}
-        \center{Fonctionnement de DDA.}
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
     \end{block}    
     \begin{figure}
         \centering
-        \includegraphics[width=0.7\textwidth]{images/DDA.jpg}
+        \includegraphics[width=0.7\textwidth]{images/DDA 0.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA 1.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA 2.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA 3.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA 4.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA 5.jpg}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small DDA}           
+    \begin{block}{Fonctionnement de DDA.}
+        \begin{itemize}
+            \item Déplacement vertical et horizontal d'une unité.
+            \item Comparaison entre les distances parcourus sur le segment.
+            \item Choix de la distance la plus petite.
+        \end{itemize}
+    \end{block}    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/DDA 6.jpg}
     \end{figure}
 \end{frame}
 
@@ -385,7 +485,7 @@
 
 \begin{frame}
     \frametitle{Les rendus}
-    \begin{block}{}
+    \begin{block}{Deux étapes}
         \begin{itemize}
             \item Récupération des sommets triés 
             \item Envoie des rayons dans l'ordre avec DDA
@@ -399,16 +499,31 @@
 
 \begin{frame}
     \frametitle{Les rendus}
-    \begin{block}{Projection des sommets}
+    \begin{block}{Trois cas possibles}
         \begin{itemize}
-            \item Déterminer la hauteur du segment (sommet en 3D) et sa position.
+            \item Le sommet est atteint et on arrête le rayon. 
+            \item Le sommet n'est pas atteint donc on arrête le rayon.
+            \item Le sommet est atteint mais on continue le rayon.
         \end{itemize}
     \end{block}
     \begin{figure}
         \centering
-        \includegraphics[width=0.7\textwidth]{images/shemaLanceRayon01.jpeg}
+        \includegraphics[width=0.7\textwidth]{images/envoie-rayon-ordre.jpg}
     \end{figure}
 \end{frame}
+
+% \begin{frame}
+%     \frametitle{Les rendus}
+%     \begin{block}{Projection des sommets}
+%         \begin{itemize}
+%             \item Déterminer la hauteur du segment (sommet en 3D) et sa position.
+%         \end{itemize}
+%     \end{block}
+%     \begin{figure}
+%         \centering
+%         \includegraphics[width=0.7\textwidth]{images/shemaLanceRayon01.jpeg}
+%     \end{figure}
+% \end{frame}
 
 \begin{frame}
     \frametitle{Les rendus}
