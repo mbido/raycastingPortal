@@ -260,6 +260,10 @@
 \begin{frame}
     \frametitle{Les collisions \\
                 \small Système de collision cercle/rectangle}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.4\textwidth]{images/fig4.jpg}
+    \end{figure}
     \begin{block}{}
         \begin{itemize}
             \item Recherche du point le plus proche
@@ -268,7 +272,7 @@
             \end{itemize}
             \item Validation de proximité
             \begin{itemize}
-                \item replacement éventuel du personnage
+                \item replacement du personnage en cas de collision
             \end{itemize}
         \end{itemize}
     \end{block}
@@ -556,40 +560,27 @@
 \begin{frame}
     \frametitle{Les portails \\
                 \small La téléportation}
-    \begin{minipage}{0.48\textwidth}
-		\includegraphics[width=\linewidth]{images/portal1.png}
-	\end{minipage}
-	\begin{minipage}{0.48\textwidth}
-		\includegraphics[width=\linewidth]{images/portal2.png}
-	\end{minipage}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Les portails \\
-                \small Calculs de position et de direction}
+    \begin{figure}
+        \includegraphics[width=0.5\textwidth]{images/portal2.png}
+		\includegraphics[width=0.45\textwidth]{images/portal3.png}
+	\end{figure}
     \begin{block}{}
         \begin{itemize}
-            \item Calcul de la nouvelle direction
-            $$\alpha = \beta + \pi + (Ps.dir - Pe.dir) \times \pi / 2$$
+            \item Utilisation des cliques gauche et droit
+            \item Gain de distance
         \end{itemize}
     \end{block}
     \begin{block}{}
         \begin{itemize}
-            \item Nouvelles positions possible
-            $$(Ps_x + (J_x - Pe_x) ; Ps_y - (J_y - Pe_y))$$
-            $$(Ps_x + (J_y - Pe_y) ; Ps_y + (J_x - Pe_x))$$
-            $$(Ps_x - (J_x - Pe_x) ; Ps_y + (J_y - Pe_y))$$
-            $$(Ps_x - (J_y - Pe_y) ; Ps_y - (J_x - Pe_x))$$
+            \item Réutilisation du système de collision
+            \item Rencontre avec un portail
+            \begin{itemize}
+                \item Calcul du nouvelle angle
+                \item Calcul de la nouvelle position
+            \end{itemize}
         \end{itemize}
-        \begin{itemize}
-            \item Déterminisation du cas 
-            $$Ps.dir + Pe.dir \equiv cas_n (4)$$
-        \end{itemize}
-        
-    \end{block} 
+    \end{block}
 \end{frame}
-
-
 
 \section{Conclusion}
 
