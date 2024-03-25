@@ -4,6 +4,14 @@
 \usepackage[T1]{fontenc}
 \usepackage{tikz}
 \usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{color}
+
+\lstset{
+  basicstyle=\ttfamily, % Utilise la police de machine à écrire
+  backgroundcolor=\color[gray]{0.9} % Définit la couleur de fond en gris clair
+}
 
 % Pour quel partie chaque personne parle :
 % Mise en contexte -> Vital
@@ -208,7 +216,7 @@
         \begin{minipage}{0.7\textwidth}
             \begin{block}{}
                 \begin{itemize}
-                    \item Les coordonnées des cellules corresondent au coin supérieur gauche de chaque cellule
+                    \item Les coordonnées des cellules correspondent au coin supérieur gauche de chaque cellule
                     \item Une cellule correspond à un bloc unitaire de la carte
                 \end{itemize}                
             \end{block}
@@ -235,19 +243,19 @@
 \begin{frame}[fragile]
     \frametitle{Construction de mur \\
                 \small Trie des sommets}
-    \hspace*{-2.5cm}
-    \begin{minipage}[t][3.5cm][t]{-1\textwidth} % La hauteur est contrôlée ici, ajustez 3cm selon vos besoins
-       
-        \begin{verbatim}
-            d = {'d', 'b', 'g', 'h'}
-            dir = d[i%4], dir2 = d[(i+1)%4]
-            while(v.contient(sommetA(dir)) ou v.contient(sommetA(dir2))):
-                if canGo(dir) and !canGo(dir2):
-                    v <- sommetA(dir)
-                else:
-                    v <- sommetA(dir2)
-                    echange(dir, dir2)
-        \end{verbatim}
+    \vspace*{-0.5cm}
+    \begin{minipage}[t][4cm][t]{\textwidth}
+        \small\begin{lstlisting}
+        d = {'d', 'b', 'g', 'h'}
+        dir = d[i%4], dir2 = d[(i+1)%4]
+        while(v.contient(sommetA(dir)) 
+                ou v.contient(sommetA(dir2))):
+            if canGo(dir) and !canGo(dir2):
+                v <- sommetA(dir)
+            else:
+                v <- sommetA(dir2)
+                echange(dir, dir2)
+        \end{lstlisting}
     \end{minipage}
     \begin{figure}
         \centering
@@ -339,7 +347,7 @@
     \begin{block}{Raycasting}
         \begin{itemize}
             \item Projection de rayons depuis la position du joueur.
-            \item Pour chaque colonnes de pixels de la fenêtre.
+            \item Répétition pour chaque colonnes de pixels de la fenêtre.
         \end{itemize}
     \end{block}
 
