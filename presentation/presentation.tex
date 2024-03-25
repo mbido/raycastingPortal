@@ -282,27 +282,7 @@
 
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
-                \small Approche historique}
-    \begin{block}{Raycasting}
-        \begin{itemize}
-            \item Projection de rayons depuis la position du joueur.
-            \item Pour chaque colonnes de pixels de la fenêtre.
-        \end{itemize}
-    \end{block}
-
-    \begin{figure}
-        \center
-        \includegraphics[width=0.25\textwidth]{images/projection2D.jpeg}
-        \raisebox{2cm}{
-            \hspace{2mm}$\Longrightarrow$\hspace{2mm}
-        }
-        \includegraphics[width=0.6\textwidth]{images/rendu-historique.jpg}
-    \end{figure}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Différentes stratégie pour un rendu 3D \\
-                \small DDA}           
+                \small DDA : l'algorithme commun}           
     \begin{block}{}
         \begin{itemize}
             \item Conçu pour la rasterisation de lignes
@@ -319,7 +299,7 @@
 
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
-                \small DDA}           
+                \small DDA : l'algorithme commun}           
     \begin{block}{Fonctionnement de DDA.}
         \begin{itemize}
             \item Déplacement vertical et horizontal d'une unité.
@@ -350,6 +330,26 @@
         \only<7>{
             \includegraphics[width=0.7\textwidth]{images/DDA 6.jpg}
         }
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Différentes stratégie pour un rendu 3D \\
+                \small Approche historique}
+    \begin{block}{Raycasting}
+        \begin{itemize}
+            \item Projection de rayons depuis la position du joueur.
+            \item Pour chaque colonnes de pixels de la fenêtre.
+        \end{itemize}
+    \end{block}
+
+    \begin{figure}
+        \center
+        \includegraphics[width=0.25\textwidth]{images/projection2D.jpeg}
+        \raisebox{2cm}{
+            \hspace{2mm}$\Longrightarrow$\hspace{2mm}
+        }
+        \includegraphics[width=0.6\textwidth]{images/rendu-historique.jpg}
     \end{figure}
 \end{frame}
 
@@ -384,10 +384,10 @@
 
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
-                \small Approche moderne (Line Of Sight)}    
+                \small Approche moderne}    
                 
     
-    \begin{block}{}
+    \begin{block}{Line Of Sight}
         \begin{itemize} 
             \item Envoyer un rayon pour chaque sommet de chaque mur
         \end{itemize}
@@ -402,8 +402,12 @@
 
 
     \begin{figure}
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/comparaison-deux-methodes.jpeg}
+        \center
+        \includegraphics[width=0.25\textwidth]{images/projection-2D-V2.jpeg}
+        \raisebox{2cm}{
+            \hspace{2mm}$\Longrightarrow$\hspace{2mm}
+        }
+        \includegraphics[width=0.6\textwidth]{images/rendu-points.jpeg}
     \end{figure}
 \end{frame}
 
@@ -414,10 +418,11 @@
 
 \begin{frame}
     \frametitle{Les rendus}
-    \begin{block}{Deux étapes}
+    \begin{block}{Trois étapes}
         \begin{itemize}
             \item Récupération des sommets triés 
             \item Envoie des rayons dans l'ordre avec DDA
+            \item Déterminer la position et la taille des segments sur la fenêtre de jeu
         \end{itemize}
     \end{block}
     \begin{figure}
