@@ -8,6 +8,7 @@
 \usepackage{hyperref}
 
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{cleveref}
 
 \usepackage{hyperref}
@@ -36,7 +37,7 @@
 \section*{Remerciements}
 
 Nous tenons à remercier notre enseignant de projet, M. \textsc{Bernard} 
-qui a su nous guider et nous conseiller tout au long de ce projet.
+qui a volontier accepter notre idée et a su nous conseiller tout au long de ce projet.
 
 \newpage
 
@@ -59,7 +60,7 @@ Lors de ce rapport, nous allons détailler les différents aspects conceptuels e
 techniques de ce projet. Nous commencerons par présenter les besoins, les 
 contraintes et les objectifs du projet. Ensuite, nous détaillerons différentes phases de 
 développement du projet, comme les stratégies envisageables pour le rendu 3D. Nous continuerons
-dans les spécifications techniques du projet en détaillant la façon dont les rendus 3D on été
+dans les spécifications techniques du projet en détaillant la façon dont les rendus 3D ont été
 réalisés. Nous parlerons ensuite rapidement de notre politique de gestion de projet. Enfin,
 nous terminerons par une conclusion sur le travail réalisé et les perspectives d'avenir.
 
@@ -182,7 +183,7 @@ l'espace pour atteindre la sortie des différents niveaux proposés.
 
 L'une des motivations principales de ce projet est de réaliser un jeu vidéo
 avec graphique comme à l'époque de \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D}
-mais avec des concepts de jeux plus récentes et qui plus est pourrai être
+mais avec des concepts de jeux plus récentes et qui plus est pourrait être
 un préquel de \href{https://fr.wikipedia.org/wiki/Portal_(jeu_vid%C3%A9o)}{Portal}\cite{Portal}.
 \subsection{Objectif et contraintes}
 
@@ -209,28 +210,18 @@ Mais avec des contraintes :
 
 \section{Développement}
 \subsection{Des technologies nouvelles ou presque}
-Programmer en C++ a pu s'avérer assez techniques car cela était un tout nouveau langage de programmation à apprendre pour nous car il n'avait jamais été abordé auparavant lors de notre parcours universitaire.
-Une des plus grandes difficultés de ce projet était de développé avec la bibliothèque GF. En effet, quand bien même c'est un bibliothèque possédant un bon nombre de fonctions pouvant permettre le développement graphique 2D. Elle reste néanmoins parfois limité pour les besoins techniques du projet, mais grâce à cela, cela permet de donner des idées de méthodes à rajouter dans GF voire dans GF2.\cite{GF2}
+Programmer en C++ a pu s'avérer assez technique car cela était un tout nouveau langage de programmation à apprendre pour nous car il n'avait jamais été abordé auparavant lors de notre parcours universitaire.
+Une des plus grandes difficultés de ce projet était de développer avec la bibliothèque GF. En effet, quand bien même c'est un bibliothèque possédant un bon nombre de fonctions pouvant permettre le développement graphique 2D, elle reste néanmoins parfois limitée pour les besoins techniques du projet. Mais cela permet de donner des idées de méthodes à ajouter dans GF voire dans GF2.\cite{GF2}
 
-\subsection{Différentes stratégie pour le rendu 3D}
-Pour implémenter notre jeux, l'un des points les plus importants était de pouvoir afficher des murs en 3D. Pour cela, nous partions d'une grille de cellules 
+\subsection{Différentes stratégies pour le rendu 3D}
+Pour implémenter notre jeu, l'un des points les plus importants était de pouvoir afficher des murs en 3D. Pour cela, nous partions d'une grille de cellules 
 représentant les emplacements des murs donc d'un environnement 2D pour aller vers un rendu 3D.
-\subsubsection{Raycasting, l'approche historique}
-La première approche envisagée était celle du raycasting historique.
 
-Historiquement, le raycasting est une méthode de rendu graphique utilisée pour créer une perspective 3D à partir d'un environnement 2D. Cet effet est réalisé en projetant des 
-rayons depuis la position du joueur à travers la scène pour déterminer les intersections avec les murs. Pour optimiser ce
-processus, l'algorithme Digital Differential Analyzer (DDA) a été utilisé.
+\subsubsection{L'algorithme Digital Differential Analyzer (DDA)}
 
-Le raycasting génère une illusion de profondeur en projetant des rayons depuis le point de vue du joueur jusqu'à ce qu'ils rencontrent un 
-objet dans l'espace de jeu. Le processus est répété pour chaque colonne de l'écran, permettant ainsi de dessiner une image 3D à partir d'une
-carte 2D. Les distances calculées entre le joueur et les points d'intersection sont utilisées pour déterminer la hauteur des objets rendus, 
-créant ainsi une perspective en fausse 3D.
-
-\paragraph{Expliquons plus en détail cet algorithme DDA :}
-L'algorithme DDA est historiquement conçu pour la rasterisation de lignes, c'est-à-dire la conversion de lignes géométriques en ligne visuelle composées de pixels 
+L'algorithme DDA est historiquement conçu pour la rasterisation de lignes, c'est-à-dire la conversion de lignes géométriques en lignes visuelles composées de pixels 
 alignés. Dans le contexte du raycasting, DDA est employé pour déterminer où les rayons projetés à travers la scène intersectent avec les objets de l'environnement, 
-typiquement et dans notre cas représenté par une grille de cellules.
+dans notre cas représenté par une grille de cellules.
 
 Plutôt que de calculer chaque point le long d'une demie droite en utilisant des formules de géométrie 
 directe, ce qui pourrait être coûteux en termes de performances, DDA avance par petits incréments. Cela signifie que pour chaque pas sur l'axe le plus 
@@ -238,6 +229,18 @@ dominant (x ou y), DDA calcule l'emplacement correspondant sur l'autre axe en aj
 efficace le long de la ligne en faisant des sauts à chaque intersection entre la demie droite et la grille 2D.
 
 Dans le raycasting, DDA est utilisé pour trouver rapidement et précisément les intersections entre les rayons et les murs. 
+
+\subsubsection{Raycasting, l'approche historique}
+La première approche envisagée était celle du raycasting historique.
+
+Historiquement, le raycasting est une méthode de rendu graphique utilisée pour créer une perspective 3D à partir d'un environnement 2D. Cet effet est réalisé en projetant des 
+rayons depuis la position du joueur à travers la scène pour déterminer les intersections avec les murs. Pour optimiser ce
+processus, l'algorithme (DDA) a été utilisé.
+
+Le raycasting génère une illusion de profondeur en projetant des rayons depuis le point de vue du joueur jusqu'à ce qu'ils rencontrent un 
+objet dans l'espace de jeu. Le processus est répété pour chaque colonne de l'écran, permettant ainsi de dessiner une image 3D à partir d'une
+carte 2D. Les distances calculées entre le joueur et les points d'intersection sont utilisées pour déterminer la hauteur des objets rendus, 
+créant ainsi une perspective en fausse 3D.
 
 \paragraph{Les avantages de DDA dans ce contexte :}
 \begin{itemize}
@@ -264,22 +267,22 @@ nous a fait choisir une autre approche, plus adaptée à un projet d'étudiants 
 
 Cette seconde approche s'approche des algorithme \textit{Line Of Sight} et consiste à calculer la distance entre le 
 joueur et chaque sommet de chaque mur.
-Pour ce faire on à pu récupérer l'algorithme DDA précédemment utilisé pour le rendu des murs mais cette fois-ci 
-en visant chaque sommets au lieu de viser chaque colonne de pixel. Cela permet théoriquement de réduire considérablement 
+Pour ce faire, on a pu récupérer l'algorithme DDA précédemment utilisé pour le rendu des murs mais cette fois-ci 
+en visant chaque sommet au lieu de viser chaque colonne de pixel. Cela permet théoriquement de réduire considérablement 
 le nombre de calculs à effectuer.
 \paragraph{Cependant, des problèmes ont été rencontrés, les voici avec leur solution :}
 \begin{itemize}
-	\item \textbf{Viser un sommet avec DDA : } Si DDA est efficace et précis cela peut être la cause de certain problèmes. 
-	En effet, si l'on vise un sommet de mur avec un rayon, la moindre approximation dans le calcule de l'angle avec lequel on 
-	lance le rayon ferais rater le sommet en moyenne une fois sur deux.
+	\item \textbf{Viser un sommet avec DDA : } Si DDA est efficace et précis cela peut être la cause de certains problèmes. 
+	En effet, si l'on vise un sommet de mur avec un rayon, la moindre approximation dans le calcul de l'angle avec lequel on 
+	lance le rayon ferait rater le sommet en moyenne une fois sur deux.
 
-	\textbf{Solution : }Pour remédier à cela, nous avons ajuster DDA pour qu'à chaque fois qu'un pas
+	\textbf{Solution : }Pour remédier à cela, nous avons ajusté DDA pour qu'à chaque fois qu'un pas
 	passe assez proche d'un sommet, si l'une des quatre cellules adjacentes est
-	un mur alors on considère que le rayon à toucher le sommet.
+	un mur alors on considère que le rayon a touché le sommet.
 
 	\item \textbf{Continuer le rayon après avoir touché un sommet :} Si l'on touche un sommet avec 
-	un rayon, il faut déterminer si le rayon doit continuer ou non. Cela est important dans le cas ou l'on 
-	est au bord d'un mur est qu'il faut faire le rendu du mur se trouvant derrière
+	un rayon, il faut déterminer si le rayon doit continuer ou non. Cela est important dans le cas où l'on 
+	est au bord d'un mur est qu'il faut faire le rendu du mur se trouvant derrière.
 
 	\textbf{Solution : }Pour déterminer si le rayon doit continuer ou non, il faut regarder si
 	dans les cellules adjacentes au sommet touché, il y a exactement un mur et que ce mur
@@ -300,7 +303,7 @@ le nombre de calculs à effectuer.
 	par rapport au joueur. Concrètement, cela signifie que la carte graphique ne peux pas gérer ces mur les
 	affichant alors devant le joueur.
 
-	\textbf{Solution : }Pour régler ce problèmes, il faut créer une droite imaginaire passant par le 
+	\textbf{Solution : }Pour régler ce problème, il faut créer une droite imaginaire passant par le 
 	joueur et orthogonale à la direction dans laquelle le joueur regarde. Ensuite, il faut retirer
 	tous les segments qui se trouvent de l'autre coté de cette droite. Puis, il faut ajouter un sommet
 	à l'intersection de cette droite avec chaque segment l'intersectant, en plaçant ces points, 
@@ -308,7 +311,7 @@ le nombre de calculs à effectuer.
 	projeter ce point sur le plan de projection, le plan étant lui même parallèle à la droite. Enfin, 
 	on peut générer les murs comme précédemment.
 
-	\item \textbf{Afficher des textures sur les murs :}Pour afficher des murs texturés, il faut
+	\item \textbf{Afficher des textures sur les murs :} Pour afficher des murs texturés, il faut
 	pouvoir mapper une texture sur un trapèze en deux dimensions. Cependant il ne suffit pas d'afficher 
 	une texture coupé en deux triangles. En effet, il faut que la déformation soit correcte
 	du point de vue de la perspective et ce problème est loin d'être trivial.
@@ -382,38 +385,38 @@ différentes étapes ont été tester sur un rendu 2D pour faciliter le dévelop
 	\label{fig:png_map}
 \end{figure}
 
-\subsubsection{Les cartes:}
-Afin de pouvoir afficher des cartes, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}). Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des deux. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
-\subsubsection{Les murs:}
+\subsubsection{Les cartes}
+Afin de pouvoir afficher des cartes, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}). Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des trois. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
+\subsubsection{Les murs}
 
 Dans cette partie nous allons détailler les différentes étapes pour la création des murs.
 
-\paragraph{Récupération des sommets utiles:}
+\paragraph{Récupération des sommets utiles :}
+Pour la création des murs, on effectue une boucle sur la liste de coordonnées des cellules occupées par un mur précédemment récupérée. Sur chacune des coordonnées, on regarde quatre de ses coordonnées adjacentes qui représente les cellules en haut, en bas, à gauche et à droite. Si l'une d'entre elles fait partie de la liste des coordonnées des murs alors on incrémente un compteur. Si ce compteur est égal à 1 ou 3 alors on ajoute les coordonnées essayées dans une liste de coordonnées dites utiles, c'est-à-dire que ce sont les coordonnées des sommets des murs.
 
-Pour la création des murs, on effectue un boucle sur la liste de coordonnées des cellules occupées pour un mur précédemment récupérée. Sur chacune des coordonnées, on va regarder quatre de ses coordonnées adjacentes qui sont celles en haut, en bas, à gauche et à droite. Si l'une d'entre elles fait partie de la liste des coordonnées des cellules alors on va incrémenter un compteur. Si ce compteur est égal à 1 ou 3 alors on va l'ajouter dans une liste de coordonnées dites utiles, c'est-à-dire que ceux sont les coordonnées des sommets des murs.
-
-\paragraph{Triage des sommets:}
-Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets. Pour cela, nous effectuons un boucle tant que la taille de la liste des sommets utiles est supérieur à la taille de la liste des sommets triés. Dans cette boucle, nous allons effectuer une boucle sur la liste des sommets utiles si le sommet est dans la liste des sommets triés ou non. Si il ne l'est pas alors on va récupérer les coordonnées de ce sommet et faire appel à une fonction pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets triés. Dans cette fonction, on va effectuer une boucle sur la liste des sommets utiles à partir du sommets donné en paramètre. On va regarder pour chaque sommet si il existe un sommet dans la direction choisie ainsi que dans sa direction opposée. %(Explication de la fonction fctCanGo?)
+\paragraph{Tri des sommets :}
+Afin de faciliter le rendu des murs, nous avons besoin de trier les sommets. Pour cela, nous effectuons une boucle tant que la taille de la liste des sommets utiles est supérieure à la taille de la liste des sommets triés. Dans cette boucle, nous effectuons une boucle sur la liste des sommets utiles si le sommet est dans la liste des sommets triés ou non. S'il ne l'est pas alors on récupère les coordonnées de ce sommet et fait appel à une fonction pour trier à partir de ce sommet, la liste des sommets utiles et la liste des sommets triés. Dans cette fonction, on effectue une boucle sur la liste des sommets utiles à partir du sommet donné en paramètre. On regarde pour chaque sommet s'il existe un sommet dans la direction choisie ainsi que dans sa direction opposée. %(Explication de la fonction fctCanGo?)
 \begin{itemize}
-	\item Si il existe un sommet dans la direction choisie et aucun sommet dans la direction opposée alors on va ajouter ce sommet dans la liste des sommets triés.
-	\item Sinon si il existe un sommet dans la direction opposée et aucun sommet dans la direction choisie alors on va ajouter le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
+	\item S'il existe un sommet dans la direction choisie et aucun sommet dans la direction opposée alors on ajoute ce sommet dans la liste des sommets triés.
+	\item Sinon s'il existe un sommet dans la direction opposée et aucun sommet dans la direction choisie alors on ajoute le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
 	\item Sinon
 	\begin{itemize}
-		\item Si il existe un sommet dans la direction choisie et un sommet dans la direction opposée alors on regarder si le sommet de la direction opposée n'est pas dans la liste des sommets triés et qu'un changement de direction doit être effectué ou bien que le sommet de la direction choisie est dans la liste des sommets triés et qu'un chanegement de direction ne doit pas être effectué alors on va ajouter le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
-		\item Sinon on va ajouter le sommet de la direction choisie dans la liste des sommets triés.
+		\item S'il existe un sommet dans la direction choisie et un sommet dans la direction opposée alors on regarde si le sommet de la direction opposée n'est pas dans la liste des sommets triés et qu'un changement de direction doit être effectué ou bien que le sommet de la direction choisie est dans la liste des sommets triés et qu'un changement de direction ne doit pas être effectué alors on va ajouter le sommet de la direction opposée dans la liste des sommets triés et changer la direction courante par la direction opposée.
+		\item Sinon on ajoute le sommet de la direction choisie dans la liste des sommets triés.
 	\end{itemize}
 \end{itemize}
-On va changer de direction en fonction de la direction courante, si le changement de direction reste le même que l'ancien alors on va changer de direction. Si n'existe aucune sommet dans les directions choisies et opposées alors on va incrémenter un compteur. Si ce compteur est supérieur ou égal à 4 alors on arrête la fonction de triage.
 
-\paragraph{Contruction des murs:}
-Une fois les sommets utiles triés nous allons pouvoir construire les murs et les ajouter dans une liste de murs. Chaque murs de cette liste a pour attributs les coordonnées de ses sommets triés, les coordonnées de ses cellules occupées et la taille de son périmètre.
+On change de direction en fonction de la direction courante, si le changement de direction reste le même que l'ancien alors on va changer de direction. Si n'existe aucun sommet dans les directions choisies et opposées alors on va incrémenter un compteur. Si ce compteur est supérieur ou égal à 4 alors on arrête la fonction de tri.
 
-\subsubsection{Les collisions:}
+\paragraph{Contruction des murs :}
+Une fois les sommets utiles triés nous allons pouvoir construire les murs et les ajouter dans une liste de murs. Chaque mur de cette liste a pour attributs les coordonnées de ses sommets triés, les coordonnées de ses cellules occupées et la taille de son périmètre.
+
+\subsubsection{Les collisions}
 
 Dans ce point nous allons traiter des collisions. Notre objectif est d'empêcher
 que notre personnage puisse passe dans ainsi qu'à travers les murs.
 
-\paragraph{Aspect conceptuel:}
+\paragraph{Aspect conceptuel :}
 
 \begin{figure}
 	\centering
@@ -444,13 +447,13 @@ Alors deux cas s'ouvre à nous.
 	\end{minipage}
 \end{figure}
 
-\subparagraph{Premier cas:} 
+\subparagraph{Premier cas :} 
 
 
 Dans ce cas là, le cercle n'est pas en collision avec le rectangle, alors 
 tout va bien et aucun traitement spécifique n'est à prévoir (cf: \nameref{fig:pas_de_collision}). 
 
-\subparagraph{Second cas:} 
+\subparagraph{Second cas :} 
 
 
 
@@ -462,15 +465,14 @@ de glissement contre le rectangle.
 
 
 
-\paragraph{Aspect technique: }
+\paragraph{Aspect technique : }
 % Maintenant, parlons de l'aspect technique.
 Nous définissons notre personnage, noté P, par des coordonnées représentant 
 sa position ainsi qu'un nombre représentant sa largeur, noté L Ainsi :
 
 \begin{itemize}
-	\item[] $P = ((x ; y) ; l), x, y, l \epsilon R$ 
-	\item[] $L = 0,1$\footnote{Nous avons choisi cette valeur de manière 
-	empirique suite à une salve d'essais et de réflexions.}
+	\item[] $$P = ((x ; y) ; l), x, y, l \in \mathbb{R}$$ 
+	\item[] $$L = 0.1\footnote{Cette valeur est purement arbitraire.}$$
 \end{itemize}
 
 La méthode de "clampage" consiste à prendre la valeur la plus proche d'une 
@@ -550,7 +552,7 @@ suffit alors d'ajouter la différence entre les coordonnées de P et de C :
 Nous avons donc efficacement mis en place un système de gestion de 
 collisions entre un cercle et un rectangle.
 
-\subsubsection{La boucle de jeu:}
+\subsubsection{La boucle de jeu}
 Dans cette partie nous allons détailler les différentes étapes de la boucle de jeu.
 
 \paragraph{Events:}
@@ -629,99 +631,57 @@ Pour utiliser les portails, il faut commencer par posé les deux portails. Ensui
 
 D’un point de vue technique, nous utilisons une structure qui contient les coordonnées du portail, la direction du portail (s’il est sur la droite, la gauche, le haut ou le bas d’un mur) représentée par un entier, un pointeur sur le portail associé ainsi que la largeur du portail.
 
-Pour positionner un portail lors d’un clique, on récupère le point d’intersection entre la direction regardée par le personnage et le premier mur rencontré. Ce point sert alors de coordonnées à notre portail. Pour connaître la direction du portail, nous voyons d’abord si le mur utilisé comme support est vertical ou horizontal. 
+Pour positionner un portail lors d’un clique, on récupère le point d’inter\-section entre la direction regardée par le personnage et le premier mur rencontré. Ce point sert alors de coordonnées à notre portail. Pour connaître la direction du portail, nous voyons d’abord si le mur utilisé comme support est vertical ou horizontal. 
 Si le mur est vertical (resp. horizontal) alors si l’abscisse (resp. ordonnée) du personnage est inférieur à l’abscisse (resp. ordonnée) du mur, alors le portail est posé sur la gauche (resp. le haut) du mur. Sinon  le portail est posé sur la droite (resp. le bas) du mur.
 
 Pour savoir si le personnage rencontre un portail, on utilise le même système de collision utilisé avec les murs et l’on vérifie les collisions avec les portails avant celles des murs.
 
 Pour effectuer le passage d’un portail à l’autre, on doit calculer les nouvelles coordonnées du personnage (noté C) ainsi que l’angle (noté $\alpha$) indiquant sa direction. Les portails sont notés Pe (portail d’entrée) et Ps (portail de sortie).
-En ce qui concerne le nouvelle angle, on utilise la direction des portails et l’angle actuel du personnage (noté $\beta$). La relation suivante permet de calculer cet angle :
+En ce qui concerne le nouvelle angle, on utilise la direction des portails et l’angle actuel du personnage (noté $\beta$). La relation suivante permet de calculer cet angle :
 
-$\alpha = \beta + \pi + (Ps.dir – Pe.dir) * \pi / 2$
+$$\alpha = \beta + \pi + (Ps.dir – Pe.dir) * \pi / 2$$
 
 Cette relation, trouvée empiriquement, utilise la différence entre les directions des portails pour connaître le nombre de quart de tours nécessaires. On doit ajouter un demi-tour et l’angle actuel du personnage pour garder l’orientation du personnage.
 
 Pour trouver les nouvelles coordonnées, on réutilise les directions des portails. On effectue une superposition imaginaire entre les portails et l’on doit transformer les coordonnées pour avoir une suite logique à travers les portails.
 
+Il y a quatre possibilités de nouvelles coordonnées et chacun des cas correspond au résultat du calcul suivant :
 
-Droite (0)
-Bas (1)
-Gauche (2)
-Haut (3)
-Portail de sortie
-Droite (0)
-(Ps.x + (J.x – Pe.x) ;
-Ps.y - (J.y – Pe.y))
-(Ps.x + (J.y – Pe.y) ;
-Ps.y + (J.x – Pe.x))
-(Ps.x - (J.x – Pe.x) ;
-Ps.y + (J.y – Pe.y))
-(Ps.x - (J.y – Pe.y) ;
-Ps.y - (J.x – Pe.x))
+$$Ps.dir + Pe.dir \equiv n (4)$$
 
-Bas (1)
-(Ps.x + (J.y – Pe.y) ;
-Ps.y + (J.x – Pe.x))
-(Ps.x - (J.x – Pe.x) ;
-Ps.y + (J.y – Pe.y))
-(Ps.x - (J.y – Pe.y) ;
-Ps.y - (J.x – Pe.x))
-(Ps.x + (J.x – Pe.x) ;
-Ps.y - (J.y – Pe.y))
+\begin{center}
+    \begin{tabular}{c|c}
+            n & nouvelle position associée \\
+            \hline
+            0 & $(Ps.x + (J.x - Pe.x) ; Ps.y - (J.y - Pe.y))$ \\ 
+            1 & $(Ps.x + (J.y - Pe.y) ; Ps.y + (J.x - Pe.x))$ \\
+            2 & $(Ps.x - (J.x - Pe.x) ; Ps.y + (J.y - Pe.y))$ \\
+            3 & $(Ps.x - (J.y - Pe.y) ; Ps.y - (J.x - Pe.x))$ \\
+    \end{tabular}
+\end{center}
 
-Gauche (2)
-(Ps.x - (J.x – Pe.x) ;
-Ps.y + (J.y – Pe.y))
-(Ps.x - (J.y – Pe.y) ;
-Ps.y - (J.x – Pe.x))
-(Ps.x + (J.x – Pe.x) ;
-Ps.y - (J.y – Pe.y))
-(Ps.x + (J.y – Pe.y) ;
-Ps.y + (J.x – Pe.x))
+Notations :
 
-Haut (3)
-(Ps.x - (J.y – Pe.y) ;
-Ps.y - (J.x – Pe.x))
-(Ps.x + (J.x – Pe.x) ;
-Ps.y - (J.y – Pe.y))
-(Ps.x + (J.y – Pe.y) ;
-Ps.y + (J.x – Pe.x))
-(Ps.x - (J.x – Pe.x) ;
-Ps.y + (J.y – Pe.y))
+- Pe.x (resp. Pe.y) → abscisse (resp. ordonnée) du portail d’entrée
 
-Portail d’entrée
+- Ps.x (resp. Ps.y) → abscisse (resp. ordonnée) du portail de sortie
 
-
-
-
-
-
-Notation :	- Pe.x (resp. Pe.y) → abscisse (resp. ordonnée) du portail d’entrée
-	- Ps.x (resp. Ps.y) → abscisse (resp. ordonnée) du portail de sortie
-	- J.x (resp. J.y) → abscisse (resp. ordonnée) du joueur/personnage
-
-On peut alors se rendre compte qu’il y a quatre possibilités de nouvelles coordonnées (noté c) et chacun des cas correspond au résultat du calcul suivant :
-
-$Ps.dir + Pe.dir \equiv c (4)$
+- J.x (resp. J.y) → abscisse (resp. ordonnée) du joueur/personnage
 
 Nous avons donc les nouvelles coordonnées ainsi que le nouvel angle du personnage.
 
 \section{Gestion du projet}
-\subsection{L'équipe}
 \subsection{Planification et outils de gestion}
 
+Nous avions comme contrainte d'utiliser GF\cite{GF} et donc le langage de programmation C++.
 Pour la gestion du projet nous avons utilisé le versionneur \href{https://github.com/}{github}\cite{Github} 
 qui est un outil de gestion de projet en ligne.
 
-\subsection{Répartition des tâches}
 
-
-\section{Conclusion technique \& personnelle}
+\section{Conclusion}
 \subsection{Bilan technique}
-\subsubsection{Résultats obtenus}
-\subsection{Bilan personnel}
-\subsection{Perspectives}
-\subsubsection{Améliorations possibles}
+\subsection{Améliorations possibles}
+\subsubsection{Améliorations de l'existant}
 
 La plus grande amélioration possible serait de pouvoir voir à travers les portails
 lorsque les deux sont activés. (Bref explication de comment cela serai possible)
@@ -736,8 +696,6 @@ Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelqu
 	\item Pouvoir mettre plusieurs textures différentes sur les murs
 	\item Avoir des murs qui possèdent des trous permettant de voir ainsi que tirer des portails à travers
 \end{itemize}
-
-\subsubsection{Un plus dans nos CV}
 
 % \section{Bibliographie}
 \bibliographystyle{plain}
