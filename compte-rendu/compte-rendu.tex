@@ -53,16 +53,16 @@ qui utilise un moteur de type Raycaster à la façon du jeu
 \href{https://fr.wikipedia.org/wiki/Wolfenstein_3D}{Wolfenstein 3D}\cite{Wolfenstein3D} pour afficher les éléments
 du jeu.
 
-% L'objectif de ce projet est de réaliser un jeu vidéo en C++ avec la bibliothèque Gamedev Framework\cite{GF} (GF) afin 
-% d'occuper M. Bernard lorsqu'il ne veux pas corriger les copies de ses élèves.
-
 Lors de ce rapport, nous allons détailler les différents aspects conceptuels et
-techniques de ce projet. Nous commencerons par présenter les besoins, les 
-contraintes et les objectifs du projet. Ensuite, nous détaillerons différentes phases de 
-développement du projet, comme les stratégies envisageables pour le rendu 3D. Nous continuerons
-dans les spécifications techniques du projet en détaillant la façon dont les rendus 3D ont été
-réalisés. Nous parlerons ensuite rapidement de notre politique de gestion de projet. Enfin,
-nous terminerons par une conclusion sur le travail réalisé et les perspectives d'avenir.
+techniques de ce projet. 
+Nous commencerons par présenter les besoins et les objectifs du projet. 
+Ensuite, nous détaillerons les algorithmes et les technologies utilisés et mis en place pour mettre en oeuvre ce projet.
+Comme la creation des murs, les collisions et les différentes stratégies envisagées pour le rendu 3D.
+Suivit des explication sur des parties importantes des implantations de ces algorithmes.
+Enfin nous pourrons conclure sur ce projet en détaillant ce qui a finalement été réalisé par rapport à ce qui était prévu
+ainsi que les perspectives d'avenir pour ce projet.
+
+
 
 % Portal 0.0 s'inscrit dans le cadre du projet semestriel de troisième année de licence
 % informatique à l'université de Franche-Comté. Il a pour but de nous faire 
@@ -211,7 +211,7 @@ Mais avec des contraintes :
 \section{Algorithmes et technologies}
 Mettre un petit texte ici d'introduction
 
-\subsection{Les murs}
+\subsection{Création des murs}
 \begin{figure}
 	\centering
 	\begin{tikzpicture}[scale=0.5]
@@ -266,7 +266,7 @@ Mettre un petit texte ici d'introduction
 	\label{fig:png_map}
 \end{figure}
 
-Dans cette partie nous allons détailler les différentes étapes pour la création des murs.
+% Dans cette partie nous allons détailler les différentes étapes pour la création des murs.
 
 \subsubsection{Les cartes}
 Afin de pouvoir afficher des cartes, nous avons dû créer un fichier PNG\footnote{Portable Network Graphics} où nous dessinons les murs ainsi que la case de départ et d'arrivée (\nameref{fig:png_map}). Lors du lancement du jeu, le programme lit le fichier PNG et enregistre les différentes cases dans un tableau à deux dimensions. En même temps, le programme va regarder si les coordonnées correspondent à une cellule de mur, la case de départ, la case d'arrivée ou aucune des trois. Si c'est une cellule de mur, alors on va effectuer un parcours en profondeur des coordonnées adjacentes pour savoir si ceux sont des cellules de murs ou non. Grâce à cela nous pouvons récuperer toutes les cellules d'un mur directement et ainsi compter le nombre de mur assez facilement.
@@ -533,14 +533,6 @@ le nombre de calculs à effectuer (cf: \nameref{fig:result-modern}).
 	passe assez proche d'un sommet, si l'une des quatre cellules adjacentes est
 	un mur alors on considère que le rayon a touché le sommet.
 
-	\begin{figure}
-		\center\begin{minipage}{\textwidth}
-			\center\includegraphics[width=\linewidth]{image/3cas-dda.jpeg}
-			\caption{Les 3 cas de projection de rayon à gérer}
-			\label{fig:3cas-dda}
-		\end{minipage}
-	\end{figure}
-
 	\item \textbf{Continuer le rayon après avoir touché un sommet :} Si l'on touche un sommet avec 
 	un rayon, il faut déterminer si le rayon doit continuer ou non. Cela est important dans le cas où l'on 
 	est au bord d'un mur est qu'il faut faire le rendu du mur se trouvant derrière.
@@ -582,7 +574,13 @@ le nombre de calculs à effectuer (cf: \nameref{fig:result-modern}).
 	sorte que la déformation ne soit pas trop flagrante. Cela dit, cette méthode empêche 
 	l'utilisation de textures avec des motifs réguliers et principalement horizontaux.
 \end{itemize}
-
+\begin{figure}
+	\center\begin{minipage}{\textwidth}
+		\center\includegraphics[width=\linewidth]{image/3cas-dda.jpeg}
+		\caption{Les 3 cas de projection de rayon à gérer}
+		\label{fig:3cas-dda}
+	\end{minipage}
+\end{figure}
 
 
 
