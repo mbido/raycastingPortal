@@ -46,6 +46,14 @@
 Licence 3 Informatique}
 \date{Mars 2024}
 
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \tableofcontents[currentsection,currentsubsection,subsubsectionstyle=show/hide/hide/hide]
+  \end{frame}
+}
+
 \AtBeginSubsection[]
 {
   \begin{frame}<beamer>
@@ -541,7 +549,6 @@ Licence 3 Informatique}
             \item Utilisation de scènes
             \item Vue à travers le portail
             \item Ajout de niveaux supplémentaires
-            \item Lissage de l'environnement
             \item Ajout d'un marquage de fin de niveau
         \end{itemize}
     \end{block}
