@@ -369,35 +369,6 @@ Licence 3 Informatique}
     \end{figure}
 \end{frame}
 
-% \begin{frame}
-%     \frametitle{Différentes stratégie pour un rendu 3D \\
-%                 \small DDA}           
-%     \begin{block}{}
-%         \begin{itemize}
-%             \item Calcule l'emplacement correspondant sur l'autre axe en ajoutant un incrément constant
-%             \item Utilisé pour trouver rapidement et précisément les intersections entre les rayons 
-%             et les murs dans le raycasting
-%         \end{itemize}
-%         % L'algorithme DDA est historiquement conçu pour la rasterisation de 
-%         % lignes, c'est-à-dire la conversion de lignes geometriques en ligne 
-%         % visuelle composées de pixels alignés. Dans le contexte du raycasting, 
-%         % DDA est employé pour déterminer où les rayons projetés à travers la 
-%         % scène intersectent avec les objets de l'environnement, typiquement et 
-%         % dans notre cas représenté par une grille de cellules. Le principe 
-%         % fondamental de DDA repose sur l'itération linéaire. Plutôt que de 
-%         % calculer chaque point le long d'une demie droite en utilisant des formules 
-%         % de géométrie directe, ce qui pourrait être coûteux en termes de performances, 
-%         % DDA avance par petits incr ́ements. Cela signifie que pour chaque
-%         % pas sur l'axe le plus dominant (x ou y), DDA calcule l'emplacement 
-%         % correspondant sur l'autre axe en ajoutant un incrément constant. 
-%         % Cela se traduit par un parcours régulier et efficace le long de la 
-%         % ligne en faisant des sauts à chaque intersection entre la demie 
-%         % droite et la grille 2D. Dans le raycasting, DDA est utilisé pour 
-%         % trouver rapidement et précisément les intersections entre les rayons 
-%         % et les murs
-%     \end{block}    
-% \end{frame}
-
 \begin{frame}
     \frametitle{Différentes stratégie pour un rendu 3D \\
                 \small Approche moderne}    
@@ -407,13 +378,6 @@ Licence 3 Informatique}
         \begin{itemize} 
             \item Envoyer un rayon pour chaque sommet de chaque mur
         \end{itemize}
-%         Cette seconde approche s’approche des algorithme Line Of Sight et consiste
-% a calculer la distance entre le joueur et chaque sommet de chaque mur.
-% Pour ce faire on a pu recuperer l’algorithme DDA precedemment utilise
-% pour le rendu des murs mais cette fois-ci en visant chaque sommets au lieu
-% de viser chaque colonne de pixel. Cela permet theoriquement de reduire
-% considerablement le nombre de calculs a effectuer.
-
     \end{block}    
 
 
@@ -462,18 +426,7 @@ Licence 3 Informatique}
     \end{figure}
 \end{frame}
 
-% \begin{frame}
-%     \frametitle{Les rendus}
-%     \begin{block}{Projection des sommets}
-%         \begin{itemize}
-%             \item Déterminer la hauteur du segment (sommet en 3D) et sa position.
-%         \end{itemize}
-%     \end{block}
-%     \begin{figure}
-%         \centering
-%         \includegraphics[width=0.7\textwidth]{images/shemaLanceRayon01.jpeg}
-%     \end{figure}
-% \end{frame}
+
 
 \begin{frame}
     \frametitle{Les rendus}
@@ -492,6 +445,33 @@ Licence 3 Informatique}
         \includegraphics[width=0.6\textwidth]{images/rendu-points.jpeg}
     \end{figure}
 \end{frame}
+
+\begin{frame}
+    \frametitle{Les rendus}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{images/shemaLanceRayon01.jpeg}
+    \end{figure}
+    \begin{block}{Projection des sommets}
+        \begin{itemize}
+            \item $OI = \tan\theta$, la position horizontal du segment.
+            \item $h = \frac{H}{2dist}$, la hauteur du segment.
+        \end{itemize}
+    \end{block}
+    % \begin{minipage}[t][2cm][t]{0.5\textwidth}
+    %     \[
+    %         OI = \tan\theta
+    %     \]
+    % \end{minipage}%
+    % \begin{minipage}[t][2cm][t]{0.5\textwidth}
+    %     \[
+    %         h = \frac{H}{2dist}
+    %     \]
+    % \end{minipage}
+\end{frame}
+
+
+
 
 \subsection{Les portails}
 
