@@ -707,8 +707,28 @@ Nous avons donc les nouvelles coordonnées ainsi que le nouvel angle du personna
 \subsection{Améliorations possibles}
 \subsubsection{Améliorations de l'existant}
 
+\begin{figure}
+	\begin{minipage}{\textwidth}
+		\center\includegraphics[width=0.8\linewidth]{image/vue-travers-portail.jpeg}
+		\hspace*{-0.5cm}
+		\caption{Vue à travers un portail}
+		\label{fig:vue-travers-portail}
+	\end{minipage}
+\end{figure}
+
 La plus grande amélioration possible serait de pouvoir voir à travers les portails
-lorsque les deux sont activés. (Bref explication de comment cela serai possible)
+lorsque les deux sont activés.
+
+Pour cela, on pourrais simuler un joueur se trouvant derrière le portail
+lié à celui au travers duquel on regarde. On pourrais alors afficher
+ce que ce joueur simulé voit à travers le portail (cf: \nameref{fig:vue-travers-portail}). 
+
+Il faudrait cependant alors créer un nouveau type de rendu car le joueur
+simulé étant derrière le portail lié, il se trouverais derrière ou à l'intérieur
+d'un mur. On pourrais alors imaginer une façon de ne pas prendre en compte tous ce qui 
+se trouve derrière le portail d'un point de vue affichage mais aussi 
+d'un point de vue du lancé des rayon aui ne doivent pas s'arrêter sur
+un mur derrière le portail lié.
 
 \subsubsection{Nouvelles fonctionnalités}
 
@@ -720,6 +740,8 @@ Parmi de nouvelles fonctionnalités, que nous pourrions rajouter en voici quelqu
 	\item Pouvoir mettre plusieurs textures différentes sur les murs
 	\item Avoir des murs qui possèdent des trous permettant de voir ainsi que tirer des portails à travers
 \end{itemize}
+
+\newpage
 
 % \section{Bibliographie}
 \bibliographystyle{plain}
