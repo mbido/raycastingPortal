@@ -290,7 +290,7 @@ Une fois les sommets utiles triés nous allons pouvoir construire les murs et le
 \subsection{Les collisions}
 
 Dans ce point nous allons traiter des collisions. Notre objectif est d'empêcher
-que notre personnage puisse passe dans ainsi qu'à travers les murs.
+que notre personnage puisse se déplacer à travers les murs.
 
 \subsubsection{Aspect conceptuel}
 
@@ -302,13 +302,14 @@ que notre personnage puisse passe dans ainsi qu'à travers les murs.
 \end{figure}
 
 % Nous commençons avec l'aspect conceptuel.
-Le personnage est représenté par un point auquel nous accordons une 
-largeur et donc un cercle centré autour de lui. Chaque mur est composé de 
-blocs carrés unitaires. Ainsi, nous employons un système de collisions 
-entre un cercle et un rectangle (cf: \nameref{fig:collision_cercle_rectangle}). 
-Ce système s'appuie sur une méthode dite du "clampage", qui permet de connaître le point du mur le plus proche 
-et ainsi de savoir si notre cercle est en collision avec notre rectangle.
-Alors deux cas s'ouvre à nous.
+Le personnage est représenté par un point auquel nous accordons une largeur et donc un cercle centré autour de lui.
+Chaque mur est composé de blocs carrés unitaires.
+Ainsi, nous employons un système de collision entre un cercle et un rectangle (cf: \nameref{fig:collision_cercle_rectangle}). 
+
+Ce système s'appuie sur une méthode de "clampage", qui permet de connaître le point du mur le plus proche.
+Puis, à l'aide de la distance entre ce point et le personnage, on détermine si notre cercle est en collision avec notre rectangle.
+
+Alors deux cas se présentent à nous:
 
 \begin{figure}
 	\begin{minipage}{0.48\textwidth}
@@ -325,47 +326,27 @@ Alors deux cas s'ouvre à nous.
 
 \paragraph{Premier cas :} 
 
-
-Dans ce cas là, le cercle n'est pas en collision avec le rectangle, alors 
-tout va bien et aucun traitement spécifique n'est à prévoir (cf: \nameref{fig:pas_de_collision}). 
+Le cercle n'est pas en collision avec le rectangle, alors aucun traitement spécifique n'est à prévoir (cf: \nameref{fig:pas_de_collision}). 
 
 \paragraph{Second cas :} 
 
-
-
-Dans ce cas ci, le cercle est en collision avec le rectangle (cf: \nameref{fig:collision}) et nous 
-devons alors procéder à un repositionnement du personnage de manière à ce 
-qu'il ne soit plus imbriqué avec le rectangle. Ce qui donne un effet visuel 
-de glissement contre le rectangle.
-
-
-
+Le cercle est en collision avec le rectangle (cf: \nameref{fig:collision}) et nous repositionnons le personnage de manière à ce qu'il ne soit plus imbriqué avec le rectangle. 
+Ce qui donne un effet visuel de glissement contre le rectangle.
 
 \subsubsection{Aspect technique}
-% Maintenant, parlons de l'aspect technique.
-Nous définissons notre personnage, noté P, par des coordonnées représentant 
-sa position ainsi qu'un nombre représentant sa largeur, noté L Ainsi :
 
-\begin{itemize}
-	\item[] $$P = ((x ; y) ; l), x, y, l \in \mathbb{R}$$ 
-	\item[] $$L = 0.1\footnote{Cette valeur est purement arbitraire.}$$
-\end{itemize}
+Nous définissons notre personnage, noté P, par des coordonnées représentant sa position ainsi qu'un nombre représentant sa largeur, noté $l$ Ainsi :
 
-La méthode de "clampage" consiste à prendre la valeur la plus proche d'une 
-valeur donnée dans un intervalle donnée.
-Ce qui nous donne l'application suivante :
+$$\text{P} = ((x ; y) ; l), x, y, l \in \mathbb{R}$$ 
+$$l = 0.1$$
 
-% \begin{codeFrame}{c++}{clampage}
-% 	float clamp(float min, float max, float value)
-% 	{
-% 		if (value < min)
-% 			return min;
-% 		if (value > max)
-% 			return max;
-% 		return value;
-% 	}
-% \end{codeFrame}
+La méthode de "clampage" consiste à prendre la valeur la plus proche d'une valeur donnée dans un intervalle donnée.
+Ce qui nous donne l'applica\-tion suivante :
 
+\begin{align*}
+    \text{clamp}\colon\mathbb{R}&\longrightarrow \mathopen{[}a\,;b\mathclose{]}, a\,, b \in \mathbb{R}\\
+    x&\longmapsto  \left \{ \begin{array}{c} a \text{ si } x \leq a \\ b \text{ si } x \geq b \\ x \text{ sinon} \end{array} \right.
+\end{align*}
 
 A partir de cette application, nous pouvons trouver le point le plus proche 
 d'un mur. Nos murs sont composés de blocs unitaires, c'est-à-dire que ce 
@@ -376,11 +357,12 @@ il suffit d'une coordonnée pour avoir toutes les autres. Nous choisissons
 arbitrairement de prendre la coordonnée à la plus basse abscisse et plus 
 basse ordonnée du bloc que nous noterons (a ; b). Nous avons alors :
 
-\begin{itemize}
-	\item[]	$B = \{(a ; b) ; (a + 1 ; b) ; (a ; b + 1) ; (a + 1 ; b + 1)\}$
-	\item[] Que l'on simplifiera donc par
-	\item[] $B = (a ; b)$
-\end{itemize}
+
+$$\text{B} = \{(a ; b) ; (a + 1 ; b) ; (a ; b + 1) ; (a + 1 ; b + 1)\}$$
+
+Que l'on simplifie par
+
+$$\text{B} = (a ; b)$$
 
 \begin{figure}
 	\centering
@@ -390,18 +372,15 @@ basse ordonnée du bloc que nous noterons (a ; b). Nous avons alors :
 \end{figure}
 
 Pour avoir le point le plus proche de B, noté C, nous devons alors "clamper" 
-l'abscisse, resp. l'ordonnée, du personnage sur l'intervalle d'abscisse, 
-resp. d'ordonnée, de B (cf: \nameref{fig:clampage}). Alors :
+l'abscisse (resp. l'ordonnée) du personnage sur l'intervalle d'abscisse 
+(resp. d'ordonnée) de B (cf: \nameref{fig:clampage}). Alors :
 
-\begin{itemize}
-	\item[] $C = (clamp(P.x, B.a, B.a +1) ; clamp(P.y, B.b, B.b +1))$
-\end{itemize}
+$$\text{C} = (\text{clamp}(\text{P}.x, \text{B}.a, \text{B}.a +1) ; \text{clamp}(\text{P}.y, \text{B}.b, \text{B}.b +1))$$
 
 Grâce à C, nous pouvons maintenant vérifier si P est à moins de 0,1 de B, 
 et donc en collision. Pour cela, calculons la distance entre P et C :
-\begin{itemize}
-	\item[] $dist = \sqrt[]{((P.x - C.x)^2 + (P.y - C.y)^2) xx  x}$
-\end{itemize}
+
+$$\text{dist} = \sqrt[]{((\text{P}.x - \text{C}.x)^2 + (\text{P}.y - \text{C}.y)^2)}$$
 
 Maintenant, nous pouvons généraliser notre réflexion à un mur pour nous 
 offrir une légère optimisation. Nos murs sont composés de plusieurs blocs. 
@@ -410,20 +389,14 @@ distance minimale, nous pouvons déterminer le point le plus proche de
 chaque mur cette fois ci. Ceci nous évite des comparaisons inutile par la 
 suite. On peut alors définir DistMur :
 
-\begin{itemize}
-	\item[] $DistMur = min(dist)$
-\end{itemize}
+$$\text{DistMur} = \min(\text{dist})$$
 
-
-Ensuite, si distMur $>$ P.l, c'est-à-dire si dist $>$ 0,1, alors P n'entre pas 
-en collision avec B (fig.2). Sinon, nous devons replacer P.
+Ensuite, si $\text{distMur} > \text{P}.l$, c'est-à-dire si $\text{dist} > 0,1$, alors P n'entre pas en collision avec B (cf: \nameref{fig:pas_de_collision}). Sinon, nous devons replacer P.
 
 Dans ce second cas, nous devons connaître la nouvelle position de P. Il 
 suffit alors d'ajouter la différence entre les coordonnées de P et de C :
 
-\begin{itemize}
-	\item[] $P = (P.x + (P.x - C.x) ; P.y + (P.y - C.y))$
-\end{itemize}
+$$\text{P} = (\text{P}.x + (\text{P}.x - \text{C}.x) ; \text{P}.y + (\text{P}.y - \text{C}.y))$$
 
 Nous avons donc efficacement mis en place un système de gestion de 
 collisions entre un cercle et un rectangle.
@@ -658,12 +631,26 @@ On obtient alors les deux points du segment représentant le sommet sur le plan 
 
 \subsection{Les portails}
 
-Le personnage dispose d’un portail bleu et un portail orange que l’on active en utilisant le clique droit et gauche. Ils se positionnent chacun sur un mur. Les portails servent à créer un passage d’un point A à un point B pour ainsi gagner de la distance et du temps.
-Pour utiliser les portails, il faut commencer par posé les deux portails. Ensuite, il faut se déplacer en continue contre l’un des deux portails ce qui permet de sortir par l’autre.
+Le personnage dispose d’un portail bleu et un portail orange que l’on activent en utilisant le clique droit et gauche.
+Ils se positionnent chacun sur un mur.
+Les portails servent à créer un passage d’un point A à un point B pour ainsi gagner de la distance et du temps.
 
-D’un point de vue technique, nous utilisons une structure qui contient les coordonnées du portail, la direction du portail (s’il est sur la droite, la gauche, le haut ou le bas d’un mur) représentée par un entier, un pointeur sur le portail associé ainsi que la largeur du portail.
+Pour utiliser les portails, il faut commencer par poser les deux portails.
+Ensuite, il faut se déplacer en continue contre l’un des deux portails ce qui permet de sortir par l’autre.
 
-Pour positionner un portail lors d’un clique, on récupère le point d’inter\-section entre la direction regardée par le personnage et le premier mur rencontré. Ce point sert alors de coordonnées à notre portail. Pour connaître la direction du portail, nous voyons d’abord si le mur utilisé comme support est vertical ou horizontal. 
+D’un point de vue technique, nous utilisons une structure qui contient :
+
+\begin{align*}
+    \text{(float;float) coords} & \xrightarrow{} \text{Les coordonnées du portail} \\
+    \text{int dir, dir } \in \mathopen{[}0\,;3\mathclose{]} & \xrightarrow{} \text{La direction du portail} \\
+    \text{portal* other} & \xrightarrow{} \text{Un pointeur sur le portail associé} \\
+    \text{int width} & \xrightarrow{} \text{La largeur du portail}
+\end{align*}
+
+Pour positionner un portail lors d’un clique, on récupère le point d’inter\-section entre la direction regardée par le personnage et le premier mur rencontré. 
+Ce point sert alors de coordonnées à notre portail. 
+
+Pour connaître la direction\footnote{Si le portail est sur la droite, la gauche, le haut ou le bas d’un mur} du portail, nous voyons d’abord si le mur utilisé comme support est vertical ou horizontal. 
 Si le mur est vertical (resp. horizontal) alors si l’abscisse (resp. ordonnée) du personnage est inférieur à l’abscisse (resp. ordonnée) du mur, alors le portail est posé sur la gauche (resp. le haut) du mur. Sinon  le portail est posé sur la droite (resp. le bas) du mur.
 
 Pour savoir si le personnage rencontre un portail, on utilise le même système de collision utilisé avec les murs et l’on vérifie les collisions avec les portails avant celles des murs.
@@ -671,34 +658,34 @@ Pour savoir si le personnage rencontre un portail, on utilise le même système 
 Pour effectuer le passage d’un portail à l’autre, on doit calculer les nouvelles coordonnées du personnage (noté C) ainsi que l’angle (noté $\alpha$) indiquant sa direction. Les portails sont notés Pe (portail d’entrée) et Ps (portail de sortie).
 En ce qui concerne le nouvelle angle, on utilise la direction des portails et l’angle actuel du personnage (noté $\beta$). La relation suivante permet de calculer cet angle :
 
-$$\alpha = \beta + \pi + (Ps.dir – Pe.dir) * \pi / 2$$
+$$\alpha = \beta + \pi + (\text{Ps.dir} – \text{Pe.dir}) \times \pi / 2$$
 
-Cette relation, trouvée empiriquement, utilise la différence entre les directions des portails pour connaître le nombre de quart de tours nécessaires. On doit ajouter un demi-tour et l’angle actuel du personnage pour garder l’orientation du personnage.
+Cette relation utilise la différence entre les directions des portails pour connaître le nombre de quart de tour nécessaires. On doit ajouter un demi-tour et l’angle actuel du personnage pour garder l’orientation du personnage.
 
 Pour trouver les nouvelles coordonnées, on réutilise les directions des portails. On effectue une superposition imaginaire entre les portails et l’on doit transformer les coordonnées pour avoir une suite logique à travers les portails.
 
 Il y a quatre possibilités de nouvelles coordonnées et chacun des cas correspond au résultat du calcul suivant :
 
-$$Ps.dir + Pe.dir \equiv n (4)$$
+$$\text{Ps.dir} + \text{Pe.dir} \equiv n (4)$$
 
 \begin{center}
-    \begin{tabular}{c|c}
-            n & nouvelle position associée \\
+    \begin{tabular}{c|l}
+            $n$ & nouvelle position associée \\
             \hline
-            0 & $(Ps.x + (J.x - Pe.x) ; Ps.y - (J.y - Pe.y))$ \\ 
-            1 & $(Ps.x + (J.y - Pe.y) ; Ps.y + (J.x - Pe.x))$ \\
-            2 & $(Ps.x - (J.x - Pe.x) ; Ps.y + (J.y - Pe.y))$ \\
-            3 & $(Ps.x - (J.y - Pe.y) ; Ps.y - (J.x - Pe.x))$ \\
+            0 & $(\text{Ps}.x + (\text{J}.x - \text{Pe}.x) ; \text{Ps}.y - (\text{J}.y - \text{Pe}.y))$ \\ 
+            1 & $(\text{Ps}.x + (\text{J}.y - \text{Pe}.y) ; \text{Ps}.y + (\text{J}.x - \text{Pe}.x))$ \\
+            2 & $(\text{Ps}.x - (\text{J}.x - \text{Pe}.x) ; \text{Ps}.y + (\text{J}.y - \text{Pe}.y))$ \\
+            3 & $(\text{Ps}.x - (\text{J}.y - \text{Pe}.y) ; \text{Ps}.y - (\text{J}.x - \text{Pe}.x))$ \\
     \end{tabular}
 \end{center}
 
 Notations :
 
-- Pe.x (resp. Pe.y) → abscisse (resp. ordonnée) du portail d’entrée
+- Pe.$x$ (resp. Pe.$y$) → abscisse (resp. ordonnée) du portail d’entrée
 
-- Ps.x (resp. Ps.y) → abscisse (resp. ordonnée) du portail de sortie
+- Ps.$x$ (resp. Ps.$y$) → abscisse (resp. ordonnée) du portail de sortie
 
-- J.x (resp. J.y) → abscisse (resp. ordonnée) du joueur/personnage
+- J.$x$ (resp. J.$y$) → abscisse (resp. ordonnée) du joueur/personnage
 
 Nous avons donc les nouvelles coordonnées ainsi que le nouvel angle du personnage.
 
