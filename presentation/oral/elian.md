@@ -20,4 +20,9 @@ Pour téléporter le joueur, on calcule un nouvel angle, pour garder une impress
 ## Slide 22 :
 > Conclusion
 
-On conclue sur ce qui a été fait et ce qui pourrait être fait.
+Pour conclure, nous avons réussi à créer un environnement de jeu, où nous avons une grille de jeu, un système de collision, un rendu texturé et des portails qui fonctionnent.
+Nous avons aussi réussi à mettre en place un raycaster en utilisant l'algorithme DDA.
+
+Notre projet peut encore être amélioré. Nous pourions ajouter des scènes pour améliorer l'ergonomie. L'amélioration principale que nous pourions faire serait d'ajouter la vue à travers le portail. Nous pourions aussi ajouter des niveaux supplémentaires et ajouter un marquage de fin de niveau.
+
+Merci de votre attention.
